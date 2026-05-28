@@ -1,0 +1,148 @@
+import React from 'react';
+import { Search, Info, Plus } from 'lucide-react';
+import { BaseExercise } from '../../../data/exerciseDatabase';
+
+interface ExerciseLibraryProps {
+  filteredSuggestions: BaseExercise[];
+  searchExerciseQuery: string;
+  setSearchExerciseQuery: (val: string) => void;
+  selectedMuscleFilter: string;
+  setSelectedMuscleFilter: (val: string) => void;
+  recentAddedId: string | null;
+  onAddExercise: (ex: BaseExercise) => void;
+  onInjectBlock: (list: BaseExercise[]) => void;
+}
+
+export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
+  filteredSuggestions,
+  searchExerciseQuery,
+  setSearchExerciseQuery,
+  selectedMuscleFilter,
+  setSelectedMuscleFilter,
+  recentAddedId,
+  onAddExercise,
+  onInjectBlock
+}) => {
+  const muscleGroups = ['Todos', 'Peito', 'Costas', 'Pernas', 'Ombros', 'Braços', 'Abdômen', 'Glúteos', 'Livre'];
+
+  return (
+    <div className="flex flex-col h-full bg-transparent overflow-hidden px-4 md:px-6 py-4 pb-0 text-left select-none relative z-10 w-full min-w-0 flex-grow">
+      {/* 2.1 BIBLIOTECA HEADER E FILTROS */}
+      <h2 className="text-[12px] font-black tracking-tight uppercase italic text-zinc-400 leading-none shrink-0 border-b border-white/[0.015] pb-2 mb-3">
+        Dicionário Técnico
+      </h2>
+      
+      <div className="shrink-0 space-y-3 relative z-10">
+        {/* Input Text Box Modernization */}
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-white transition-colors">
+            <Search size={12} strokeWidth={2.5} />
+          </div>
+          <input
+            type="text"
+            className="w-full bg-[#111318] border border-white/[0.03] text-white text-[11px] font-bold rounded-lg pl-8 pr-3 py-2.5 focus:outline-none focus:border-white/15 focus:bg-[#15171e] transition-all placeholder-zinc-600 shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)]"
+            placeholder="Buscar por biomecânica ou grupo muscular..."
+            value={searchExerciseQuery}
+            onChange={(e) => setSearchExerciseQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Scrollable Filter Chips - Clean look */}
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
+          {muscleGroups.map(group => (
+            <button
+              key={group}
+              onClick={() => setSelectedMuscleFilter(group)}
+              className={`px-3.5 py-1.5 rounded-[6px] text-[9.5px] font-black uppercase tracking-wider whitespace-nowrap transition-all border shrink-0 font-mono shadow-sm cursor-pointer ${
+                selectedMuscleFilter === group
+                  ? 'bg-zinc-100 text-[#09090B] border-zinc-200'
+                  : 'bg-[#111318] border-white/[0.03] text-zinc-500 hover:text-zinc-200 hover:border-white/[0.08]'
+              }`}
+            >
+              {group}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 2.2 LISTA DA BIBLIOTECA (Scrollable) */}
+      <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar pr-1 mr-[-4px] mt-2 pb-6 space-y-2 relative z-10 w-full mb-12">
+        {filteredSuggestions.length > 0 ? (
+          filteredSuggestions.map((ex, idx) => (
+            <div 
+              key={idx}
+              className={`flex items-center justify-between p-2.5 pr-2 rounded-[10px] border shadow-sm transition-all focus:outline-none active:scale-[0.99] cursor-pointer ${
+                recentAddedId === ex.name 
+                ? 'bg-zinc-100 border-zinc-200 shadow-zinc-100/20' 
+                : 'bg-[#111318] border-white/[0.02] hover:bg-[#15171e] hover:border-white/[0.06]'
+              }`}
+              onClick={() => onAddExercise(ex)}
+            >
+              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                {/* Tech Square Bullet */}
+                <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 shadow-inner font-black text-[9px] uppercase font-mono transition-colors ${
+                  recentAddedId === ex.name
+                  ? 'bg-black text-white border-black/10'
+                  : 'bg-[#09090B] border-white/5 text-zinc-500'
+                }`}>
+                  {ex.muscleGroup.slice(0,2)}
+                </div>
+                
+                <div className="text-left min-w-0 leading-tight">
+                  <h4 className={`text-[10px] font-black uppercase tracking-tight truncate ${
+                    recentAddedId === ex.name ? 'text-black' : 'text-zinc-200'
+                  }`}>
+                    {ex.name}
+                  </h4>
+                  <div className="flex items-center gap-1.5 mt-[2px] leading-none">
+                    <span className={`text-[8.5px] font-bold tracking-widest uppercase font-mono ${
+                      recentAddedId === ex.name ? 'text-zinc-600' : 'text-zinc-500'
+                    }`}>
+                      {ex.muscleGroup}
+                    </span>
+                    <span className={`text-[10px] font-[900] ${
+                      recentAddedId === ex.name ? 'text-black/30' : 'text-zinc-600'
+                    }`}>•</span>
+                    <span className={`text-[8px] font-bold tracking-wider font-mono ${
+                      recentAddedId === ex.name ? 'text-black underline decoration-black/20 decoration-2 underline-offset-1' : 'text-white'
+                    }`}>
+                      {ex.defaultSets}×{ex.defaultReps}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <button 
+                type="button"
+                className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border transition-all ${
+                  recentAddedId === ex.name
+                  ? 'bg-transparent text-black border-transparent opacity-50 cursor-default'
+                  : 'bg-[#09090B] border-white/5 text-white shadow hover:bg-white hover:text-black cursor-pointer'
+                }`}
+              >
+                {recentAddedId === ex.name ? <Info size={11} strokeWidth={3} /> : <Plus size={11} strokeWidth={2.5} />}
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center text-center opacity-40 select-none pb-12 w-full">
+             <Search size={24} className="mb-3 text-zinc-600" />
+             <p className="text-[10px] text-zinc-400 font-bold max-w-[180px] uppercase tracking-widest font-mono">NENHUM EXERCÍCIO ENCONTRADO NO ACERVO</p>
+          </div>
+        )}
+      </div>
+
+      {/* QUICK INJECT BLOCK STRIP */}
+      {filteredSuggestions.length > 0 && selectedMuscleFilter !== 'Todos' && (
+        <div className="lg:absolute lg:bottom-0 lg:inset-x-0 w-[calc(100%-2rem)] mx-auto p-3 mb-2 rounded-xl bg-zinc-900 border border-white/5 shadow-2xl z-20">
+           <button
+              className="w-full py-2 bg-white text-black font-black uppercase text-[9px] tracking-[0.1em] rounded-lg active:scale-95 transition-all"
+              onClick={() => onInjectBlock(filteredSuggestions.slice(0, 4))}
+           >
+              INJETAR GRUPO {selectedMuscleFilter.slice(0, 4)} ({Math.min(4, filteredSuggestions.length)} EX)
+           </button>
+        </div>
+      )}
+    </div>
+  );
+};
