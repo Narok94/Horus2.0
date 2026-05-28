@@ -18,6 +18,7 @@ import { ToastProvider, useToast } from './components/ui/Toast';
 import { DashboardSkeleton } from './components/ui/Skeleton';
 import { db, auth, collection, getDocs, doc, setDoc, getDoc, onSnapshot, signInAnonymously } from './firebase';
 
+// Atualização de sincronização do GitHub. Assets restaurados.
 // Views
 import { DashboardView } from './components/views/DashboardView';
 import { WorkoutView } from './components/views/WorkoutView';
@@ -441,13 +442,12 @@ const AppContent: React.FC = () => {
         >
           {/* Bloco do Logotipo (Brand Header) */}
           <div className="flex flex-col items-center text-center space-y-4">
-            {/* Utilize a imagem subida no GitHub via caminho estático público */}
             <div className="w-32 h-auto max-w-[140px] drop-shadow-[0_0_20px_rgba(var(--accent-color-rgb),0.55)]">
                <img 
-                 src="/assets/logo/logo.png" 
+                 src="https://raw.githubusercontent.com/Narok94/Horus2.0/main/assets/logo/logo.png" 
                  alt="Horus Training Logo" 
                  onError={(e) => {
-                   // Fallback visual case a imagem não carregue no ambiente local por algum erro de caminho
+                   // Fallback visual
                    const target = e.target as HTMLImageElement;
                    target.onerror = null; 
                    target.style.display = 'none';

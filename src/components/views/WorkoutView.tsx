@@ -326,7 +326,8 @@ export const WorkoutView: React.FC = () => {
       ctx.fillText('HORUS TRAINING', 60, 100);
       
       // Accent Line
-      ctx.fillStyle = user.username.toLowerCase() === 'teste2' || user.username.toLowerCase().includes('jessica') ? '#FF007F' : '#00F0FF';
+      // Use global accent color instead of hardcoded neon
+      ctx.fillStyle = '#D4AF37';
       ctx.fillRect(60, 115, 60, 8);
 
       // Infer Focus

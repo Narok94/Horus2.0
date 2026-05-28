@@ -6,3 +6,7 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Ignore assets to prevent GitHub sync issues with massive deletions
+assets/
+public/assets/

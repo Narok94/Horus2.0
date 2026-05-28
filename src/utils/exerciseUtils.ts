@@ -170,6 +170,13 @@ export const getExerciseGifUrlVariations = (exerciseName: string, originalUrl?: 
     urls.push(originalUrl);
   }
 
+  // 1.5 URLs do repositório Horus2.0 usando o nome exato e primeira letra maiúscula
+  urls.push(`https://raw.githubusercontent.com/Narok94/Horus2.0/main/assets/gifs/${encodeURIComponent(exerciseName)}.gif`);
+  const firstLetterCap = exerciseName.charAt(0).toUpperCase() + exerciseName.slice(1);
+  if (firstLetterCap !== exerciseName) {
+    urls.push(`https://raw.githubusercontent.com/Narok94/Horus2.0/main/assets/gifs/${encodeURIComponent(firstLetterCap)}.gif`);
+  }
+
   const normalized = normalizeExerciseName(exerciseName);
   if (!normalized) return urls.length > 0 ? urls : ['https://picsum.photos/seed/gym/400/300'];
 
@@ -183,27 +190,30 @@ export const getExerciseGifUrlVariations = (exerciseName: string, originalUrl?: 
 
   const uniqueVariations = Array.from(new Set(baseVariations)).slice(0, 3);
   
-  // 3. Extensões e pastas mais comuns
+  // 3. Extensões e pastas mais comuns (Tatu Gym Assets legacy / Horus 2.0)
   const extensions = ['.gif', '.mp4', '.webp'];
-  const folders = ['', 'assets/', 'gifs/'];
+  const repos = [
+    'Narok94/Horus2.0/main/assets/gifs/',
+    'Narok94/Horus2.0/main/assets/',
+    'Narok94/tatu-gym-assets/main/assets/',
+    'Narok94/tatu-gym-assets/main/gifs/'
+  ];
   
   // Construímos uma lista pequena e eficiente (máximo ~20 URLs)
   uniqueVariations.forEach(v => {
     const encoded = encodeURIComponent(v);
-    folders.forEach(folder => {
+    repos.forEach(repoPath => {
       extensions.forEach(ext => {
         const filename = `${encoded}${ext}`;
-        // GitHub Raw (Prioridade para arquivos diretos)
-        urls.push(`https://raw.githubusercontent.com/Narok94/tatu-gym-assets/main/${folder}${filename}`);
+        urls.push(`https://raw.githubusercontent.com/${repoPath}${filename}`);
       });
     });
   });
 
-  // 4. Fallback final: jsDelivr de uma variação segura
-  urls.push(`https://cdn.jsdelivr.net/gh/Narok94/tatu-gym-assets@main/assets/${encodeURIComponent(normalized)}.gif`);
+  urls.push(`https://cdn.jsdelivr.net/gh/Narok94/Horus2.0@main/assets/gifs/${encodeURIComponent(exerciseName)}.gif`);
   
   // Remove duplicatas e limita para não demorar demais
-  return Array.from(new Set(urls)).slice(0, 12);
+  return Array.from(new Set(urls)).slice(0, 15);
 };
 
 /**
