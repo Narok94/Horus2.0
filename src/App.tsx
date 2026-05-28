@@ -143,24 +143,18 @@ const AppContent: React.FC = () => {
 
   // Sync Dynamic User Accent Color with global CSS variables based on target layouts
   useEffect(() => {
-    let accentColor = '#00F0FF'; // Default / Horus Fit Ciano Neon
-    let accentRgb = '0, 240, 255';
+    let accentColor = '#D4AF37'; // Global Gold Theme
+    let accentRgb = '212, 175, 55';
     
     if (user) {
       const uName = user.username.toLowerCase();
       const isFemale = uName === 'teste2' || uName.includes('jessica') || uName.includes('jéssica') || user.sex === 'feminino';
       const isTeacher = uName === 'teste3' || uName.includes('flavia') || uName.includes('flávia');
       
-      if (isFemale) {
-        accentColor = '#FF007F'; // Female Theme Magenta/Pink Neon
-        accentRgb = '255, 0, 127';
-      } else if (isTeacher) {
-        accentColor = '#FFFFFF'; // Clean teacher white accent
-        accentRgb = '255, 255, 255';
-      } else {
-        accentColor = '#00F0FF'; // Male / Default Theme Ciano Neon
-        accentRgb = '0, 240, 255';
-      }
+      // Removed dynamic colors so everything respects the golden visual identity as requested:
+      // Golden theme overrides all user roles
+      accentColor = '#D4AF37'; 
+      accentRgb = '212, 175, 55';
     }
     
     const root = document.documentElement;
@@ -447,7 +441,24 @@ const AppContent: React.FC = () => {
         >
           {/* Bloco do Logotipo (Brand Header) */}
           <div className="flex flex-col items-center text-center space-y-4">
-            <HorusLogoIcon size={56} className="text-accent drop-shadow-[0_0_20px_rgba(var(--accent-color-rgb),0.55)]" />
+            {/* Utilize a imagem subida no GitHub via caminho estático público */}
+            <div className="w-32 h-auto max-w-[140px] drop-shadow-[0_0_20px_rgba(var(--accent-color-rgb),0.55)]">
+               <img 
+                 src="/assets/logo/logo.png" 
+                 alt="Horus Training Logo" 
+                 onError={(e) => {
+                   // Fallback visual case a imagem não carregue no ambiente local por algum erro de caminho
+                   const target = e.target as HTMLImageElement;
+                   target.onerror = null; 
+                   target.style.display = 'none';
+                   const fallback = document.getElementById('logo-fallback');
+                   if(fallback) fallback.style.display = 'block';
+                 }}
+                 className="w-full h-auto object-contain"
+               />
+               <div id="logo-fallback" className="hidden text-accent text-6xl font-black">H</div>
+            </div>
+            
             <div className="space-y-1">
               <h1 className="text-3xl font-[950] italic uppercase tracking-wider text-white">
                 HORUS <span className="text-accent">TRAINING</span>
