@@ -443,10 +443,10 @@ const AppContent: React.FC = () => {
           {/* Bloco do Logotipo (Brand Header) */}
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="w-32 h-auto max-w-[140px] drop-shadow-[0_0_20px_rgba(var(--accent-color-rgb),0.55)]">
-               <img 
-                 src="https://raw.githubusercontent.com/Narok94/Horus2.0/main/assets/logo/logo.png" 
-                 alt="Horus Training Logo" 
-                 onError={(e) => {
+              <img 
+                src="/logo/logo.png" 
+                alt="Horus Training Logo" 
+                onError={(e) => {
                    // Fallback visual
                    const target = e.target as HTMLImageElement;
                    target.onerror = null; 
