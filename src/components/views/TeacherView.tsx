@@ -54,6 +54,9 @@ export const TeacherView: React.FC = () => {
   const [trigger, setTrigger] = useState(0);
   const [students, setStudents] = useState<User[]>([]);
 
+  // Mobile constructor tab switcher
+  const [mobileConstrutorView, setMobileConstrutorView] = useState<'workspace' | 'library'>('workspace');
+
   // Selected Division Frequency (AB, ABC, ABCD, ABCDE)
   const [sheetFrequency, setSheetFrequency] = useState<'AB' | 'ABC' | 'ABCD' | 'ABCDE'>('ABC');
 
@@ -78,7 +81,7 @@ export const TeacherView: React.FC = () => {
           <p className="text-xs leading-relaxed text-zinc-400 mb-6">Esta interface administrativa é exclusiva para o Docente Credenciado (Prof. Teste3).</p>
           <button 
             onClick={logout} 
-            className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg text-xs transition-colors cursor-pointer"
+            className="w-full py-2 bg-accent hover:brightness-110 text-white font-[950] font-sans tracking-widest uppercase rounded-lg text-xs transition-colors cursor-pointer"
           >
             Sair da conta
           </button>
@@ -784,10 +787,33 @@ export const TeacherView: React.FC = () => {
                   </div>
  
                   {/* FULL-CANVAS SIDE-BY-SIDE INTEGRATION (Zero external borders constraint) */}
-                  <div className="flex-grow flex flex-col lg:flex-row gap-0 lg:overflow-hidden min-h-0 w-full lg:h-full h-auto">
+                  <div className="flex-grow flex flex-col lg:flex-row gap-0 lg:overflow-hidden min-h-0 w-full lg:h-full h-full relative">
                     
+                    {/* MOBILE TAB CONTROLS (Only visible on small devices) */}
+                    <div className="lg:hidden flex bg-[#111318] p-2 shrink-0 border-b border-white/[0.015]">
+                      <div className="flex w-full bg-[#0A0B0E] p-1 rounded-xl border border-white/5">
+                        <button 
+                          onClick={() => setMobileConstrutorView('library')} 
+                          className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${mobileConstrutorView === 'library' ? 'bg-zinc-100 text-black shadow-md' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                          Dicionário Técnico
+                        </button>
+                        <button 
+                          onClick={() => setMobileConstrutorView('workspace')} 
+                          className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 ${mobileConstrutorView === 'workspace' ? 'bg-accent text-black shadow-md' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                          <span>Ficha de Treino</span>
+                          {(localRoutines[activeRoutineIdx]?.exercises?.length || 0) > 0 && (
+                             <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-mono leading-none ${mobileConstrutorView === 'workspace' ? 'bg-black text-accent' : 'bg-white/10 text-white'}`}>
+                               {localRoutines[activeRoutineIdx].exercises.length}
+                             </span>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
                     {/* LEFT COL: EMBEDDED DOCKED EXERCISE LIBRARY PANEL - Exactly 420px */}
-                    <aside className="w-full lg:w-[420px] lg:h-full shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.015] bg-[#0F1014] h-auto lg:overflow-hidden">
+                    <aside className={`w-full lg:w-[420px] lg:h-full shrink-0 lg:flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.015] bg-[#0F1014] h-full lg:overflow-hidden ${mobileConstrutorView === 'library' ? 'flex' : 'hidden'}`}>
                       <ExerciseLibrary 
                         filteredSuggestions={filteredSuggestions}
                         searchExerciseQuery={searchExerciseQuery}
@@ -801,7 +827,7 @@ export const TeacherView: React.FC = () => {
                     </aside>
  
                     {/* RIGHT COL: MAIN DOMINANT WORKSPACE (Spans 100% of remaining screen space) */}
-                    <section className="flex-grow lg:h-full lg:overflow-hidden flex flex-col bg-[#111318] min-w-0 h-auto">
+                    <section className={`flex-grow lg:h-full lg:overflow-hidden lg:flex flex-col bg-[#111318] min-w-0 h-full ${mobileConstrutorView === 'workspace' ? 'flex' : 'hidden'}`}>
                       <WorkoutWorkspace 
                         localRoutines={localRoutines}
                         activeRoutineIdx={activeRoutineIdx}
