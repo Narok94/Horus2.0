@@ -10,3 +10,4 @@ coverage/
 # Ignore assets to prevent GitHub sync issues with massive deletions
 assets/
 public/assets/
+public/gifs/

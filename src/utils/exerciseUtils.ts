@@ -170,6 +170,49 @@ export const getExerciseGifUrlVariations = (exerciseName: string, originalUrl?: 
     urls.push(originalUrl);
   }
 
+  // Mapa local exato forçado pelos novos uploads
+  const manualExactMap: Record<string, string> = {
+    'Abdomen Infra': '/gifs/abdominal_invertido.gif',
+    'Pingus (Abdomen Infra)': '/gifs/abdominal_invertido.gif',
+    'Pingus': '/gifs/cópia_de_abdominal_de_rã_com_bola_de_exercícios.gif',
+    'Abdomen Infra (Pingus)': '/gifs/cópia_de_abdominal_de_rã_com_bola_de_exercícios.gif',
+    'Agachamento Livre Banco': '/gifs/agachamento_no_banco_com_peso_corporal.gif',
+    'Cadeira Adutora': '/gifs/adução_do_quadril_com_cabo.gif',
+    'Afundo': '/gifs/afundo_livre.gif',
+    'Cadeira Extensora': '/gifs/extensão_de_perna_reta.gif',
+    'Panturrilha em pé': '/gifs/elevação_de_panturrilha_em_uma_perna.gif',
+    'Abdomen Reto': '/gifs/abdominal_invertido.gif',
+    'Elevação Lateral Halteres': '/gifs/elevação_lateral_de_braços.gif',
+    'Supino Máquina': '/gifs/supino_declinado_no_smit.gif',
+    'Desenvolvimento Máquina': '/gifs/desenvolvimento_de_ombro_com_kettlebell.gif',
+    'Crucifixo Banco Halteres': '/gifs/crucifixo_invertido_com_gymstick_para_deltoides_posterior.gif',
+    'Remada Alta Kettlebell': '/gifs/remada_baixa_no_pulley_pegada_aberta_supinada.gif',
+    'Extensão Lombar Livre': '/gifs/hiperextensão_do_tronco.gif',
+    'Stiff Barra': '/gifs/stiff_unilateral.gif',
+    'Gluteo Máquina Coice': '/gifs/glúteo_coice_em_pé_com_faixa_elástica.gif',
+    'Cadeira Flexora': '/gifs/mesa_flex.gif',
+    'Elevação Pélvica Livre': '/gifs/elevação_pelvica_livre.gif',
+    'Elevação Pélvica Solo': '/gifs/elevação_pelvica_livre.gif',
+    'Puxada Supinada': '/gifs/pulley_frente_pegada_supinada.gif',
+    'Triceps Pulley Barra W': '/gifs/triceps_frances_barra_w.gif',
+    'Remada Baixa Aberta': '/gifs/remada_baixa_unilateral_pegada_neutra.gif',
+    'Rosca Direta Pulley Corda': '/gifs/rosca_bíceps_com_faixa_elástica.gif',
+    'Serrote Halteres': '/gifs/serrote.gif',
+    'Canoa Estática': '/gifs/prancha.gif',
+    'Deadlift': '/gifs/levantamento_terra.gif',
+    'Sumô': '/gifs/agachamento_sumô_sem_pesos.gif',
+    'Back Squat': '/gifs/agachamento.gif',
+    'Flexão': '/gifs/flexão.gif',
+    'Flexão de Braços': '/gifs/flexão.gif',
+  };
+
+  if (manualExactMap[exerciseName]) {
+    urls.push(manualExactMap[exerciseName]);
+  }
+
+  // 1.2 URLs Locais (Dentro da pasta public/gifs)
+  urls.push(`/gifs/${encodeURIComponent(exerciseName)}.gif`);
+  
   // 1.5 URLs do repositório Horus2.0 usando o nome exato e primeira letra maiúscula
   urls.push(`https://raw.githubusercontent.com/Narok94/Horus2.0/main/assets/gifs/${encodeURIComponent(exerciseName)}.gif`);
   const firstLetterCap = exerciseName.charAt(0).toUpperCase() + exerciseName.slice(1);
@@ -178,6 +221,13 @@ export const getExerciseGifUrlVariations = (exerciseName: string, originalUrl?: 
   }
 
   const normalized = normalizeExerciseName(exerciseName);
+  
+  // Inclui com o nome normalizado na pasta local public/gifs
+  if (normalized) {
+    urls.push(`/gifs/${normalized}.gif`);
+    urls.push(`/gifs/${normalized.replace(/-/g, '_')}.gif`);
+  }
+
   if (!normalized) return urls.length > 0 ? urls : ['https://picsum.photos/seed/gym/400/300'];
 
   // 2. Variações de base para o repositório de assets
@@ -206,14 +256,16 @@ export const getExerciseGifUrlVariations = (exerciseName: string, originalUrl?: 
       extensions.forEach(ext => {
         const filename = `${encoded}${ext}`;
         urls.push(`https://raw.githubusercontent.com/${repoPath}${filename}`);
+        // Também tenta local com essas extensões/nomes normalizados
+        urls.push(`/gifs/${filename}`);
       });
     });
   });
 
   urls.push(`https://cdn.jsdelivr.net/gh/Narok94/Horus2.0@main/assets/gifs/${encodeURIComponent(exerciseName)}.gif`);
   
-  // Remove duplicatas e limita para não demorar demais
-  return Array.from(new Set(urls)).slice(0, 15);
+  // Remove duplicatas e limita para não demorar demais (aumentado o limite para dar espaço às tentativas locais)
+  return Array.from(new Set(urls)).slice(0, 25);
 };
 
 /**

@@ -441,8 +441,8 @@ const AppContent: React.FC = () => {
           className="w-full max-w-sm space-y-10 relative z-10"
         >
           {/* Bloco do Logotipo (Brand Header) */}
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="w-32 h-auto max-w-[140px] drop-shadow-[0_0_20px_rgba(var(--accent-color-rgb),0.55)]">
+          <div className="flex flex-col items-center text-center space-y-4 mt-8">
+            <div className="w-64 sm:w-72 h-auto max-w-full drop-shadow-[0_0_30px_rgba(var(--accent-color-rgb),0.6)]">
               <img 
                 src="/logo/logo.png" 
                 alt="Horus Training Logo" 
@@ -454,7 +454,7 @@ const AppContent: React.FC = () => {
                    const fallback = document.getElementById('logo-fallback');
                    if(fallback) fallback.style.display = 'block';
                  }}
-                 className="w-full h-auto object-contain"
+                 className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
                />
                <div id="logo-fallback" className="hidden text-accent text-6xl font-black">H</div>
             </div>

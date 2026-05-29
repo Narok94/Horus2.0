@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Horus Workout Tracker",
+  "description": "Gerenciador de treinos e exercícios físicos com suporte a professores, alunos e demonstrações em GIF.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
