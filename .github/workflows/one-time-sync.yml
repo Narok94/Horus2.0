@@ -1,0 +1,36 @@
+name: One-time sync Horus to Horus2.0
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.head_commit.message == 'chore: prepare Horus sync'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy current Horus contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          git clone --depth 1 https://github.com/Narok94/Horus.git "$tmp/source"
+          rsync -a --delete --exclude='.git' "$tmp/source/" ./
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to sync."
+            exit 0
+          fi
+          git commit -m "chore: sync current Horus into Horus2.0"
+          git push origin HEAD:main
