@@ -1,10 +1,27 @@
+import { interpretPrescription } from './src/utils/workoutPrescription';
+import { getExerciseWeightKey } from './src/utils/exerciseWeights';
+import { normalizeSavedWorkouts, isValidWorkout } from './src/utils/localData';
 
 import { create } from 'zustand';
+import { migrateLocalIdentity } from './data/migrateLocalIdentity';
 import confetti from 'canvas-confetti';
-import { User, WorkoutRoutine, AppTab, SetPerformance, WorkoutHistoryEntry, Badge } from './types';
-import { jessicaWorkouts, henriqueWorkouts } from './data/workoutData';
-import { auth, signOut } from './firebase';
-import { getUserByUsername } from './data/users';
+import { User, WorkoutRoutine, AppTab, SetPerformance, Badge } from './types';
+import { defaultWorkouts, jessicaWorkouts } from './data/workoutData';
+import { migrateExerciseWeights } from './src/utils/exerciseWeights';
+
+// Datas de calendário local; UTC é usado apenas para avançar dias sem efeito de DST.
+export const calculateCheckInStreak = (checkIns: string[], now = new Date()): number => {
+  const dates = new Set(checkIns);
+  const cursor = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  const dateKey = () => cursor.toISOString().slice(0, 10);
+  if (!dates.has(dateKey())) cursor.setUTCDate(cursor.getUTCDate() - 1);
+  let streak = 0;
+  while (dates.has(dateKey())) {
+    streak++;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return streak;
+};
 
 interface AppState {
   user: User | null;
@@ -12,7 +29,6 @@ interface AppState {
   activeTab: AppTab;
   selectedWorkout: WorkoutRoutine | null;
   currentSessionProgress: Record<string, SetPerformance[]>;
-  currentCardioProgress: { exercise: string; duration: number; completed: boolean } | null;
   isWorkoutActive: boolean;
   workoutStartTime: number | null;
   lastMarkedTime: number | null;
@@ -20,22 +36,17 @@ interface AppState {
   showSummary: boolean;
   lastWorkoutVolume: number;
   workoutDuration: number | null;
-  chatMessages: { role: 'user' | 'model'; text: string }[];
-  isChatLoading: boolean;
-  selectedStudent: string | null;
   allWorkouts: Record<string, WorkoutRoutine[]>;
   theme: 'light' | 'dark';
-  syncStatus: 'synced' | 'syncing' | 'error' | 'offline';
 
+  registerCompletedWorkout: (workout: WorkoutRoutine, progress: Record<string, SetPerformance[]>, duration: number, completionId: string) => boolean;
   // Actions
   setUser: (user: User | null) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setActiveTab: (tab: AppTab) => void;
   setSelectedWorkout: (workout: WorkoutRoutine | null) => void;
-  setSelectedStudent: (student: string | null) => void;
   setAllWorkouts: (workouts: AppState['allWorkouts']) => void;
   setCurrentSessionProgress: (progress: Record<string, SetPerformance[]>) => void;
-  setCurrentCardioProgress: (progress: AppState['currentCardioProgress']) => void;
   setIsWorkoutActive: (isActive: boolean) => void;
   setWorkoutStartTime: (time: number | null) => void;
   setLastMarkedTime: (time: number | null) => void;
@@ -43,16 +54,8 @@ interface AppState {
   setShowSummary: (show: boolean) => void;
   setLastWorkoutVolume: (volume: number) => void;
   setWorkoutDuration: (duration: number | null) => void;
-  setChatMessages: (messages: { role: 'user' | 'model', text: string }[]) => void;
-  setIsChatLoading: (isLoading: boolean) => void;
-  setSyncStatus: (status: 'synced' | 'syncing' | 'error' | 'offline') => void;
   toggleTheme: () => void;
   updateUserProfile: (newData: Partial<User>) => void;
-  syncUserProfile: (username: string) => Promise<User | null>;
-  setDietPlan: (plan: import('./types').DietPlan) => void;
-  toggleMealComplete: (mealId: string) => void;
-  toggleDailyHabit: (date: string, habitKey: keyof import('./types').DailyCheck) => void;
-  addMeasurement: (measurement: import('./types').BodyMeasurement) => void;
   checkAchievements: () => void;
   handleManualCheckIn: () => void;
   toggleCheckInDate: (dateStr: string) => void;
@@ -62,70 +65,21 @@ interface AppState {
   logout: () => void;
 }
 
+// Catálogos locais antigos podem conter itens do módulo removido.
+const musculacaoOnly = (workouts: WorkoutRoutine[]): WorkoutRoutine[] => workouts.map(workout => {
+  const { cardio: _legacyCardio, ...routine } = workout as WorkoutRoutine & { cardio?: unknown };
+  return {
+    ...routine,
+    title: routine.title.replace(/\s+e\s+cardio/gi, ''),
+    description: routine.description.split('•').filter(part => !/cardio|bicicleta|aer[oó]b/i.test(part)).join('•').trim(),
+    exercises: routine.exercises.filter(ex => !/cardio|aer[oó]b/i.test(ex.muscleGroup) && !/^cardio:/i.test(ex.name))
+  };
+});
+
 export const useStore = create<AppState>((set, get) => {
-  // Allow user custom theme, default is 'dark' for premium dark HUD, except for henrique
-  const initialTheme = (() => {
-    if (typeof localStorage !== 'undefined') {
-      // Safely ensure no accidental resets ever run
-      const RESET_KEY = 'tatugym_reset_v5_july_challenge';
-      if (!localStorage.getItem(RESET_KEY)) {
-        localStorage.setItem(RESET_KEY, 'true');
-      }
+  if (typeof localStorage !== 'undefined') migrateLocalIdentity(localStorage);
+  const initialTheme = typeof localStorage !== 'undefined' && localStorage.getItem('tatugym_theme') === 'dark' ? 'dark' : 'light';
 
-      // Restore Henrique's progress for Jul 6 to Jul 9
-      const RESTORE_KEY = 'tatugym_restore_july_10_v3';
-      if (!localStorage.getItem(RESTORE_KEY)) {
-        try {
-          const storedProfile = localStorage.getItem('tatugym_user_profile_henrique');
-          if (storedProfile) {
-            const profile = JSON.parse(storedProfile);
-            const missingDates = ['2026-07-06', '2026-07-07', '2026-07-08', '2026-07-09'];
-            profile.checkIns = Array.from(new Set([...(profile.checkIns || []), ...missingDates]));
-            profile.totalWorkouts = Math.max(profile.totalWorkouts || 0, (profile.totalWorkouts || 0) + missingDates.length);
-            
-            if (!profile.history) profile.history = [];
-            missingDates.forEach((date, i) => {
-               if (!profile.history.some((h: any) => h.date.startsWith(date))) {
-                 profile.history.push({
-                   id: 'dummy-' + date,
-                   date: date + 'T12:00:00.000Z',
-                   workoutId: 'dummy-old',
-                   workoutTitle: 'Treino Anterior ' + (i + 1),
-                   duration: 3600,
-                   exercises: []
-                 });
-               }
-            });
-            // Sort history descending
-            profile.history.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-            localStorage.setItem('tatugym_user_profile_henrique', JSON.stringify(profile));
-            
-            const rem = localStorage.getItem('tatugym_remembered');
-            if (rem) {
-               const remData = JSON.parse(rem);
-               if (remData.username.toLowerCase() === 'henrique') {
-                 localStorage.setItem('tatugym_remembered', JSON.stringify(profile));
-               }
-            }
-          }
-        } catch (e) {}
-        localStorage.setItem(RESTORE_KEY, 'true');
-      }
-
-      const remembered = localStorage.getItem('tatugym_remembered');
-      if (remembered) {
-        try {
-          const userData = JSON.parse(remembered);
-          if (userData && userData.username.toLowerCase() === 'henrique') {
-            return 'light';
-          }
-        } catch (_) {}
-      }
-    }
-    return 'dark';
-  })();
-  
   if (typeof document !== 'undefined') {
     document.body.classList.remove('light', 'dark');
     document.body.classList.add(initialTheme);
@@ -134,10 +88,9 @@ export const useStore = create<AppState>((set, get) => {
   return {
   user: null,
   isLoggedIn: false,
-  activeTab: AppTab.AGENDA,
+  activeTab: AppTab.WORKOUT,
   selectedWorkout: null,
   currentSessionProgress: {},
-  currentCardioProgress: null,
   isWorkoutActive: false,
   workoutStartTime: null,
   lastMarkedTime: null,
@@ -145,72 +98,51 @@ export const useStore = create<AppState>((set, get) => {
   showSummary: false,
   lastWorkoutVolume: 0,
   workoutDuration: null,
-  chatMessages: [],
-  isChatLoading: false,
-  selectedStudent: null,
   theme: initialTheme,
-  syncStatus: 'synced',
   allWorkouts: (() => {
+    const defaults = { henrique: musculacaoOnly(defaultWorkouts) };
+    if (typeof localStorage === 'undefined') return defaults;
     const saved = localStorage.getItem('tatugym_all_workouts');
-    const cleanHenrique = henriqueWorkouts.filter(w => w.id !== 'h-f');
-    let loadedWorkouts: Record<string, WorkoutRoutine[]> = {
-      henrique: cleanHenrique,
-      teste1: cleanHenrique,
-      teste3: [],
-      jessica: jessicaWorkouts
-    };
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        loadedWorkouts = { ...loadedWorkouts, ...parsed };
+        if (Array.isArray(parsed.henrique)) {
+          const normalized = normalizeSavedWorkouts(parsed.henrique);
+          if (JSON.stringify(normalized) !== JSON.stringify(parsed.henrique)) {
+            try { localStorage.setItem('tatugym_all_workouts', JSON.stringify({ ...parsed, henrique: normalized })); }
+            catch (error) { console.warn('[Catalog] Normalização disponível em memória:', error); }
+          }
+          return { henrique: musculacaoOnly(normalized.filter(isValidWorkout)) };
+        }
       } catch (e) {
         console.error('Error loading workouts:', e);
       }
     }
-    // Clean out any 'h-f' or deleted routines from all keys
-    Object.keys(loadedWorkouts).forEach(key => {
-      loadedWorkouts[key] = (loadedWorkouts[key] || []).filter(w => w.id !== 'h-f');
-    });
-    // Forçar os treinos corretos para atualizar a versão salva em cache do navegador
-    loadedWorkouts.henrique = cleanHenrique;
-    loadedWorkouts.teste1 = cleanHenrique;
-    loadedWorkouts.jessica = jessicaWorkouts;
-    loadedWorkouts.teste3 = [];
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('tatugym_all_workouts', JSON.stringify(loadedWorkouts));
-    }
-    return loadedWorkouts;
+    return defaults;
   })(),
   addToast: undefined,
 
   setUser: (user) => {
-    set({ user });
-    if (user) {
-      const isTeacher = user.role === 'teacher';
-      const targetTheme = isTeacher ? 'dark' : 'light';
-      if (typeof document !== 'undefined') {
-        document.body.classList.remove('light', 'dark');
-        document.body.classList.add(targetTheme);
-      }
-      const uName = user.username ? user.username.toLowerCase() : '';
-      const isHenrique = uName === 'henrique' || uName === 'teste1' || uName.includes('henrique');
-      set({ theme: targetTheme, activeTab: isHenrique ? AppTab.AGENDA : AppTab.DASHBOARD });
+    const migratedUser = user ? migrateExerciseWeights(user, [
+      ...defaultWorkouts, ...jessicaWorkouts,
+      ...(get().allWorkouts[user.username.toLowerCase()] || [])
+    ]) : null;
+    if (migratedUser && migratedUser !== user) {
+      try {
+        localStorage.setItem(`tatugym_user_profile_${migratedUser.username.toLowerCase()}`, JSON.stringify(migratedUser));
+      } catch (error) { console.warn('[Weights] Não foi possível persistir a migração:', error); }
     }
+    set({ user: migratedUser, activeTab: AppTab.WORKOUT });
   },
   setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
   setActiveTab: (activeTab) => set({ activeTab }),
   setSelectedWorkout: (selectedWorkout) => set({ selectedWorkout }),
-  setSelectedStudent: (selectedStudent) => set({ selectedStudent }),
   setAllWorkouts: (allWorkouts) => {
-    const filtered: Record<string, WorkoutRoutine[]> = {};
-    Object.keys(allWorkouts).forEach(k => {
-      filtered[k] = (allWorkouts[k] || []).filter(w => w.id !== 'h-f');
-    });
+    const filtered = { henrique: musculacaoOnly((allWorkouts.henrique || [])) };
     set({ allWorkouts: filtered });
     localStorage.setItem('tatugym_all_workouts', JSON.stringify(filtered));
   },
   setCurrentSessionProgress: (currentSessionProgress) => set({ currentSessionProgress }),
-  setCurrentCardioProgress: (currentCardioProgress) => set({ currentCardioProgress }),
   setIsWorkoutActive: (isWorkoutActive) => set({ isWorkoutActive }),
   setWorkoutStartTime: (workoutStartTime) => set({ workoutStartTime }),
   setLastMarkedTime: (lastMarkedTime) => set({ lastMarkedTime }),
@@ -218,9 +150,6 @@ export const useStore = create<AppState>((set, get) => {
   setShowSummary: (showSummary) => set({ showSummary }),
   setLastWorkoutVolume: (lastWorkoutVolume) => set({ lastWorkoutVolume }),
   setWorkoutDuration: (workoutDuration) => set({ workoutDuration }),
-  setChatMessages: (chatMessages) => set({ chatMessages }),
-  setIsChatLoading: (isChatLoading) => set({ isChatLoading }),
-  setSyncStatus: (syncStatus) => set({ syncStatus }),
   setAddToast: (fn) => set({ addToast: fn }),
 
   toggleTheme: () => {
@@ -235,13 +164,8 @@ export const useStore = create<AppState>((set, get) => {
     }
   },
 
-  logout: async () => {
+  logout: () => {
     const { user } = get();
-    try {
-      await signOut(auth);
-    } catch (e) {
-      console.error('Error signing out:', e);
-    }
     if (user) {
        localStorage.removeItem(`tatugym_active_session_${user.username.toLowerCase()}`);
     }
@@ -259,189 +183,42 @@ export const useStore = create<AppState>((set, get) => {
     localStorage.removeItem('tatugym_remembered');
   },
 
+  registerCompletedWorkout: (workout, progress, duration, completionId) => {
+    const user = get().user;
+    if (!user || user.history.some(entry => entry.id === completionId) ||
+        !workout.exercises.some(ex => (progress[ex.id] || []).some(set => set.completed))) return false;
+    const now = new Date();
+    const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const weights = { ...user.weights };
+    for (const ex of workout.exercises) {
+      const drop = interpretPrescription(ex).drop;
+      const main = (progress[ex.id] || []).filter((set, index) => set.completed && (!drop || index % 2 === 0));
+      const lastWeight = main[main.length - 1]?.weight;
+      if (lastWeight !== undefined) weights[getExerciseWeightKey(ex)] = lastWeight;
+    }
+    get().updateUserProfile({
+      history: [{ id: completionId, date: now.toISOString(), workoutId: workout.id,
+        workoutTitle: workout.title, duration,
+        exercises: workout.exercises.map(ex => ({ exerciseId: ex.id, name: ex.name, performance: progress[ex.id] || [] }))
+      }, ...user.history],
+      weights, checkIns: [...new Set([...user.checkIns, localDate])],
+      totalWorkouts: user.totalWorkouts + 1, preferredWorkoutId: undefined
+    });
+    return true;
+  },
+
   updateUserProfile: (newData) => {
     const { user } = get();
     if (!user) return;
     const updatedUser = { ...user, ...newData };
-    set({ user: updatedUser, syncStatus: 'syncing' });
+    if (newData.checkIns !== undefined) {
+      updatedUser.checkIns = [...new Set(newData.checkIns)];
+      updatedUser.streak = calculateCheckInStreak(updatedUser.checkIns);
+    }
+    set({ user: updatedUser });
     localStorage.setItem(`tatugym_user_profile_${user.username.toLowerCase()}`, JSON.stringify(updatedUser));
     
-    // Non-blocking sync to Neon PostgreSQL
-    fetch(`/api/user/${user.username.toLowerCase()}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedUser)
-    })
-    .then(async (res) => {
-      if (res.ok) {
-        set({ syncStatus: 'synced' });
-      } else {
-        console.error('[DB Sync] Server error saving profile:', res.statusText);
-        set({ syncStatus: 'error' });
-      }
-    })
-    .catch(err => {
-      console.error('[DB Sync] Error saving profile to database:', err);
-      set({ syncStatus: 'offline' });
-    });
-
     get().checkAchievements();
-  },
-
-  setDietPlan: (plan) => {
-    get().updateUserProfile({ dietPlan: plan });
-  },
-
-  toggleMealComplete: (mealId) => {
-    const { user, updateUserProfile } = get();
-    if (!user) return;
-
-    const tzOffset = (new Date()).getTimezoneOffset() * 60000;
-    const today = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
-
-    const completedMeals = user.completedMeals ? { ...user.completedMeals } : {};
-    const todayMeals = completedMeals[today] ? [...completedMeals[today]] : [];
-
-    const index = todayMeals.indexOf(mealId);
-    if (index > -1) {
-      todayMeals.splice(index, 1);
-    } else {
-      todayMeals.push(mealId);
-    }
-
-    if (todayMeals.length > 0) {
-      completedMeals[today] = todayMeals;
-    } else {
-      delete completedMeals[today];
-    }
-
-    let updatedUser: Partial<User> = { completedMeals };
-
-    // Cross-update dietaRegulada for Challenge 90
-    if (user.challenge90 && user.dietPlan?.meals) {
-      const allMealsCompleted = user.dietPlan.meals.length > 0 && user.dietPlan.meals.every(m => todayMeals.includes(m.id));
-      
-      const challenge = user.challenge90;
-      const checks = [...(challenge.dailyChecks || [])];
-      const checkIndex = checks.findIndex(c => c.date === today);
-      
-      if (checkIndex > -1) {
-        checks[checkIndex] = { ...checks[checkIndex], dietaRegulada: allMealsCompleted };
-      } else {
-        checks.push({
-          date: today,
-          treino: false,
-          zeroDoce: false,
-          zeroBesteira: false,
-          agua: false,
-          sono: false,
-          dietaRegulada: allMealsCompleted
-        });
-      }
-      updatedUser.challenge90 = { ...challenge, dailyChecks: checks };
-    }
-
-    updateUserProfile(updatedUser);
-  },
-
-  toggleDailyHabit: (date, habitKey) => {
-    const { user, updateUserProfile } = get();
-    if (!user || !user.challenge90) return;
-
-    const challenge = user.challenge90;
-    const checks = [...(challenge.dailyChecks || [])];
-    const index = checks.findIndex(c => c.date === date);
-
-    if (index > -1) {
-      checks[index] = { ...checks[index], [habitKey]: !checks[index][habitKey] };
-    } else {
-      const newCheck = {
-        date,
-        treino: false,
-        zeroDoce: false,
-        zeroBesteira: false,
-        agua: false,
-        sono: false,
-        dietaRegulada: false,
-        [habitKey]: true
-      };
-      checks.push(newCheck as any);
-    }
-
-    updateUserProfile({ challenge90: { ...challenge, dailyChecks: checks } });
-  },
-
-  addMeasurement: (measurement) => {
-    const { user, updateUserProfile } = get();
-    if (!user || !user.challenge90) return;
-
-    const challenge = user.challenge90;
-    const measurements = [...(challenge.measurements || [])];
-    const index = measurements.findIndex(m => m.date === measurement.date);
-    
-    if (index > -1) {
-      measurements[index] = { ...measurements[index], ...measurement };
-    } else {
-      measurements.push(measurement);
-    }
-    
-    measurements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
-    updateUserProfile({ challenge90: { ...challenge, measurements } });
-  },
-
-  syncUserProfile: async (username) => {
-    const lowerUser = username.trim().toLowerCase();
-    set({ syncStatus: 'syncing' });
-    
-    // 1. Get current local profile if any
-    let localProfile: any = null;
-    const localProfileStr = localStorage.getItem(`tatugym_user_profile_${lowerUser}`);
-    if (localProfileStr) {
-      try {
-        localProfile = JSON.parse(localProfileStr);
-      } catch (e) {
-        console.error('[Sync] Error parsing local profile:', e);
-      }
-    }
-    
-    if (!localProfile) {
-      localProfile = getUserByUsername(lowerUser);
-    }
-    
-    if (!localProfile) {
-      set({ syncStatus: 'error' });
-      return null;
-    }
-    
-    // 2. Call the sync API to merge local state and database state securely
-    try {
-      const response = await fetch(`/api/sync/${lowerUser}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(localProfile)
-      });
-      
-      if (response.ok) {
-        const resData = await response.json();
-        if (resData.status === 'ok' && resData.data) {
-          const mergedProfile = resData.data;
-          set({ user: mergedProfile, syncStatus: 'synced' });
-          localStorage.setItem(`tatugym_user_profile_${lowerUser}`, JSON.stringify(mergedProfile));
-          return mergedProfile;
-        }
-      }
-      set({ syncStatus: 'error' });
-      get().addToast?.('Erro ao sincronizar com o servidor.', 'error');
-    } catch (err) {
-      console.error('[Sync] Failed to sync with Neon PostgreSQL backend:', err);
-      set({ syncStatus: 'offline' });
-      get().addToast?.('Offline. Suas alterações foram salvas localmente.', 'info');
-    }
-    
-    // Fallback: if offline, set user to local profile
-    set({ user: localProfile });
-    return localProfile;
   },
 
   handleManualCheckIn: () => {
@@ -456,8 +233,7 @@ export const useStore = create<AppState>((set, get) => {
     }
     const newCheckIns = [...(user.checkIns || []), today];
     updateUserProfile({ 
-      checkIns: newCheckIns,
-      streak: (user.streak || 0) + 1 
+      checkIns: newCheckIns
     });
     triggerConfetti();
   },
@@ -476,20 +252,10 @@ export const useStore = create<AppState>((set, get) => {
       isAdding = true;
     }
 
-    // Dynamic streak: simple calculation could just be increment/decrement,
-    // let's do a recalculation based on actual consecutive days if desired,
-    // or just increment streak on add and decrement on remove (clamped to >= 0)
-    let newStreak = user.streak || 0;
-    if (isAdding) {
-      newStreak += 1;
-      triggerConfetti();
-    } else {
-      newStreak = Math.max(0, newStreak - 1);
-    }
+    if (isAdding) triggerConfetti();
 
     updateUserProfile({
-      checkIns: currentCheckIns,
-      streak: newStreak
+      checkIns: currentCheckIns
     });
   },
 
@@ -547,12 +313,7 @@ export const useStore = create<AppState>((set, get) => {
       set({ user: updatedUser });
       localStorage.setItem(`tatugym_user_profile_${user.username.toLowerCase()}`, JSON.stringify(updatedUser));
       
-      // Non-blocking sync to Neon PostgreSQL
-      fetch(`/api/user/${user.username.toLowerCase()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser)
-      }).catch(err => console.error('[DB Sync] Error saving profile after badges unlock:', err));
+
     }
   }
 };

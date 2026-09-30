@@ -185,3 +185,166 @@
   ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(var(--accent-color-rgb), 0.15); }
 }
+
+/* Perfil e histórico: linguagem visual do protótipo aprovado. */
+.horus-screen { position: relative; width:100%; max-width:520px; min-height:100dvh; margin:auto; padding:48px 24px 112px; color:#f6f8ff; background:radial-gradient(ellipse at 15% 0%,#0b2b51 0%,#061528 38%,#020d19 100%); font-family:Inter, sans-serif; letter-spacing:-.025em; }
+.horus-page-header { margin-bottom:24px; }
+.horus-page-header h1 { font-size:32px; font-weight:750; line-height:1.2; margin:0 0 7px; }
+.horus-page-header p { color:#adc6e3; font-size:15px; line-height:1.5; }
+.horus-card { background:linear-gradient(135deg,#0b223d,#06192d); border:1px solid #153754; border-radius:18px; box-shadow:0 8px 24px #00000012; }
+.horus-user-card { min-height:126px; display:flex; align-items:center; gap:20px; padding:20px 18px; border-radius:20px; background:linear-gradient(145deg,#084ebc,#062a62 58%,#051c3c); border:1px solid #1976ff; box-shadow:inset 0 1px 0 #ffffff0a; }
+.horus-avatar { display:grid; place-items:center; flex-shrink:0; width:76px; height:78px; border-radius:19px; font-size:29px; font-weight:600; background:linear-gradient(145deg,#087eff,#0052f5); border:1px solid #178bff; }
+.horus-user-card h2 { font-size:21px; text-transform:uppercase; font-weight:750; margin:0 0 6px; }
+.horus-user-card p { font-size:12px; color:#a7c9ec; text-transform:uppercase; letter-spacing:.12em; }
+.horus-edit-button { display:grid; place-items:center; width:54px; height:56px; border:1px solid #0870d7; border-radius:16px; background:linear-gradient(140deg,#0757ad,#063273); color:#6ac7ff; }
+.horus-consistency { margin:26px 0 32px; border:1px solid #075cb0; border-radius:20px; padding:18px 20px 26px; background:linear-gradient(140deg,#063674,#051a3c); }
+.horus-consistency h2 { display:flex; align-items:center; gap:10px; font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:#00bfff; font-weight:700; margin-bottom:12px; }
+.horus-small-icon { display:grid; place-items:center; width:38px; height:40px; border-radius:13px; color:#00b7ff; background:linear-gradient(140deg,#0a3c76,#062549); border:1px solid #114d7e; flex-shrink:0; }
+.horus-consistency-grid { display:grid; grid-template-columns:repeat(3,1fr); text-align:center; }
+.horus-consistency-grid>div+div { border-left:1px solid #174c7d; }
+.horus-consistency-grid strong { display:block; font-size:28px; font-weight:750; margin-bottom:6px; }
+.horus-consistency-grid span { text-transform:uppercase; font-size:11px; letter-spacing:.025em; color:#a7c9ec; line-height:1.5; }
+.horus-section-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.horus-section-title h2 { text-transform:uppercase; font-size:17px; font-weight:700; letter-spacing:.055em; color:#86abc9; }
+.horus-section-title button { display:flex; align-items:center; color:#00baff; font-size:14px; gap:2px; }
+.horus-achievements { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.horus-achievement { min-height:116px; border-radius:17px; background:linear-gradient(150deg,#073269,#04152b); border:1px solid #08579a; padding:15px 5px 12px; display:flex; flex-direction:column; align-items:center; gap:13px; color:#cce3fb; font-size:12px; line-height:1.4; }
+.horus-badge-icon { display:grid; place-items:center; width:46px; height:48px; border-radius:15px; background:linear-gradient(140deg,#0c4a91,#08294f); border:1px solid #16518b; color:#21bfff; }
+.horus-badge-icon.gold { color:#ffd02b; }.horus-badge-icon.rose { color:#ff355c; }.horus-badge-icon.white { color:#fff; }
+.horus-profile-links { margin-top:30px; display:grid; gap:12px; }
+.horus-profile-links button { display:flex; align-items:center; gap:15px; padding:14px 19px; min-height:72px; text-align:left; font-size:15px; }
+.horus-profile-links button>span:nth-child(2) { flex:1; }.horus-profile-links button>svg { color:#80a6c9; }
+.horus-filters { display:flex; gap:10px; overflow:auto; scrollbar-width:none; margin:0 -1px 22px; padding:1px; }
+.horus-filters button { flex-shrink:0; border:1px solid #173f60; background:#06192d; color:#e4efff; border-radius:16px; padding:9px 15px; font-size:13px; }
+.horus-filters button.active { background:linear-gradient(145deg,#067bff,#0060ed); border-color:#137bff; }
+.horus-history-list { display:grid; gap:12px; }
+.horus-history-row { display:flex; align-items:center; gap:14px; width:100%; padding:13px 12px; min-height:94px; text-align:left; }
+.horus-muscle-icon { flex-shrink:0; width:61px; height:64px; display:grid; place-items:center; border-radius:17px; color:white; border:1px solid #ffffff22; background:linear-gradient(140deg,#008fff,#006af3); box-shadow:inset 0 1px 0 #ffffff20; }
+.horus-muscle-icon.rose { background:linear-gradient(140deg,#fa3154,#c31542); }.horus-muscle-icon.green { background:linear-gradient(140deg,#00e3af,#00a78d); }.horus-muscle-icon.gold { background:linear-gradient(140deg,#ffda23,#ffad00); }.horus-muscle-icon.violet { background:linear-gradient(140deg,#a442ff,#6b29ea); }.horus-muscle-icon.orange { background:linear-gradient(140deg,#ff8a16,#ef4b00); }
+.horus-row-copy { min-width:0; flex:1; display:flex; flex-direction:column; gap:5px; }
+.horus-row-copy strong { font-size:15px; font-weight:650; line-height:1.4; color:#f5f7ff; }
+.horus-row-copy small { color:#a9c9e6; font-size:12px; letter-spacing:.01em; }
+.horus-date { display:block; color:#73b5e9; font-size:10px; line-height:1.4; letter-spacing:.075em; text-transform:uppercase; }
+.horus-green { color:#00e59b; }.horus-orange { color:#ff6225 !important; }
+.horus-detail { padding-top:30px; }
+.horus-icon-button { width:38px; height:38px; display:grid; place-items:center; border-radius:13px; background:#0c2b4d; color:#a9dafd; margin-bottom:8px; }
+.horus-detail-header { display:flex; gap:19px; align-items:center; margin:0 0 22px; }
+.horus-muscle-icon.large { width:96px; height:98px; border-radius:23px; }
+.horus-detail-header h1 { font-size:23px; font-weight:750; line-height:1.25; margin:10px 0 10px; }
+.horus-detail-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; color:#b5d5ed; font-size:13px; letter-spacing:.005em; }
+.horus-completed { color:#00e59b; font-size:10px; text-transform:uppercase; font-weight:700; padding:8px 10px; border-radius:13px; background:#005c45aa; border:1px solid #00715455; }
+.horus-metrics { display:grid; grid-template-columns:1fr 1.35fr 1fr; padding:21px 7px; margin-bottom:15px; }
+.horus-metrics>div { text-align:center; position:relative; }.horus-metrics>div+div::before { content:''; position:absolute; left:0; top:8px; bottom:8px; width:1px; background:#1b3c5b; }
+.horus-metrics strong { display:flex; align-items:center; justify-content:center; gap:7px; font-size:17px; font-weight:700; white-space:nowrap; }.horus-metrics svg { color:#00b9ff; flex-shrink:0; }.horus-metrics span { display:block; margin-top:9px; font-size:10px; letter-spacing:.07em; color:#91bad8; text-transform:uppercase; }
+.horus-tabs { display:flex; border-bottom:1px solid #25415c; margin-bottom:14px; }.horus-tabs button { flex:1; padding:12px 0 16px; color:#93b6d8; font-size:15px; position:relative; }.horus-tabs button.active { color:#00d9ff; font-weight:700; }.horus-tabs button.active::after { content:''; height:3px; position:absolute; bottom:-1px; left:0; right:0; border-radius:3px; background:#00baff; }
+.horus-exercise-list { display:grid; gap:6px; }.horus-exercise-row { display:flex; align-items:center; gap:13px; min-height:67px; width:100%; padding:7px 12px; text-align:left; border-radius:17px; }.horus-exercise-row .horus-row-copy strong { font-size:13px; }.horus-exercise-row>svg { flex-shrink:0; color:#709bc1; }.horus-exercise-row img { height:52px; width:56px; object-fit:contain; border-radius:11px; background:#07182a; flex-shrink:0; }.horus-order { display:grid; place-items:center; width:30px; height:30px; flex-shrink:0; border-radius:50%; font-size:17px; background:linear-gradient(140deg,#087dff,#053c84); border:1px solid #0a66cb; }
+.horus-set-details { margin:5px 12px 10px; padding:10px; border-radius:12px; background:#071c32; color:#a7c9e5; font-size:12px; }.horus-set-details p { display:flex; justify-content:space-between; padding:5px; }
+.horus-information { padding:24px; color:#a9c9e6; line-height:1.6; }.horus-information h2 { font-size:18px; color:white; margin:10px 0; }
+.horus-bottom-nav { background:#061b30ed !important; border-top:1px solid #14334b !important; color:#86abc9; padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -10px 30px #00000020 !important; }.horus-bottom-nav button svg,.horus-bottom-nav button span { color:#80a6c9; }.horus-bottom-nav button:has(.bg-accent) svg,.horus-bottom-nav button:has(.bg-accent) span { color:#00d9ff; }.horus-bottom-nav .bg-accent { background:#00d9ff; }.horus-bottom-nav svg { width:25px; height:25px; }.horus-bottom-nav button span { font-size:10px; letter-spacing:.035em; font-weight:500; }
+.horus-modal-backdrop { position:fixed; inset:0; z-index:70; display:grid; place-items:center; padding:20px; background:#010811bb; backdrop-filter:blur(8px); }.horus-modal { position:relative; width:100%; max-width:420px; padding:28px; color:#eaf3ff; }.horus-modal h2 { font-size:22px; font-weight:700; margin-bottom:20px; }.horus-modal p { font-size:14px; line-height:1.65; color:#a9c9e6; margin:12px 0; }.horus-modal-close { position:absolute; top:15px; right:15px; color:#9cbddd; }.horus-modal label { display:block; color:#a9c9e6; font-size:13px; margin-bottom:14px; }.horus-modal input { display:block; width:100%; border:1px solid #285477; border-radius:12px; padding:12px; margin-top:6px; background:#071a30; color:white; }.horus-action { display:flex; justify-content:center; align-items:center; gap:8px; width:100%; border-radius:12px; padding:12px; margin-top:12px; background:#096bf4; color:white; font-size:14px; }.horus-badge-detail { display:flex; gap:12px; align-items:center; border-top:1px solid #1b3c5b; padding:12px 0; }.horus-badge-detail svg { color:#00bfff; }
+@media(max-width:390px) { .horus-screen { padding-left:18px; padding-right:18px; }.horus-user-card { gap:13px; }.horus-avatar { width:65px; height:70px; }.horus-edit-button { width:44px; }.horus-achievements { gap:8px; }.horus-detail-header { gap:13px; }.horus-muscle-icon.large { width:76px; height:86px; }.horus-detail-header h1 { font-size:21px; }.horus-metrics strong { font-size:14px; }.horus-history-row { gap:10px; }.horus-history-row .horus-muscle-icon { width:52px; height:58px; }.horus-exercise-row { gap:9px; }.horus-exercise-row img { width:43px; }.horus-exercise-row .horus-row-copy strong { font-size:12px; } }
+.horus-thumbnail-fallback { width:56px; height:52px; flex-shrink:0; display:grid; place-items:center; border-radius:11px; background:#0b2b48; color:#79b5e5; }
+body:has(.horus-detail) .horus-bottom-nav { display:none; } .horus-detail { padding-bottom:28px; } .horus-screen button:focus-visible { outline:2px solid #00d9ff; outline-offset:4px; }
+
+.horus-home { padding-top:32px; }
+.horus-home,.horus-workouts { background:#061321; padding-top:28px; }
+.horus-home .horus-card,.horus-workouts .horus-card { background:#091d32; border-color:#15334e; box-shadow:0 5px 16px #00000018; }
+.horus-home .horus-today-card { background:#0a2038; border-color:#164678; }
+.horus-home-header { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-bottom:24px; }
+.horus-home-identity { display:flex; gap:12px; align-items:center; flex:1; }
+.horus-home-avatar { flex-shrink:0; display:grid; place-items:center; width:50px; height:54px; border-radius:16px; background:linear-gradient(145deg,#078cff,#0055ec); border:1px solid #208aff; font-size:20px; font-weight:750; }
+.horus-home-identity p { color:#a9c9e6; font-size:12px; margin-bottom:3px; }
+.horus-home-identity h1 { font-size:19px; font-weight:750; line-height:1.3; }
+.horus-home-identity small { display:block; font-size:11px; color:#80a6c9; margin-top:4px; }
+.horus-home-tools { display:flex; gap:6px; margin-left:auto; }.horus-home-tools .horus-icon-button { width:30px; height:30px; border-radius:10px; margin:0; }
+.horus-today-card { padding:22px; border-color:#165aaa; background:radial-gradient(ellipse at top right,#0a469166,transparent 75%),linear-gradient(135deg,#0a2d58,#061b34); }
+.horus-today-eyebrow { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; color:#00caff; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+.horus-today-symbol { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; border:1px solid #1c5694; background:#0a3461; }
+.horus-today-card h2 { font-size:25px; line-height:1.3; font-weight:750; margin-bottom:9px; }.horus-today-card>p { font-size:13px; color:#a9c9e6; line-height:1.6; }
+.horus-today-stats { display:flex; flex-wrap:wrap; gap:18px; margin:20px 0; color:#97badb; font-size:12px; }.horus-today-stats>span { display:flex; align-items:center; gap:5px; }.horus-today-stats svg { color:#00bdff; margin-right:3px; }.horus-today-stats strong { color:#e8f4ff; font-weight:650; }
+.horus-today-start { min-height:48px; font-weight:650; background:linear-gradient(130deg,#0789ff,#0064ed); box-shadow:0 6px 22px #0065ef22; }
+.horus-today-all { display:flex; justify-content:center; align-items:center; gap:8px; margin:15px auto 0; font-size:12px; color:#7fbcf0; padding:4px; }
+.horus-week { padding:20px 16px; margin:20px 0; }.horus-week-title { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }.horus-week-title h2 { font-size:15px; font-weight:650; }.horus-week-title>span { color:#00d1ff; font-size:18px; font-weight:700; }.horus-week-title small { font-size:11px; font-weight:400; color:#7d9fbf; margin-left:4px; }
+.horus-week-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }.horus-week-days button { display:flex; flex-direction:column; align-items:center; gap:9px; color:#7e9dbc; font-size:10px; }.horus-day-mark { display:grid; place-items:center; width:34px; height:34px; border-radius:12px; border:1px solid #193953; background:#07192c; }.horus-day-dot { width:5px; height:5px; border-radius:50%; background:#345574; }.horus-week-days .today { color:#00d9ff; }.horus-week-days .today .horus-day-mark { border-color:#00b7f5; box-shadow:0 0 12px #00bfff15; }.horus-week-days .completed .horus-day-mark { color:#00e59b; border-color:#00795c; background:#004b3d55; }
+.horus-home-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }.horus-home-metrics>.horus-card { padding:14px 12px; }.horus-home-metrics .horus-small-icon { width:30px; height:32px; border-radius:10px; margin-bottom:12px; }.horus-home-metrics small { display:block; color:#8eb2d2; font-size:10px; margin-bottom:7px; }.horus-home-metrics strong { display:block; font-size:25px; font-weight:700; line-height:1.3; min-height:34px; }.horus-home-metrics strong span { font-size:11px; color:#a9c9e6; font-weight:400; }.horus-home-metrics p { color:#668bac; font-size:9px; margin-top:6px; }.horus-home-metrics .horus-recommendation { font-size:12px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.horus-home-notifications { background:#07182d; border-color:#173f60; color:#f6f8ff; }.horus-home-notifications>div { background:transparent; border-color:#173f60; }.horus-home-notifications .p-3 { background:#0a223c; border-color:#173f60; }.horus-home-notifications [class*="text-zinc-"] { color:#95b5d3; }.horus-home-notifications [class*="text-zinc-950"] { color:#f5f7ff; }.horus-home-notifications [class*="text-[#2563EB]"] { color:#00bfff; }.horus-home-notifications button.bg-zinc-100 { background:#123553; color:#a9dafd; }
+.horus-workout-list { display:grid; gap:12px; }.horus-workout-card { padding:16px; border-left-width:3px; cursor:pointer; }.horus-workout-card.continuing { box-shadow:0 0 20px #00bfff12; border-top-color:#236b97; border-bottom-color:#236b97; border-right-color:#236b97; }
+.horus-workout-card-top { display:flex; align-items:flex-start; gap:13px; }.horus-workout-symbol { display:grid; place-items:center; flex-shrink:0; width:46px; height:50px; border:1px solid; border-radius:14px; }.horus-workout-copy { flex:1; min-width:0; }.horus-workout-labels { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:8px; font-size:10px; color:#83a7c7; }.horus-workout-badge { padding:3px 7px; border-radius:6px; font-weight:650; }.horus-workout-copy h2 { font-size:17px; font-weight:650; line-height:1.35; color:#f4f7ff; }.horus-workout-copy p { font-size:11px; line-height:1.5; color:#8eafce; margin-top:6px; }
+.horus-workout-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:15px; padding-top:13px; border-top:1px solid #17334d; }.horus-workout-actions button { display:flex; align-items:center; justify-content:center; gap:7px; border-radius:10px; font-size:12px; min-height:36px; padding:8px 16px; }.horus-workout-start { color:white; background:linear-gradient(135deg,#0788ff,#0063ec); min-width:112px; font-weight:650; }.horus-workout-actions .horus-workout-complete { color:#83a7c7; font-size:11px; padding:8px 4px; }.horus-workouts-footer { display:flex; justify-content:center; align-items:center; gap:6px; margin-top:22px; font-size:10px; color:#6085a6; }
+@media(max-width:390px) { .horus-home-identity h1 { font-size:17px; }.horus-today-card { padding:18px; }.horus-today-card h2 { font-size:23px; }.horus-home-metrics>.horus-card { padding:12px 9px; }.horus-workout-card { padding:14px; }.horus-workout-copy h2 { font-size:15px; } }
+/* Compact composition scoped to HOME and TREINOS. */
+.horus-home .horus-home-header { margin-bottom:18px; gap:10px; }
+.horus-home .horus-home-avatar { width:44px; height:46px; border-radius:13px; background:#087cff; font-size:19px; }
+.horus-home .horus-home-identity { gap:10px; }.horus-home .horus-home-identity h1 { font-size:18px; }.horus-home .horus-home-identity small { font-size:10px; }
+.horus-home .horus-home-tools .horus-icon-button { background:#0a223a; width:28px; height:28px; }
+.horus-home .horus-today-card { padding:17px 18px; }.horus-home .horus-today-eyebrow { margin-bottom:8px; font-size:10px; }
+.horus-home .horus-today-symbol { width:32px; height:32px; border-radius:10px; background:#0d2744; border-color:#1b4060; }.horus-home .horus-today-symbol svg { width:20px; }
+.horus-home .horus-today-card h2 { font-size:24px; line-height:1.22; margin-bottom:7px; }.horus-home .horus-today-card>p { font-size:12px; line-height:1.4; }
+.horus-home .horus-today-stats { margin:14px 0; gap:16px; font-size:11px; }.horus-home .horus-today-start { background:#087cff; min-height:40px; padding:10px; margin-top:0; box-shadow:0 4px 14px #087cff16; font-size:13px; }
+.horus-home .horus-today-all { margin-top:10px; font-size:11px; padding:2px; }
+.horus-home .horus-week { padding:14px; margin:16px 0; }.horus-home .horus-week-title { margin-bottom:12px; }.horus-home .horus-week-title h2 { font-size:13px; }.horus-home .horus-week-title>span { font-size:16px; }
+.horus-home .horus-week-days button { gap:7px; font-size:9px; }.horus-home .horus-day-mark { width:28px; height:28px; border-radius:50%; }.horus-home .horus-day-mark svg { width:16px; height:16px; }
+.horus-home .horus-home-metrics { gap:8px; }.horus-home .horus-home-metrics>.horus-card { padding:12px 10px; border-radius:15px; }.horus-home .horus-home-metrics .horus-small-icon { width:26px; height:28px; margin-bottom:8px; background:#0d2744; }.horus-home .horus-home-metrics svg { width:16px; height:16px; }
+.horus-home .horus-home-metrics strong { font-size:23px; min-height:30px; }.horus-home .horus-home-metrics small { font-size:10px; margin-bottom:5px; }.horus-home .horus-home-metrics .horus-recommendation { font-size:11px; }.horus-home .horus-home-metrics p { margin-top:4px; }
+.horus-workouts .horus-page-header { margin-bottom:20px; }.horus-workouts .horus-page-header h1 { font-size:29px; }.horus-workouts .horus-page-header p { font-size:13px; margin-top:5px; }
+.horus-workouts .horus-workout-list { gap:10px; }.horus-workouts .horus-workout-card { padding:12px 13px; border-radius:16px; border-left-width:2px; }
+.horus-workouts .horus-workout-card-top { gap:10px; align-items:center; }.horus-workouts .horus-workout-symbol { width:42px; height:46px; border-radius:12px; }
+.horus-workouts .horus-workout-labels { font-size:9px; margin-bottom:5px; gap:8px; }.horus-workouts .horus-workout-badge { padding:2px 6px; }.horus-workouts .horus-workout-copy h2 { font-size:16px; line-height:1.25; }.horus-workouts .horus-workout-copy p { font-size:10px; margin-top:4px; line-height:1.35; }
+.horus-workout-chevron { flex-shrink:0; color:#7197b9; }
+.horus-workouts .horus-workout-actions { margin-top:10px; padding-top:9px; border-top-color:#16314a; }.horus-workouts .horus-workout-actions button { min-height:30px; padding:6px 12px; font-size:11px; border-radius:9px; }.horus-workouts .horus-workout-start { min-width:92px; background:#087cff; }.horus-workouts .horus-workout-actions .horus-workout-complete { font-size:10px; padding:6px 2px; }
+body:has(.horus-home) .horus-bottom-nav,body:has(.horus-workouts) .horus-bottom-nav { background:#061321f5 !important; border-top-color:#123049 !important; }
+body:has(.horus-home) .horus-bottom-nav button:has(.bg-accent) svg,body:has(.horus-workouts) .horus-bottom-nav button:has(.bg-accent) svg { filter:drop-shadow(0 0 5px #00d9ff55); }
+@media(max-width:390px) { .horus-home,.horus-workouts { padding-left:18px; padding-right:18px; }.horus-home .horus-home-identity h1 { font-size:16px; }.horus-home .horus-today-card h2 { font-size:22px; }.horus-workouts .horus-workout-copy h2 { font-size:14px; } }
+/* Execution UI only: keep prescriptions and interaction handlers unchanged. */
+body:has(.horus-execution) #root { background:#061321; }
+.horus-execution { background:#061321 !important; color:#f4f7ff !important; max-width:520px !important; padding:28px 20px 112px !important; font-weight:400 !important; }
+.horus-execution [class*="text-zinc-"] { color:#8faecc !important; }.horus-execution [class*="text-zinc-950"],.horus-execution [class*="text-zinc-900"] { color:#f4f7ff !important; }
+.horus-execution [class*="bg-white"],.horus-execution [class*="bg-zinc-"] { background-color:#0a2038 !important; }
+.horus-execution [class*="border-zinc-"] { border-color:#193b59 !important; }
+.horus-execution .italic { font-style:normal; }.horus-execution .font-black { font-weight:650; }
+.horus-execution>header { border-color:#18334d; padding:0 0 13px; margin-bottom:14px; }.horus-execution>header h1 { font-size:15px; line-height:1.3; }
+.horus-execution>header button { background:#0c2947; color:#a4cee9; }.horus-execution>header button.bg-accent { background:#087cff; color:#fff; }
+.horus-execution .horus-selected-workout { background:#0a2038 !important; background-image:none !important; border:1px solid #18456e; border-radius:18px; padding:17px; text-align:left; margin-top:0; box-shadow:0 6px 18px #0002; }
+.horus-selected-workout>div:first-child { display:none; }.horus-execution .horus-selected-workout h2 { font-size:10px; letter-spacing:.1em; color:#00d9ff; line-height:1.4; }.horus-selected-workout h2>span { display:block; font-size:21px; letter-spacing:-.025em; margin:8px 0 12px; line-height:1.25; }
+.horus-execution .horus-selected-workout button { background:#087cff !important; color:#fff !important; width:100%; max-width:none; box-shadow:none; font-size:11px; }.horus-selected-workout button svg { color:#fff !important; fill:currentColor; }
+.horus-execution-exercise { background:#091e34 !important; background-image:none !important; border-color:#173a57 !important; border-radius:16px !important; box-shadow:0 4px 12px #0001 !important; padding:15px 12px !important; }
+.horus-execution .horus-exercise-number { font-size:15px; color:#6b94ba !important; margin-right:12px; font-weight:500; }
+.horus-execution-exercise h3 { font-size:14px; color:#f5f8ff !important; font-weight:700; }.horus-execution-exercise p { color:#93b4d0 !important; font-size:10px; }.horus-execution-exercise p span { color:inherit !important; }
+.horus-execution-exercise [class*="text-[7px]"] { background:#0c3550 !important; color:#00cfff !important; font-size:8px; font-weight:600; }
+.horus-execution-exercise button { background:#0d2945 !important; border-color:#225070 !important; color:#00d9ff !important; width:28px; height:28px; }
+.horus-exercise-modal { background:#07182a !important; color:#f4f7ff !important; border:1px solid #20435e !important; border-radius:24px !important; box-shadow:0 22px 80px #000a; max-height:calc(100dvh - 24px) !important; padding:20px !important; overscroll-behavior:contain; }
+.horus-exercise-modal h2 { font-size:19px; font-weight:700; line-height:1.3; }.horus-exercise-modal .text-accent { color:#00d9ff !important; }.horus-exercise-modal button[class*="w-7"] { border-radius:10px; background:#0d2744; color:#8cb3d3; border-color:#20435e; }
+.horus-exercise-modal .horus-exercise-media { background:#061321 !important; border-color:#1c3c57 !important; height:170px; }.horus-exercise-media img { max-height:145px; object-fit:contain; }
+.horus-exercise-modal .horus-complete-exercise { background:#087cff !important; color:white !important; border:1px solid #1683ff !important; padding:11px 12px; font-size:10px; box-shadow:none; }.horus-complete-exercise svg { color:white !important; }
+.horus-exercise-modal .horus-set-row { background:#0a2038 !important; border-color:#193c58 !important; padding:7px 6px; border-radius:12px; }.horus-set-row>div>div { background:#061321 !important; border-color:#21435e !important; }.horus-set-row input { color:#fff !important; }.horus-set-row button { color:#8cafd0 !important; }
+.horus-exercise-modal .horus-set-row.completed { background:#07352f !important; border-color:#007a61 !important; }.horus-set-row.completed>div:last-child button { background:#00e59b !important; border-color:#00e59b !important; color:#052d25 !important; }
+.horus-set-row:not(.completed):focus-within { border-color:#00d9ff !important; }.horus-exercise-modal [class*="max-h-[170px]"] { max-height:none; overflow:visible; }
+.horus-exercise-modal [class*="text-[8.5px]"] { color:#00d9ff !important; font-weight:500; letter-spacing:.05em; }
+@media(max-width:390px) { .horus-execution { padding-left:16px !important; padding-right:16px !important; }.horus-exercise-modal { padding:16px !important; }.horus-execution-exercise h3 { font-size:12px; } }
+body:has(.horus-execution),body:has(.horus-execution) #root>div { background:#061321 !important; }
+.horus-exercise-modal input::placeholder { color:#80a6c9 !important; opacity:1; }
+.horus-gif-fallback { display:none; flex-direction:column; align-items:center; gap:8px; color:#75a4ca; font-size:12px; }.horus-gif-fallback svg { color:#00bfff; }.horus-gif-fallback small { font-size:10px; color:#6286a6; }
+.horus-exercise-media img[data-unavailable="true"] { display:none; }.horus-exercise-media:has(img[data-unavailable="true"]) .horus-gif-fallback { display:flex; }
+.horus-exercise-modal [class*="bg-accent/10"] { background:#0b3450 !important; color:#00d9ff !important; }
+/* One responsive layout for Safari and installed iOS apps. */
+:root { --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px); --safe-left:env(safe-area-inset-left,0px); --safe-right:env(safe-area-inset-right,0px); }
+html { background:#061321; width:100%; } body { min-width:0; margin:0; } #root { min-height:100vh; min-height:100dvh; }
+.horus-screen { min-height:100vh; min-height:100dvh; padding-top:calc(48px + var(--safe-top)); padding-bottom:calc(112px + var(--safe-bottom)); padding-left:calc(24px + var(--safe-left)); padding-right:calc(24px + var(--safe-right)); }
+.horus-home,.horus-workouts { padding-top:calc(28px + var(--safe-top)); }.horus-detail { padding-top:calc(30px + var(--safe-top)); padding-bottom:calc(28px + var(--safe-bottom)); }
+.horus-bottom-nav { padding-bottom:var(--safe-bottom); padding-left:var(--safe-left); padding-right:var(--safe-right); }
+.horus-execution { min-height:100vh; min-height:100dvh; padding-top:calc(28px + var(--safe-top)) !important; padding-bottom:calc(112px + var(--safe-bottom)) !important; padding-left:calc(20px + var(--safe-left)) !important; padding-right:calc(20px + var(--safe-right)) !important; }
+.horus-screen h1,.horus-screen h2,.horus-execution h2,.horus-execution h3 { overflow-wrap:anywhere; }
+.horus-modal-backdrop { padding:calc(12px + var(--safe-top)) calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left)); }
+.horus-modal { max-height:calc(100dvh - 24px - var(--safe-top) - var(--safe-bottom)); overflow-y:auto; }
+.horus-execution>.fixed.inset-0 { padding:calc(12px + var(--safe-top)) calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left)); }
+.horus-exercise-modal { max-height:calc(100dvh - 24px - var(--safe-top) - var(--safe-bottom)) !important; max-width:440px; min-width:0; }
+.horus-exercise-modal input { min-width:0; font-size:16px !important; width:32px; }.horus-exercise-modal .horus-set-row { gap:4px; }.horus-set-row>div>div { height:44px; }.horus-set-row button { min-height:44px; min-width:26px; padding-left:2px; padding-right:2px; }.horus-set-row>div:last-child button { width:38px; }
+.horus-exercise-modal>div:first-child button,.horus-execution>header button { min-width:44px; min-height:44px; }
+.horus-exercise-modal h2 { flex:1; min-width:0; padding-right:8px; }.horus-exercise-modal .horus-complete-exercise { min-height:44px; }
+.horus-execution-exercise button { min-width:44px; min-height:44px; }.horus-execution-exercise>div:last-child { gap:8px; }.horus-execution-exercise>div:last-child>div { min-width:32px; }
+.horus-today-start,.horus-workout-start { min-height:44px !important; }.horus-workout-complete { min-height:44px !important; }.horus-home-tools button { min-width:36px; min-height:36px; }
+.horus-profile-links button,.horus-bottom-nav button { touch-action:manipulation; }.horus-screen button,.horus-execution button { touch-action:manipulation; }
+@media(max-width:430px) { .horus-screen { padding-left:calc(18px + var(--safe-left)); padding-right:calc(18px + var(--safe-right)); }.horus-execution { padding-left:calc(16px + var(--safe-left)) !important; padding-right:calc(16px + var(--safe-right)) !important; }.horus-exercise-modal { padding:16px !important; }.horus-execution-exercise h3 { font-size:12px; }.horus-home-header { gap:8px; }.horus-home-tools { gap:4px; } }
+.horus-login { height:100vh; height:100dvh; padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left); }
+.horus-login input { font-size:16px; }
+@supports not (height:100dvh) { .horus-exercise-modal,.horus-modal { max-height:calc(100vh - 24px - var(--safe-top) - var(--safe-bottom)) !important; } }

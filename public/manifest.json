@@ -1,21 +1,21 @@
 {
-  "short_name": "Horus Gym",
+  "short_name": "Horus",
   "name": "Horus Training",
   "icons": [
     {
-      "src": "/logo.png?v=gym_v3",
+      "src": "/horus-icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/logo.png?v=gym_v3",
+      "src": "/horus-icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": "/",
-  "background_color": "#030617",
-  "theme_color": "#1E40AF",
+  "background_color": "#061321",
+  "theme_color": "#061321",
   "display": "standalone",
   "orientation": "portrait"
 }

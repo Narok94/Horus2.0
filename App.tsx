@@ -1,49 +1,38 @@
+import { HistoryView } from './components/views/HistoryView';
+import { validateLocalProfile } from './src/utils/localData';
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import {
   Dumbbell,
   LayoutDashboard,
-  History as HistoryIcon,
+
   User as UserIcon,
   Lock,
-  Check,
-  ArrowRight,
-  Users,
-  Plus,
+
   Home,
-  BarChart2,
-  Mail,
+  BarChart3,
+
   Eye,
   EyeOff,
-  Play,
-  Activity,
-  Utensils,
-  Target,
-  Calendar
+  Play
 } from 'lucide-react';
 import { useStore } from './store';
 import { useWorkoutPersistence } from './hooks/useWorkoutPersistence';
 import { AppTab, User } from './types';
 import { ToastProvider, useToast } from './components/ui/Toast';
 import { DashboardSkeleton } from './components/ui/Skeleton';
-import { db, auth, collection, getDocs, doc, setDoc, getDoc, onSnapshot, signInAnonymously } from './firebase';
-import { getUserByUsername, validateCredentials, jessicaDietPlan } from './data/users';
+import { getUserByUsername, validateCredentials } from './data/users';
 
 // Views
 import { DashboardView } from './components/views/DashboardView';
 import { WorkoutView } from './components/views/WorkoutView';
 import { ProfileView } from './components/views/ProfileView';
-import { TeacherView } from './components/views/TeacherView';
 import { WorkoutsListView } from './components/views/WorkoutsListView';
-import { CardioView } from './components/views/CardioView';
-import { DietView } from './components/views/DietView';
-import { DesafioView } from './components/views/DesafioView';
-import { AgendaView } from './components/views/AgendaView';
 
 export const HorusLogoIcon: React.FC<{ size?: number; className?: string }> = ({ size = 48, className = "" }) => {
   return (
     <img
-      src="https://raw.githubusercontent.com/Narok94/Horus2.0/main/public/logo/logo.png"
+      src="/horus-icon.svg"
       alt="Horus Training Logo"
       style={{ width: size, height: size }}
       className={`${className} object-contain`}
@@ -58,23 +47,19 @@ const AppContent: React.FC = () => {
     isLoggedIn,
     activeTab,
     selectedWorkout,
-    isWorkoutActive,
-    currentSessionProgress,
-    workoutStartTime,
-    allWorkouts,
+
     theme,
     setUser,
     setIsLoggedIn,
     setActiveTab,
-    setSelectedWorkout,
-    setCurrentSessionProgress,
-    setIsWorkoutActive,
-    setWorkoutStartTime,
+
     addToast,
     setAddToast
   } = useStore();
 
   useWorkoutPersistence();
+
+  useEffect(() => { window.scrollTo(0, 0); }, [activeTab]);
 
   const { addToast: toastFn } = useToast();
 
@@ -87,26 +72,10 @@ const AppContent: React.FC = () => {
     document.documentElement.classList.add(theme);
   }, [theme]);
 
-  // Accent color baseada nos atributos tipados do usuário (role e sex)
+  // Cor de destaque da aplicação.
   useEffect(() => {
-    let accentColor = '#D4AF37';
-    let accentRgb = '212, 175, 55';
-
-    if (user) {
-      if (user.role === 'teacher') {
-        accentColor = '#10B981';
-        accentRgb = '16, 185, 129';
-      } else if (user.sex === 'feminino') {
-        accentColor = '#FF007F';
-        accentRgb = '255, 0, 127';
-      } else if (user.sex === 'masculino') {
-        accentColor = '#2563EB';
-        accentRgb = '37, 99, 235';
-      } else {
-        accentColor = '#00F0FF';
-        accentRgb = '0, 240, 255';
-      }
-    }
+    const accentColor = '#00F0FF';
+    const accentRgb = '0, 240, 255';
 
     const root = document.documentElement;
     root.style.setProperty('--accent-color', accentColor);
@@ -126,7 +95,6 @@ const AppContent: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
 
   useEffect(() => {
     const checkAutoLogin = async () => {
@@ -134,14 +102,11 @@ const AppContent: React.FC = () => {
         const remembered = localStorage.getItem('tatugym_remembered');
         if (remembered) {
           const userData = JSON.parse(remembered);
-          const uName = userData.username.toLowerCase();
-          
-          // Synchronize profile with Neon PostgreSQL database
-          const finalUser = await useStore.getState().syncUserProfile(uName);
+          const finalUser = resolveUser(userData.username);
           if (finalUser) {
             setUser(finalUser);
             setIsLoggedIn(true);
-            setActiveTab(finalUser.role === 'teacher' ? AppTab.TEACHER : AppTab.AGENDA);
+            setActiveTab(AppTab.DASHBOARD);
             localStorage.setItem('tatugym_remembered', JSON.stringify(finalUser));
           } else {
             localStorage.removeItem('tatugym_remembered');
@@ -164,82 +129,49 @@ const AppContent: React.FC = () => {
     }
   };
 
-  // Função unificada: busca perfil salvo ou usa padrão de data/users.ts
+  // Aceita somente a identidade local e restaura apenas dados de treino.
   const resolveUser = (uname: string): User | null => {
-    const lowerUser = uname.toLowerCase();
-    const profile = localStorage.getItem(`tatugym_user_profile_${lowerUser}`);
+    const defaultUser = getUserByUsername(uname);
+    if (!defaultUser) return null;
+    const profile = localStorage.getItem(`tatugym_user_profile_${defaultUser.username}`);
     if (profile) {
       try {
-        const parsed = JSON.parse(profile);
-        if (lowerUser === 'jessica' || parsed.name?.toLowerCase().includes('jessica')) {
-          parsed.dietPlan = jessicaDietPlan;
+        const saved = JSON.parse(profile);
+        const validated = validateLocalProfile(saved, defaultUser);
+        if (JSON.stringify(saved) !== JSON.stringify(validated)) {
+          try {
+            const backupKey = `tatugym_user_profile_${defaultUser.username}_validation_backup`;
+            if (localStorage.getItem(backupKey) === null) localStorage.setItem(backupKey, profile);
+          } catch (error) { console.warn('[Profile] Backup indisponível:', error); }
         }
-        return parsed;
+        return validated;
       } catch (e) {
+        try {
+          const backupKey = `tatugym_user_profile_${defaultUser.username}_validation_backup`;
+          if (localStorage.getItem(backupKey) === null) localStorage.setItem(backupKey, profile);
+        } catch (error) { console.warn('[Profile] Backup indisponível:', error); }
         console.error('[resolveUser] Erro ao ler perfil salvo:', e);
       }
     }
-    return getUserByUsername(lowerUser);
+    return defaultUser;
   };
 
-  const finishLogin = async (userData: User) => {
-    // Sync with Neon database on login
-    const finalUser = await useStore.getState().syncUserProfile(userData.username);
-    const resolvedUser = finalUser || userData;
-    
-    setUser(resolvedUser);
+  const finishLogin = (userData: User) => {
+    setUser(userData);
     setIsLoggedIn(true);
-    setActiveTab(resolvedUser.role === 'teacher' ? AppTab.TEACHER : AppTab.AGENDA);
-    localStorage.setItem('tatugym_remember_me_checked', 'true');
-    localStorage.setItem('tatugym_remembered', JSON.stringify(resolvedUser));
+    setActiveTab(AppTab.DASHBOARD);
+    localStorage.setItem('tatugym_remembered', JSON.stringify(userData));
   };
 
-  const handleQuickLogin = (uname: string) => {
-    handleVibrate();
-    const userData = resolveUser(uname);
-    if (!userData) return;
-    setUsername(uname.toLowerCase());
-    setPassword('12345');
-    finishLogin(userData);
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     handleVibrate();
     const lowerUser = username.trim().toLowerCase();
-
-    // Tenta validar com credenciais padrão de data/users.ts
-    let isValid = validateCredentials(lowerUser, password);
-
-    // Se não bateu, tenta senha customizada salva no localStorage (usuário alterou pelo perfil)
-    if (!isValid) {
-      try {
-        const profileStr = localStorage.getItem(`tatugym_user_profile_${lowerUser}`);
-        if (profileStr) {
-          const profileData = JSON.parse(profileStr);
-          if (profileData?.password && profileData.password === password) {
-            isValid = true;
-          }
-        }
-      } catch (err) {}
-    }
-
-    if (isValid) {
+    if (validateCredentials(lowerUser, password)) {
       const userData = resolveUser(lowerUser);
-      if (!userData) {
-        if (addToast) addToast('Usuário não encontrado.', 'error');
-        return;
-      }
-      finishLogin(userData);
+      if (userData) finishLogin(userData);
     } else {
       if (addToast) addToast('Usuário ou senha incorreta.', 'error');
-    }
-  };
-
-  const handleForgotPassword = () => {
-    handleVibrate();
-    if (addToast) {
-      addToast("Um link de recuperação foi enviado para o seu e-mail!", "success");
     }
   };
 
@@ -247,8 +179,8 @@ const AppContent: React.FC = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="h-[100dvh] max-h-[100dvh] overflow-y-auto w-full flex flex-col font-sans select-none relative bg-[#020412]">
-        
+      <div className="horus-login h-[100dvh] max-h-[100dvh] overflow-y-auto w-full flex flex-col font-sans select-none relative bg-[#020412]">
+
         {/* TOP HALF: Background Image with Overlay */}
         <div className="absolute top-0 left-0 w-full h-[55%] sm:h-[60%] z-0">
           <img
@@ -272,11 +204,11 @@ const AppContent: React.FC = () => {
             className="relative flex flex-col items-center"
           >
             <img
-              src="https://raw.githubusercontent.com/Narok94/Horus2.0/main/public/logo/logo.png"
+              src="/horus-icon.svg"
               alt="Horus Training Logo"
               className="w-[180px] sm:w-[200px] h-auto object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] mb-4"
               onError={(e) => {
-                e.currentTarget.src = "assets/logo_horus.png";
+                e.currentTarget.src = "/horus-icon-512.png";
               }}
               referrerPolicy="no-referrer"
             />
@@ -300,12 +232,12 @@ const AppContent: React.FC = () => {
         >
           <form onSubmit={handleLogin} className="space-y-4 max-w-sm mx-auto w-full">
             <div className="space-y-4">
-              
-              {/* EMAIL FIELD */}
+
+              {/* USERNAME FIELD */}
               <div className="relative text-left w-full mt-2">
                 <div className="absolute -top-[9px] left-4 px-1.5 bg-white flex items-center gap-1.5 z-10 select-none">
                   <UserIcon size={12} className="text-[#1D4ED8]" strokeWidth={2.5} />
-                  <span className="text-[10px] font-black text-[#1D4ED8] tracking-widest uppercase">E-mail</span>
+                  <span className="text-[10px] font-black text-[#1D4ED8] tracking-widest uppercase">Usuário</span>
                 </div>
                 <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-[#1D4ED8] focus-within:ring-2 focus-within:ring-[#1D4ED8]/10 rounded-2xl h-[52px] transition-all duration-300">
                   <input
@@ -313,7 +245,7 @@ const AppContent: React.FC = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full h-full bg-transparent px-4 text-gray-800 font-semibold outline-none text-sm tracking-wide placeholder:text-gray-300"
-                    placeholder="Digite seu e-mail"
+                    placeholder="Digite seu usuário"
                     required
                   />
                 </div>
@@ -345,17 +277,6 @@ const AppContent: React.FC = () => {
               </div>
             </div>
 
-            {/* Form Options Row */}
-            <div className="flex items-center justify-end text-[11px] pt-1 pb-2">
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                className="text-[#1D4ED8] hover:text-[#0A1C5A] font-bold transition-colors bg-transparent border-0 cursor-pointer text-right p-0"
-              >
-                Esqueci minha senha
-              </button>
-            </div>
-
             {/* ENTRAR BUTTON */}
             <motion.button
               whileHover={{ scale: 1.01, boxShadow: '0 6px 20px rgba(29, 78, 216, 0.25)' }}
@@ -366,75 +287,22 @@ const AppContent: React.FC = () => {
               <Play size={12} className="fill-white text-white ml-0.5" /> ENTRAR
             </motion.button>
 
-            {/* QUICK LOGIN */}
-            <div className="w-full mt-4 flex flex-col items-center space-y-2 pb-2">
-              <span className="text-zinc-300 text-[9px] uppercase tracking-widest font-bold leading-none">
-                Acesso Rápido de Teste
-              </span>
-              <div className="flex gap-2 justify-center flex-wrap">
-                {[
-                  { id: 'henrique', label: 'Henrique' },
-                  { id: 'jessica', label: 'Jessica' },
-                  { id: 'teste3', label: 'Professor' }
-                ].map(item => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    id={`quick-login-${item.id}`}
-                    onClick={() => handleQuickLogin(item.id)}
-                    className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-[#64748B] bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-all active:scale-95 cursor-pointer leading-none"
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </form>
         </motion.div>
       </div>
     );
   }
 
-  // Layout exclusivo para professor
-  if (isLoggedIn && user?.role === 'teacher') {
-    return (
-      <div className="h-[100dvh] max-h-[100dvh] overflow-hidden relative flex flex-col bg-[#050505] text-white select-none font-sans">
-        <svg className="absolute inset-0 w-full h-full opacity-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="teacher-grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.02)" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#teacher-grid-pattern)" />
-        </svg>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-white/[0.01] blur-[100px] rounded-full pointer-events-none"></div>
-        <div className="flex-grow flex-1 min-h-0 w-full h-full relative z-10 flex flex-col justify-between overflow-hidden">
-          <TeacherView />
-        </div>
-      </div>
-    );
-  }
-
-  const isLightUser = isLoggedIn && user?.role !== 'teacher';
-  const isHenrique = user?.username?.toLowerCase() === 'henrique' || user?.username?.toLowerCase() === 'teste1' || user?.username?.toLowerCase()?.includes('henrique');
+  const isLightUser = isLoggedIn;
+  const isPremiumScreen = activeTab !== AppTab.WORKOUT || !selectedWorkout;
 
   const renderView = () => {
-    if (selectedWorkout) return <WorkoutView />;
-    if (!isHenrique && activeTab === AppTab.AGENDA) {
-      return <DashboardView />;
-    }
-    if (isHenrique && activeTab === AppTab.DESAFIO) {
-      return <DashboardView />;
-    }
+    if (selectedWorkout && activeTab === AppTab.WORKOUT) return <WorkoutView />;
     switch (activeTab) {
       case AppTab.DASHBOARD: return <DashboardView />;
-      case AppTab.AGENDA: return isHenrique ? <AgendaView /> : <DashboardView />;
       case AppTab.WORKOUT: return <WorkoutsListView />;
-      case AppTab.DIET: return <DietView />;
+      case AppTab.HISTORY: return <HistoryView />;
       case AppTab.PROFILE: return <ProfileView />;
-      case AppTab.TEACHER: return <TeacherView />;
-      case AppTab.CARDIO: return <CardioView />;
-      case AppTab.DESAFIO: return <DesafioView />;
       default: return <DashboardView />;
     }
   };
@@ -443,26 +311,16 @@ const AppContent: React.FC = () => {
   const circleFill = isLightUser ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.06)";
   const circleFillStrong = isLightUser ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)";
 
-  const navItems = isHenrique
-    ? [
-        ...(user?.role === 'teacher' ? [{ id: AppTab.TEACHER, icon: Users, label: 'Alunos' }] : []),
-        { id: AppTab.AGENDA, icon: Calendar, label: 'Agenda' },
-        { id: AppTab.DASHBOARD, icon: Dumbbell, label: 'Academia' },
-        { id: AppTab.DIET, icon: Utensils, label: 'Dieta' },
-        { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
-      ]
-    : [
-        ...(user?.role === 'teacher' ? [{ id: AppTab.TEACHER, icon: Users, label: 'Alunos' }] : []),
-        { id: AppTab.DASHBOARD, icon: isLightUser ? Home : LayoutDashboard, label: isLightUser ? 'Home' : 'Dashboard' },
-        { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treinos' },
-        { id: AppTab.DIET, icon: Utensils, label: 'Dieta' },
-        { id: AppTab.DESAFIO, icon: Target, label: 'Desafio' },
-        { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
-      ];
+  const navItems = [
+    { id: AppTab.DASHBOARD, icon: isLightUser ? Home : LayoutDashboard, label: isLightUser ? 'Home' : 'Dashboard' },
+    { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treinos' },
+    { id: AppTab.HISTORY, icon: BarChart3, label: 'Histórico' },
+    { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
+  ];
 
   return (
     <div className={`min-h-[100dvh] relative flex flex-col ${
-      isLightUser
+      isPremiumScreen ? "bg-[#061528] text-white" : isLightUser
         ? "bg-[#F5F7FA] text-gray-900 border-zinc-200"
         : "bg-[#050505] text-white"
     } transition-colors duration-400 select-none font-sans overflow-x-hidden`}>
@@ -475,7 +333,7 @@ const AppContent: React.FC = () => {
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#global-grid-pattern)" />
-        
+
         <line x1="15%" y1="15%" x2="40%" y2="28%" stroke={strokeColor} strokeWidth="0.5" />
         <line x1="40%" y1="28%" x2="25%" y2="65%" stroke={strokeColor} strokeWidth="0.5" />
         <line x1="25%" y1="65%" x2="65%" y2="80%" stroke={strokeColor} strokeWidth="0.5" />
@@ -497,8 +355,8 @@ const AppContent: React.FC = () => {
         {renderView()}
       </div>
 
-      {!selectedWorkout && (
-        <nav className={`fixed bottom-0 left-0 right-0 z-50 ${
+      {!(selectedWorkout && activeTab === AppTab.WORKOUT) && (
+        <nav className={`horus-bottom-nav fixed bottom-0 left-0 right-0 z-50 ${
           isLightUser
             ? "bg-white/80 border-t border-gray-250/50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
             : "bg-[#050505]/85 border-t border-white/[0.04] shadow-2xl"
