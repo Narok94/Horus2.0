@@ -1,20 +1,4 @@
-// Complete LocalStorage Offline Mock for Tatu Gym (Db Purged) in /src
-
-export enum OperationType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  LIST = 'list',
-  GET = 'get',
-  WRITE = 'write',
-}
-
-export interface User {
-  uid: string;
-  email: string | null;
-  displayName?: string | null;
-  photoURL?: string | null;
-}
+// Complete LocalStorage Offline Mock for Tatu Gym (Db Purged)
 
 export class Timestamp {
   seconds: number;
@@ -53,7 +37,6 @@ export const auth = {
 
 export const db = {};
 export const storage = {};
-export const googleProvider = {};
 
 export const collection = (dbInstance: any, path: string) => {
   return { path };
@@ -162,45 +145,26 @@ export const onSnapshot = (docRef: any, callback: any) => {
   return () => {};
 };
 
-export const signInWithPopup = async (...args: any[]) => {
+export const signInAnonymously = async (authInstance: any) => {
   return {
     user: {
-      uid: 'teste-uid',
-      displayName: 'Teste',
-      photoURL: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop',
-      email: 'teste@tatugym.pro'
+      uid: 'teste-uid'
     }
   };
 };
 
-export const onAuthStateChanged = (authInstance: any, callback: any) => {
-  setTimeout(() => {
-    callback({
-      uid: 'teste-uid',
-      displayName: 'Teste',
-      photoURL: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop',
-      email: 'teste@tatugym.pro'
-    });
-  }, 0);
-  return () => {};
+export const signOut = async (authInstance: any) => {
+  return Promise.resolve();
 };
 
-export const query = (refInstance: any, ...args: any[]) => {
-  return refInstance;
+export const ref = (storageInstance: any, path: string) => {
+  return { path };
 };
 
-export const where = (field: string, operator: string, value: any) => {
-  return { field, operator, value };
+export const uploadBytes = async (refInstance: any, file: any) => {
+  return { ref: refInstance };
 };
 
-export const orderBy = (field: string, direction?: string) => {
-  return { field, direction };
+export const getDownloadURL = async (refInstance: any) => {
+  return 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop';
 };
-
-export const limit = (num: number) => {
-  return { num };
-};
-
-export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  console.warn('Mock Firestore Handled Error:', error);
-}

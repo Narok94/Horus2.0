@@ -1,6 +1,8 @@
 {
-  "name": "Horus Workout Tracker",
-  "description": "Gerenciador de treinos e exercícios físicos com suporte a professores, alunos e demonstrações em GIF.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "HORUS TRAINING",
+  "description": "Um aplicativo de academia personalizado e inteligente que organiza seus treinos, monitora seu progresso e utiliza IA para otimizar sua performance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
 }

@@ -1,0 +1,71 @@
+{
+  "entities": {
+    "Exercise": {
+      "title": "Exercise",
+      "description": "A single exercise with a name, category, muscle group, and GIF URL.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "muscleGroup": { "type": "string" },
+        "gifUrl": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["name", "category", "muscleGroup", "gifUrl"]
+    },
+    "Workout": {
+      "title": "Workout",
+      "description": "A workout session performed by a user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "exercises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "exerciseId": { "type": "string" },
+              "sets": { "type": "integer" },
+              "reps": { "type": "integer" },
+              "weight": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["userId", "name", "date", "exercises"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "The profile of a user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoUrl": { "type": "string" },
+        "goal": { "type": "string" },
+        "weight": { "type": "number" },
+        "height": { "type": "number" }
+      },
+      "required": ["name", "email"]
+    }
+  },
+  "firestore": {
+    "/exercises": {
+      "schema": "Exercise",
+      "description": "A collection of all available exercises."
+    },
+    "/workouts": {
+      "schema": "Workout",
+      "description": "A collection of all workouts performed by users."
+    },
+    "/users": {
+      "schema": "UserProfile",
+      "description": "A collection of all user profiles."
+    }
+  }
+}
