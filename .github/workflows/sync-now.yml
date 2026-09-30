@@ -1,0 +1,28 @@
+name: Sync Horus now
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sync-now.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Sync source repository
+        run: |
+          set -e
+          TMP_DIR="$(mktemp -d)"
+          git clone --depth 1 https://github.com/Narok94/Horus.git "$TMP_DIR/Horus"
+          rsync -a --delete --exclude ".git" "$TMP_DIR/Horus/" ./
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: copy Horus into Horus2.0" || exit 0
+          git push origin HEAD:main
