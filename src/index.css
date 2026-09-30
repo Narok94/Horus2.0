@@ -348,3 +348,22 @@ html { background:#061321; width:100%; } body { min-width:0; margin:0; } #root {
 .horus-login { height:100vh; height:100dvh; padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left); }
 .horus-login input { font-size:16px; }
 @supports not (height:100dvh) { .horus-exercise-modal,.horus-modal { max-height:calc(100vh - 24px - var(--safe-top) - var(--safe-bottom)) !important; } }
+/* Exercise list thumbnails, persistent navigation and completion screen. */
+.horus-workout-thumbnail { width:46px; height:54px; flex-shrink:0; border-radius:12px; background:#061321; border:1px solid #173a57; display:grid; place-items:center; overflow:hidden; margin-right:11px; }
+.horus-workout-thumbnail img { width:100%; height:100%; object-fit:contain; }.horus-workout-thumbnail-fallback { display:none; color:#729dc3; }
+.horus-workout-thumbnail img[data-unavailable="true"] { display:none; }.horus-workout-thumbnail:has(img[data-unavailable="true"]) .horus-workout-thumbnail-fallback { display:block; }
+.horus-exercise-copy { display:flex; flex-direction:column; gap:5px; }.horus-exercise-copy>h3 { order:0; margin:0 !important; }.horus-exercise-copy>div { order:1; flex-wrap:wrap; }.horus-exercise-copy>p { order:2; margin:0 !important; gap:4px; font-family:inherit; font-size:10px; line-height:1.5; }
+.horus-execution-exercise>div:last-child>div>span:first-child { display:none; }.horus-execution-exercise button { background:transparent !important; border:none !important; color:#779dc0 !important; min-width:28px; width:28px; }.horus-execution-exercise>div:last-child { gap:3px; }
+.horus-execution { padding-bottom:calc(118px + var(--safe-bottom)) !important; }
+body:has(.horus-execution) .horus-bottom-nav,body:has(.horus-workout-summary) .horus-bottom-nav { background:#061321f5 !important; border-top-color:#15334e !important; }
+body:has(.horus-workout-summary),body:has(.horus-workout-summary) #root>div { background:#061321 !important; }
+.horus-workout-summary { min-height:100vh; min-height:100dvh; height:auto; max-height:none; max-width:520px !important; padding:calc(32px + var(--safe-top)) calc(20px + var(--safe-right)) calc(118px + var(--safe-bottom)) calc(20px + var(--safe-left)); background:#061321 !important; color:#f5f8ff !important; justify-content:flex-start; gap:0; }
+.horus-workout-summary>.border { background:#0a2038 !important; border-color:#193c59 !important; border-radius:18px; padding:16px; }.horus-workout-summary [class*="bg-zinc-"],.horus-workout-summary [class*="bg-white"] { background-color:#091d32 !important; }.horus-workout-summary [class*="border-zinc-"] { border-color:#1b3b56 !important; }
+.horus-workout-summary [class*="text-zinc-"] { color:#94b5d2 !important; }.horus-workout-summary [class*="text-zinc-950"] { color:#fff !important; }.horus-workout-summary .text-accent { color:#00d9ff !important; }.horus-workout-summary .italic { font-style:normal; }
+.horus-workout-summary .horus-summary-heading { display:flex; flex-direction:column; gap:15px; padding:26px 16px; background:transparent !important; border:none; box-shadow:none; }
+.horus-summary-heading>div:first-child { width:64px; height:64px; border-radius:20px; background:#073b35; border:1px solid #007d64; color:#00e59b; box-shadow:0 0 24px #00e59b12; }.horus-summary-heading>div:first-child svg { width:30px; height:30px; color:#00e59b; }
+.horus-summary-heading>div:last-child { text-align:center; }.horus-workout-summary .horus-summary-heading h1 { font-size:26px; font-weight:750; line-height:1.25; }.horus-summary-heading p { font-size:10px; margin-top:9px; color:#83accd !important; }
+.horus-summary-metrics { gap:12px; }.horus-summary-metrics>div { background:#0a2038 !important; border:1px solid #193c59; padding:18px 14px; border-radius:16px; }.horus-summary-metrics span { font-size:20px; line-height:1.35; }.horus-summary-metrics p { font-size:9px; margin-bottom:7px; }.horus-summary-metrics svg { width:20px; height:20px; }
+.horus-workout-summary>div:last-child>button { background:#087cff !important; color:#fff !important; font-size:11px; min-height:48px; box-shadow:0 6px 20px #087cff20; }
+.horus-workout-summary button:focus-visible { outline:2px solid #00d9ff; outline-offset:3px; }
+@media(max-width:430px) { .horus-workout-thumbnail { width:42px; height:50px; margin-right:9px; }.horus-execution-exercise { gap:5px !important; }.horus-exercise-copy h3 { font-size:12px; }.horus-workout-summary { padding-left:calc(16px + var(--safe-left)); padding-right:calc(16px + var(--safe-right)); } }

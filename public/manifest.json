@@ -3,12 +3,12 @@
   "name": "Horus Training",
   "icons": [
     {
-      "src": "/horus-icon-192.png",
+      "src": "/horus-icon-192.png?v=horus_v5",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/horus-icon-512.png",
+      "src": "/horus-icon-512.png?v=horus_v5",
       "type": "image/png",
       "sizes": "512x512"
     }

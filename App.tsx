@@ -355,7 +355,6 @@ const AppContent: React.FC = () => {
         {renderView()}
       </div>
 
-      {!(selectedWorkout && activeTab === AppTab.WORKOUT) && (
         <nav className={`horus-bottom-nav fixed bottom-0 left-0 right-0 z-50 ${
           isLightUser
             ? "bg-white/80 border-t border-gray-250/50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
@@ -401,7 +400,6 @@ const AppContent: React.FC = () => {
             })}
           </div>
         </nav>
-      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../../store';
 import {
   ChevronLeft,
+  ChevronRight,
   Clock,
   CheckCircle2,
   Play,
@@ -627,10 +628,10 @@ export const WorkoutView: React.FC = () => {
 
   if (showSummary) {
     return (
-      <div className={`h-full max-h-full overflow-y-auto flex flex-col justify-center py-4 px-1 text-center bg-transparent font-sans antialiased selection:bg-accent/30 select-none w-full max-w-sm md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto space-y-4 my-auto ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
+      <div className={`horus-workout-summary h-full max-h-full overflow-y-auto flex flex-col justify-center py-4 px-1 text-center bg-transparent font-sans antialiased selection:bg-accent/30 select-none w-full max-w-sm md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto space-y-4 my-auto ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
 
           {/* HEADER COMPACTO */}
-          <div className={`flex items-center gap-3 ${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/90 border-white/5'} border p-3 rounded-xl shrink-0 shadow-sm`}>
+          <div className={`horus-summary-heading flex items-center gap-3 ${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/90 border-white/5'} border p-3 rounded-xl shrink-0 shadow-sm`}>
             <div className="w-9 h-9 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center text-accent shrink-0">
                <CheckCircle2 size={18} className="text-accent" strokeWidth={3} />
             </div>
@@ -745,7 +746,7 @@ export const WorkoutView: React.FC = () => {
           </div>
 
           {/* METRICAS DE PERFORMANCE EXTRA COMPACTAS */}
-          <div className="grid grid-cols-2 gap-2 mt-1 shrink-0">
+          <div className="horus-summary-metrics grid grid-cols-2 gap-2 mt-1 shrink-0">
              <div className={`${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/80 border-white/5'} border p-2 rounded-xl flex items-center justify-between gap-1 shadow-sm font-sans text-left`}>
                 <div className="leading-none min-w-0">
                    <p className={`text-[7.5px] font-black ${isLightTheme ? 'text-zinc-500' : 'text-white/40'} uppercase tracking-widest font-mono truncate`}>DURAÇÃO</p>
@@ -886,7 +887,7 @@ export const WorkoutView: React.FC = () => {
 
         {/* Exercises list - Renders continuously with page scroll */}
         <div className="space-y-3.5 py-1">
-          {selectedWorkout.exercises.map((ex, idx) => {
+          {selectedWorkout.exercises.map((ex) => {
             const perf = getExercisePerformance(ex);
             const completedCount = perf.filter(p => p.completed).length;
             const sizeSets = interpretPrescription(ex).drop ? ex.sets * 2 : ex.sets;
@@ -917,15 +918,14 @@ export const WorkoutView: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center min-w-0 flex-1">
-                    {/* Elegant big index number */}
-                    <span className={`horus-exercise-number text-3xl font-light font-sans tracking-tight mr-4 shrink-0 font-mono group-hover:text-white/30 transition-colors ${
-                      isLightTheme ? 'text-white/20' : 'text-white/10'
-                    }`}>
-                      {String(idx + 1).padStart(2, '0')}
+                    <span className="horus-workout-thumbnail">
+                      <img src={details.gif} alt={ex.name} loading="lazy" referrerPolicy="no-referrer"
+                        onError={event => { event.currentTarget.dataset.unavailable = 'true'; }} />
+                      <Dumbbell className="horus-workout-thumbnail-fallback" size={23} strokeWidth={1.5} aria-hidden="true" />
                     </span>
 
                     {/* Compact Details Column */}
-                    <div className="min-w-0 flex-1 space-y-1">
+                    <div className="horus-exercise-copy min-w-0 flex-1 space-y-1">
                       <div className="flex items-center gap-2 leading-none">
                         <span className={`text-[7px] font-black px-1.5 py-0.5 rounded font-mono uppercase tracking-wider ${
                           isLightTheme ? 'bg-white/15 border border-white/10 text-white' : 'bg-[#1b1b22] text-[#e3e3e8]'
@@ -954,7 +954,7 @@ export const WorkoutView: React.FC = () => {
                       <p className={`text-[10px] font-mono flex items-center gap-1.5 flex-wrap ${
                         isLightTheme ? 'text-white/75' : 'text-zinc-400'
                       }`}>
-                        <span className={`${isLightTheme ? 'text-white font-bold' : 'text-white'} font-semibold`}>{ex.sets}x{ex.reps}</span>
+                        <span className={`${isLightTheme ? 'text-white font-bold' : 'text-white'} font-semibold`}>{ex.sets} séries • {ex.reps}{interpretPrescription(ex).kind === 'reps' ? ' reps' : ''}</span>
                         <span className={`${isLightTheme ? 'text-white/40' : 'text-zinc-650'}`}>•</span>
                         <span>{ex.rest}s descanso</span>
                         {ex.notes && (
@@ -979,6 +979,7 @@ export const WorkoutView: React.FC = () => {
                     </div>
 
                     <button
+                      aria-label={`Abrir ${ex.name}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         openExerciseModal(ex);
@@ -989,7 +990,7 @@ export const WorkoutView: React.FC = () => {
                           : 'bg-accent/5 border border-accent/20 hover:bg-accent hover:border-accent hover:text-black text-accent'
                       }`}
                     >
-                      <Plus size={14} strokeWidth={3} />
+                      <ChevronRight size={18} strokeWidth={2} />
                     </button>
                   </div>
                 </div>
@@ -1406,6 +1407,7 @@ export const WorkoutView: React.FC = () => {
                                 isLightTheme ? 'bg-white border-zinc-300' : 'bg-zinc-950/80 border-white/5'
                               }`}>
                                 <button
+                                  aria-label={`Diminuir peso da série ${setIdx + 1}`}
                                   onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -1)}
                                   disabled={isSetCompleted}
                                   className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
@@ -1427,6 +1429,7 @@ export const WorkoutView: React.FC = () => {
                                   placeholder="0"
                                 />
                                 <button
+                                  aria-label={`Aumentar peso da série ${setIdx + 1}`}
                                   onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 1)}
                                   disabled={isSetCompleted}
                                   className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
@@ -1444,6 +1447,7 @@ export const WorkoutView: React.FC = () => {
                                 isLightTheme ? 'bg-white border-zinc-300' : 'bg-zinc-950/80 border-white/5'
                               }`}>
                                 <button
+                                  aria-label={`Diminuir repetições ou tempo da série ${setIdx + 1}`}
                                   onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}
                                   disabled={isSetCompleted}
                                   className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
@@ -1465,6 +1469,7 @@ export const WorkoutView: React.FC = () => {
                                   placeholder="0"
                                 />
                                 <button
+                                  aria-label={`Aumentar repetições ou tempo da série ${setIdx + 1}`}
                                   onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}
                                   disabled={isSetCompleted}
                                   className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
@@ -1479,6 +1484,7 @@ export const WorkoutView: React.FC = () => {
                             {/* Column 4: Glowing check indicator */}
                             <div className="col-span-2 flex items-center justify-end pr-0.5">
                               <button
+                                aria-label={`${isSetCompleted ? 'Desmarcar' : 'Concluir'} série ${setIdx + 1}`}
                                 onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: !isSetCompleted })}
                                 className={`w-7 h-7 rounded-sm border flex items-center justify-center active:scale-95 transition-all ${
                                   isSetCompleted
