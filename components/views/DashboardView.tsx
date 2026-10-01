@@ -38,6 +38,7 @@ export const DashboardView: React.FC = () => {
   } = useStore();
 
   const [showNotificationDrawer, setShowNotificationDrawer] = useState<boolean>(false);
+  const [unavailableAvatar, setUnavailableAvatar] = useState<string | null>(null);
   const [, setCurrentTime] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -137,7 +138,7 @@ export const DashboardView: React.FC = () => {
 
   return <section className="horus-screen horus-home">
     <header className="horus-home-header">
-      <div className="horus-home-identity"><span className="horus-home-avatar">{getInitials(user.name)}</span><div><p>Olá, {user.name.split(' ')[0]} 👋</p><h1>Pronto para evoluir hoje?</h1><small>Disciplina hoje, resultado sempre.</small></div></div>
+      <div className="horus-home-identity"><span className="horus-home-avatar">{user.avatar && unavailableAvatar !== user.avatar ? <img src={user.avatar} alt="Foto de perfil" onError={() => setUnavailableAvatar(user.avatar || null)} /> : getInitials(user.name)}</span><div><p>Olá, {user.name.split(' ')[0]} 👋</p><h1>Pronto para evoluir hoje?</h1><small>Disciplina hoje, resultado sempre.</small></div></div>
       <div className="horus-home-tools"><span className="horus-icon-button horus-green" title="Dados salvos neste dispositivo"><CheckCircle2 size={17} /></span><button className="horus-icon-button" aria-label="Notificações" onClick={() => { handleVibrate(15); setShowNotificationDrawer(!showNotificationDrawer); }}><Bell size={18} /></button><button className="horus-icon-button" aria-label="Sair" title="Sair" onClick={() => { handleVibrate(15); logout(); }}><LogOut size={17} /></button></div>
     </header>
     <div className="horus-today-card horus-card">

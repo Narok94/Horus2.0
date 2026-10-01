@@ -799,31 +799,13 @@ export const WorkoutView: React.FC = () => {
           </button>
           <div className="min-w-0">
             <h1 className={`text-xs font-black italic truncate leading-none uppercase tracking-tight ${isLightTheme ? 'text-zinc-950 font-[900]' : 'text-white'}`}>{selectedWorkout.title}</h1>
-            {isWorkoutActive && (
-              <span className={`text-[7.5px] font-black mt-0.5 block tracking-wider uppercase leading-none ${isLightTheme ? 'text-zinc-500 font-bold' : 'text-white/40'}`}>SESSÃO EM ANDAMENTO ⏱️</span>
-            )}
+                {isWorkoutActive && <span className="text-xs text-text-secondary">Sessão em andamento</span>}
           </div>
         </div>
-
-        {isWorkoutActive && (
-          <div className="flex items-center gap-1.5 shrink-0">
-            <div className={`px-2 py-1 rounded-lg font-mono text-xs font-black tracking-tight leading-none ${
-              isLightTheme ? 'bg-white border border-zinc-250 text-zinc-950' : 'bg-[#0c0c0c]/80 border-white/5 text-white'
-            }`}>
-              {formatTime(elapsedTime)}
-            </div>
-            <button
-              onClick={() => handleFinishWorkout()}
-              className={`px-2.5 py-1.5 bg-accent ${isLightTheme ? 'text-white' : 'text-black'} font-black text-[8px] tracking-wider uppercase rounded-lg hover:brightness-110 active:scale-95 transition-all font-sans leading-none`}
-            >
-              SALVAR
-            </button>
-          </div>
-        )}
       </header>
 
       {/* Selected Workout Upper Banner matching attachment 1 */}
-      <div className={`horus-selected-workout relative overflow-hidden rounded-xl border p-3 text-center space-y-2 shadow-lg shrink-0 mt-1.5 ${
+      <div className={`horus-selected-workout ${isWorkoutActive ? 'horus-session-active' : ''} relative overflow-hidden rounded-xl border p-3 text-center space-y-2 shadow-lg shrink-0 mt-1.5 ${
         isLightTheme
           ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10'
           : 'border-white/5 bg-gradient-to-br from-zinc-950/90 to-zinc-900/50'
@@ -844,16 +826,16 @@ export const WorkoutView: React.FC = () => {
         {/* Action Button inside banner */}
         <div className="flex justify-center pt-0.5">
           {isWorkoutActive ? (
-            <div className="flex gap-2 w-full max-w-xs justify-center">
-              <div className="flex-1 py-1 px-2 rounded-lg bg-zinc-950/60 border border-white/5 text-center flex flex-col justify-center leading-none">
-                <span className="text-[6.5px] font-black text-white/40 uppercase tracking-[0.1em] font-sans">TEMPO ATIVO DE SESSÃO</span>
+            <div className="horus-session-controls">
+              <div className="horus-session-clock">
+                <span className="horus-session-clock-label"><Clock size={14} />Tempo de treino</span>
                 <span className="text-sm font-black text-white font-mono leading-none tracking-tight animate-pulse">{formatTime(elapsedTime)}</span>
               </div>
               <button
                 onClick={() => handleFinishWorkout()}
-                className="flex-1 py-2 bg-accent hover:brightness-110 text-black font-black text-[9px] uppercase tracking-wider rounded-lg active:scale-95 transition-all shadow-md leading-none"
+                className="horus-session-finish"
               >
-                FINALIZAR SESSÃO 🏆
+                Finalizar sessão
               </button>
             </div>
           ) : (
