@@ -1125,7 +1125,7 @@ export const WorkoutView: React.FC = () => {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 20, opacity: 0, scale: 0.95 }}
               transition={{ type: "spring", damping: 28, stiffness: 220 }}
-              className={`horus-exercise-modal relative w-full sm:max-w-md p-5 rounded-2xl shadow-2xl overflow-hidden space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar pb-6 z-10 border ${
+              className={`horus-exercise-modal ${showExerciseInfo ? 'horus-exercise-detail' : 'horus-exercise-compact'} relative w-full sm:max-w-md p-5 rounded-2xl shadow-2xl overflow-hidden space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar pb-6 z-10 border ${
                 isLightTheme ? 'bg-white border-zinc-200 text-zinc-950 font-black' : 'bg-[#0c0c0f] border-white/10 text-white'
               }`}
             >
@@ -1269,9 +1269,9 @@ export const WorkoutView: React.FC = () => {
               }}>{selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) < selectedWorkout.exercises.length - 1 ? 'Próximo exercício' : 'Voltar para finalizar treino'}<ChevronRight size={18} /></button>}
               {/* Exercise details and per-set controls use the existing session handlers. */}
               {activeModalExercise && (
-                <div className="space-y-4 pb-2">
+                <div className="horus-exercise-content space-y-4 pb-2">
                   <p className="horus-current-label">Exercício atual</p>
-                  <div className={`horus-exercise-media relative rounded-xl overflow-hidden h-44 w-full flex flex-col items-center justify-center p-1.5 shadow-inner border animate-fade-in ${
+                  <button type="button" aria-label="Abrir detalhe completo do exercício" onClick={() => setShowExerciseInfo(true)} className={`horus-exercise-media relative rounded-xl overflow-hidden h-44 w-full flex flex-col items-center justify-center p-1.5 shadow-inner border animate-fade-in ${
                     isLightTheme ? 'bg-white border-zinc-250' : 'bg-zinc-950 border-white/5'
                   }`}>
                     <img
@@ -1285,17 +1285,18 @@ export const WorkoutView: React.FC = () => {
                     />
                     <div className="horus-gif-fallback"><Dumbbell size={30} strokeWidth={1.5} /><span>Demonstração indisponível</span><small>Consulte o guia técnico abaixo</small></div>
                     <span className="absolute bottom-1.5 px-2 py-0.5 rounded bg-black/60 border border-white/5 font-mono text-[6px] font-bold text-zinc-400 uppercase tracking-widest leading-none">DEMONSTRAÇÃO DE EXECUÇÃO</span>
-                  </div>
+                  </button>
 
               {/* Title Section */}
-              <div className="space-y-1">
+              <div className="horus-exercise-title space-y-1">
                 <div className="flex items-center justify-between">
                   <h2 className={`text-base font-black italic tracking-tight uppercase leading-none ${
                     isLightTheme ? 'text-zinc-950 font-[950]' : 'text-white'
                   }`}>
-                    {activeModalExercise.name}
+                    <button className="horus-exercise-name" onClick={() => setShowExerciseInfo(true)}>{activeModalExercise.name}</button>
                   </h2>
                   <button
+                    aria-label={showExerciseInfo ? "Voltar à execução" : "Abrir informações do exercício"}
                     onClick={() => setShowExerciseInfo(!showExerciseInfo)}
                     className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${
                       showExerciseInfo
@@ -1308,7 +1309,7 @@ export const WorkoutView: React.FC = () => {
                     <HelpCircle size={14} strokeWidth={2.5} />
                   </button>
                 </div>
-                <div className="w-12 h-0.5 bg-accent rounded"></div>
+                <p className="horus-compact-meta">{activeModalExercise.sets} séries • {activeModalExercise.reps}{interpretPrescription(activeModalExercise).kind === 'time' ? '' : ' reps'}</p>
               </div>
 
                   <div className="horus-prescription"><div><strong>{activeModalExercise.sets}</strong><span>Séries</span></div><div><strong>{activeModalExercise.reps}</strong><span>{interpretPrescription(activeModalExercise).kind === 'time' ? 'Tempo' : 'Repetições'}</span></div><div><strong>{activeModalExercise.rest}</strong><span>Descanso</span></div></div>
@@ -1349,6 +1350,7 @@ export const WorkoutView: React.FC = () => {
                     )}
                   </AnimatePresence>
 
+                  {showExerciseInfo && <button className="horus-action" onClick={() => setShowExerciseInfo(false)}>Voltar para registrar série</button>}
                   <section className="horus-register">
                     <h3>Registrar série</h3>
                     {(() => {

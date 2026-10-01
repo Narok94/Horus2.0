@@ -74,8 +74,8 @@ const AppContent: React.FC = () => {
 
   // Cor de destaque da aplicação.
   useEffect(() => {
-    const accentColor = '#0A84FF';
-    const accentRgb = '10, 132, 255';
+    const accentColor = '#0875F5';
+    const accentRgb = '8, 117, 245';
 
     const root = document.documentElement;
     root.style.setProperty('--accent-color', accentColor);

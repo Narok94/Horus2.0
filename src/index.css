@@ -426,3 +426,28 @@ body:has(.horus-detail) .horus-bottom-nav { display:block; }.horus-detail { padd
 .horus-exercise-modal h3 { color:#13233D; }.horus-exercise-modal button { min-height:44px; }.horus-exercise-modal button[class*="w-7"],.horus-exercise-modal button[class*="w-8"] { min-width:44px; }
 .horus-exercise-modal .horus-stepper button { min-width:32px; }
 .horus-execution>header h1 { font-size:18px; line-height:1.3; text-transform:none; }.horus-execution-exercise h3 { text-transform:none; line-height:1.4; }.horus-execution .horus-selected-workout button { min-height:48px; font-size:14px; }.horus-execution>div>button { min-height:44px; }
+
+/* Vibrant fitness identity on comfortable light surfaces. */
+:root,.dark { --accent-color:#0875F5; --accent-color-rgb:8,117,245; --highlight-color:#0875F5; --brand-primary:#0875F5; }
+.horus-screen,.horus-execution,.horus-workout-summary { background:linear-gradient(160deg,#EAF3FF 0%,#F5F7FA 45%,#EEF4FC 100%) !important; }
+.horus-home .horus-today-card { background:linear-gradient(125deg,#0875F5,#0753D5) !important; box-shadow:0 10px 25px #0875F52B; position:relative; }
+.horus-today-card::after { content:''; position:absolute; top:18px; right:65px; width:56px; height:56px; border:9px double #ffffff12; border-radius:50%; pointer-events:none; }
+.horus-home .horus-week,.horus-workouts .horus-workout-card,.horus-history-row,.horus-profile-links .horus-card { background:#F0F6FF !important; border-color:#D6E6FC !important; }
+.horus-home .horus-home-metrics>.horus-card { background:#E4EFFF !important; border-color:#CDE0FC !important; }
+.horus-small-icon,.horus-badge-icon,.horus-home .horus-home-metrics .horus-small-icon { background:#D9E9FF !important; color:#0875F5; }
+.horus-user-card { background:linear-gradient(120deg,#0875F5,#0753D5) !important; border:0 !important; box-shadow:0 8px 24px #0875F524; }
+.horus-user-card h2 { color:#fff !important; }.horus-user-card p { color:#E0EEFF; }.horus-user-card .horus-edit-button { background:#ffffff20 !important; color:#fff; border-color:#ffffff35; }
+.horus-consistency { background:#E4EFFF !important; border-color:#CDE0FC !important; }.horus-consistency-grid>div+div { border-color:#C3D9F8; }
+.horus-achievement { background:#EDF4FF !important; border-color:#D6E6FC !important; }.horus-badge-icon.white { color:#0875F5; }
+.horus-avatar { background:#ffffff25 !important; border-color:#ffffff35; }.horus-photo-avatar { position:relative; padding:0; cursor:pointer; }.horus-photo-avatar>img { width:100%; height:100%; object-fit:cover; border-radius:inherit; }.horus-photo-edit { position:absolute; right:-4px; bottom:-4px; display:grid; place-items:center; width:25px; height:25px; border:2px solid #fff; border-radius:50%; background:#0875F5; color:#fff; }.horus-photo-select { padding:10px 14px; border-radius:12px; background:#E4EFFF; color:#0753D5; margin-bottom:18px; min-height:44px; font-size:14px; }
+.horus-action,.horus-workout-start,.horus-home-avatar,.horus-series .active { background:#0875F5; }.horus-bottom-nav button:has(.bg-accent) svg,.horus-bottom-nav button:has(.bg-accent) span { color:#0875F5; }
+.horus-execution .horus-selected-workout { background:#E4EFFF !important; border-color:#CDE0FC; }.horus-execution-exercise { background:#F0F6FF !important; border-color:#D6E6FC !important; }
+.horus-exercise-modal { gap:10px; }.horus-exercise-content { min-width:0; }.horus-exercise-name { text-align:left; line-height:1.35; width:100%; color:inherit; }.horus-exercise-title { min-width:0; }.horus-compact-meta { font-size:12px; color:#64748B; margin:3px 0 0; }
+.horus-exercise-compact .horus-exercise-content { display:grid; grid-template-columns:76px minmax(0,1fr); gap:12px; align-items:center; }.horus-exercise-compact .horus-exercise-content> * { margin:0; }
+.horus-exercise-compact .horus-current-label { grid-column:1/-1; font-size:13px; font-weight:600; color:#0753D5; }
+.horus-exercise-compact .horus-exercise-media { width:76px; height:76px !important; padding:4px !important; background:#E4EFFF !important; border-color:#CDE0FC !important; }.horus-exercise-compact .horus-exercise-media img { max-height:68px !important; width:100%; }
+.horus-exercise-compact .horus-exercise-media>span,.horus-exercise-compact .horus-gif-fallback span,.horus-exercise-compact .horus-gif-fallback small { display:none; }
+.horus-exercise-compact .horus-exercise-title h2 { font-size:16px; padding:0; }.horus-exercise-compact .horus-prescription { display:none; }.horus-exercise-compact .horus-register { grid-column:1/-1; background:#EAF3FF; border-color:#CDE0FC; padding:14px; }.horus-exercise-compact .horus-exercise-content>.pt-2 { display:none; }
+.horus-exercise-detail .horus-register,.horus-exercise-detail .horus-current-label,.horus-exercise-detail .horus-compact-meta { display:none; }.horus-exercise-detail .horus-exercise-media { width:100%; height:240px !important; }.horus-exercise-detail .horus-exercise-content { display:block; }.horus-exercise-detail .horus-exercise-content>.horus-action { margin-top:16px; }
+.horus-exercise-compact>div:has(.animate-pulse) { order:2; }.horus-exercise-compact>.horus-exercise-content { order:1; }.horus-exercise-compact>.horus-action { order:3; }
+.horus-exercise-modal .horus-register .horus-action { margin-top:14px; }.horus-exercise-modal .horus-register p { margin:10px 0; }
