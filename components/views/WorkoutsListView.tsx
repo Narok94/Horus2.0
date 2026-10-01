@@ -1,5 +1,6 @@
 import { createInitialPerformance, interpretPrescription } from '../../src/utils/workoutPrescription';
 import React from 'react';
+import { getExerciseDetails } from '../../src/utils/exerciseUtils';
 import { Play, Activity, Flame, Zap, Target, Star, CheckCircle2, ChevronRight } from 'lucide-react';
 import { useStore } from '../../store';
 import { AppTab, WorkoutRoutine } from '../../types';
@@ -126,7 +127,7 @@ export const WorkoutsListView: React.FC = () => {
   };
 
   return <section className="horus-screen horus-workouts">
-    <header className="horus-page-header"><h1>Treinos</h1><p>Escolha sua rotina e comece a evoluir.</p></header>
+    <header className="horus-page-header"><h1>Meus treinos</h1><p>Escolha sua rotina e comece a evoluir.</p></header>
     <div className="horus-workout-list">{workouts.map((workout, index) => {
       const focus = getWorkoutFocus(workout);
       const label = getWorkoutCardLabel(workout, index);
@@ -136,7 +137,7 @@ export const WorkoutsListView: React.FC = () => {
       const ThemeIcon = themeInfo.icon;
       const continuing = isWorkoutActive && currentSelected?.id === workout.id;
       return <article key={workout.id} className={`horus-workout-card horus-card ${continuing ? 'continuing' : ''}`} style={{ borderLeftColor: themeInfo.color }} onClick={() => startWorkout(workout)}>
-        <div className="horus-workout-card-top"><span className="horus-workout-symbol" style={{ color: themeInfo.color, backgroundColor: `${themeInfo.color}15`, borderColor: `${themeInfo.color}35` }}><ThemeIcon size={23} /></span><div className="horus-workout-copy"><div className="horus-workout-labels"><span className="horus-workout-badge" style={{ color: themeInfo.color, backgroundColor: `${themeInfo.color}15` }}>{label}</span><span>{exerciseCount} exercícios</span></div><h2>{focus}</h2><p>{cleanDesc}</p></div><ChevronRight className="horus-workout-chevron" size={18} aria-hidden="true" /></div>
+        <div className="horus-workout-card-top"><span className="horus-workout-symbol" style={{ color: themeInfo.color, backgroundColor: `${themeInfo.color}15`, borderColor: `${themeInfo.color}35` }}>{workout.exercises[0] ? <><img src={getExerciseDetails(workout.exercises[0].name, workout.exercises[0].muscleGroup).gif} alt="" onError={event => { event.currentTarget.hidden = true; }} /><ThemeIcon className="horus-list-fallback" size={23} /></> : <ThemeIcon size={23} />}</span><div className="horus-workout-copy"><div className="horus-workout-labels"><span className="horus-workout-badge" style={{ color: themeInfo.color, backgroundColor: `${themeInfo.color}15` }}>{label}</span><span>{exerciseCount} exercícios</span><span>45 min estimados</span></div><h2>{focus}</h2><p>{cleanDesc}</p></div><ChevronRight className="horus-workout-chevron" size={18} aria-hidden="true" /></div>
         <div className="horus-workout-actions"><button className="horus-workout-start" onClick={event => { event.stopPropagation(); startWorkout(workout); }}><Play size={14} fill="currentColor" />{continuing ? 'Continuar' : 'Iniciar'}</button><button className="horus-workout-complete" title="Marcar treino como 100% concluído" onClick={event => { event.stopPropagation(); handleQuickCompleteWorkout(workout); }}><CheckCircle2 size={14} />Concluir tudo</button></div>
       </article>;
     })}</div>

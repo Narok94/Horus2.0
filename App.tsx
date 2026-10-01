@@ -74,8 +74,8 @@ const AppContent: React.FC = () => {
 
   // Cor de destaque da aplicação.
   useEffect(() => {
-    const accentColor = '#00F0FF';
-    const accentRgb = '0, 240, 255';
+    const accentColor = '#0A84FF';
+    const accentRgb = '10, 132, 255';
 
     const root = document.documentElement;
     root.style.setProperty('--accent-color', accentColor);
@@ -312,7 +312,7 @@ const AppContent: React.FC = () => {
   const circleFillStrong = isLightUser ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)";
 
   const navItems = [
-    { id: AppTab.DASHBOARD, icon: isLightUser ? Home : LayoutDashboard, label: isLightUser ? 'Home' : 'Dashboard' },
+    { id: AppTab.DASHBOARD, icon: Home, label: 'Home' },
     { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treinos' },
     { id: AppTab.HISTORY, icon: BarChart3, label: 'Histórico' },
     { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
@@ -320,7 +320,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className={`min-h-[100dvh] relative flex flex-col ${
-      isPremiumScreen ? "bg-[#061528] text-white" : isLightUser
+      isPremiumScreen ? "bg-[#F5F7FA] text-slate-900" : isLightUser
         ? "bg-[#F5F7FA] text-gray-900 border-zinc-200"
         : "bg-[#050505] text-white"
     } transition-colors duration-400 select-none font-sans overflow-x-hidden`}>

@@ -56,7 +56,7 @@ export const WorkoutView: React.FC = () => {
     addToast
   } = useStore();
 
-  const isLightTheme = theme === 'light';
+  const isLightTheme = true;
   const accentColor = '#2563EB';
 
   const [capturedImage, setCapturedImage] = React.useState<string | null>(null);
@@ -538,10 +538,7 @@ export const WorkoutView: React.FC = () => {
         triggerLocalConfetti();
         setExerciseCompletedSuccess(true);
         setModalRestTimeLeft(null);
-        setTimeout(() => {
-          setExerciseCompletedSuccess(false);
-          setActiveModalExercise(null);
-        }, 1500);
+
       } else {
         // Automate rest timer with exercise rest or fallback 60s
         setModalRestTimeLeft(getRestSeconds(currentEx.rest));
@@ -610,10 +607,7 @@ export const WorkoutView: React.FC = () => {
     if (activeModalExercise && activeModalExercise.id === ex.id) {
       setExerciseCompletedSuccess(true);
       setModalRestTimeLeft(null);
-      setTimeout(() => {
-        setExerciseCompletedSuccess(false);
-        setActiveModalExercise(null);
-      }, 1500);
+
     }
 
     if (addToast) {
@@ -1116,7 +1110,7 @@ export const WorkoutView: React.FC = () => {
       <AnimatePresence>
         {activeModalExercise && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm">
-            {/* Backdrop translucent black filter */}
+            {/* Dismiss the exercise sheet by tapping outside it. */}
             <motion.div
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
@@ -1160,30 +1154,6 @@ export const WorkoutView: React.FC = () => {
                 >
                   <X size={13} strokeWidth={2.5} />
                 </button>
-              </div>
-
-              {/* Title Section */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <h2 className={`text-base font-black italic tracking-tight uppercase leading-none ${
-                    isLightTheme ? 'text-zinc-950 font-[950]' : 'text-white'
-                  }`}>
-                    {activeModalExercise.name}
-                  </h2>
-                  <button
-                    onClick={() => setShowExerciseInfo(!showExerciseInfo)}
-                    className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${
-                      showExerciseInfo
-                        ? 'bg-accent/20 text-accent'
-                        : (isLightTheme
-                            ? 'bg-zinc-100 border border-zinc-250 text-zinc-500 hover:text-zinc-950'
-                            : 'bg-zinc-900 border border-white/5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800')
-                    }`}
-                  >
-                    <HelpCircle size={14} strokeWidth={2.5} />
-                  </button>
-                </div>
-                <div className="w-12 h-0.5 bg-accent rounded"></div>
               </div>
 
               {/* Active Rest Countdown Timer Panel (Depicted in image 3) */}
@@ -1284,21 +1254,28 @@ export const WorkoutView: React.FC = () => {
                         EXERCÍCIO CONCLUÍDO! 🔥
                       </h3>
                       <p className="text-[7.5px] font-black text-[#00DDA2] uppercase tracking-[0.2em] mt-1.5">
-                        MINIMIZANDO JANELA...
+                        Todas as séries registradas
                       </p>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Educational info checklist with GIF - ONLY if not completed success */}
-              {!exerciseCompletedSuccess && (
+              {getExercisePerformance(activeModalExercise).every(set => set.completed) && <button className="horus-action" onClick={() => {
+                const next = selectedWorkout.exercises[selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) + 1];
+                setModalRestTimeLeft(null);
+                if (next) openExerciseModal(next);
+                else { setActiveModalExercise(null); setExerciseCompletedSuccess(false); }
+              }}>{selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) < selectedWorkout.exercises.length - 1 ? 'Próximo exercício' : 'Voltar para finalizar treino'}<ChevronRight size={18} /></button>}
+              {/* Exercise details and per-set controls use the existing session handlers. */}
+              {activeModalExercise && (
                 <div className="space-y-4 pb-2">
-                  {/* Custom exercise video/GIF of high-tech Horus */}
+                  <p className="horus-current-label">Exercício atual</p>
                   <div className={`horus-exercise-media relative rounded-xl overflow-hidden h-44 w-full flex flex-col items-center justify-center p-1.5 shadow-inner border animate-fade-in ${
                     isLightTheme ? 'bg-white border-zinc-250' : 'bg-zinc-950 border-white/5'
                   }`}>
                     <img
+                      key={activeModalExercise.id}
                       src={getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif}
                       alt={activeModalExercise.name}
                       className="max-h-[150px] w-auto max-w-[200px] rounded-lg object-contain"
@@ -1310,20 +1287,31 @@ export const WorkoutView: React.FC = () => {
                     <span className="absolute bottom-1.5 px-2 py-0.5 rounded bg-black/60 border border-white/5 font-mono text-[6px] font-bold text-zinc-400 uppercase tracking-widest leading-none">DEMONSTRAÇÃO DE EXECUÇÃO</span>
                   </div>
 
-                  {/* Quick complete button for all sets of this exercise */}
+              {/* Title Section */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h2 className={`text-base font-black italic tracking-tight uppercase leading-none ${
+                    isLightTheme ? 'text-zinc-950 font-[950]' : 'text-white'
+                  }`}>
+                    {activeModalExercise.name}
+                  </h2>
                   <button
-                    type="button"
-                    onClick={() => handleCompleteExerciseSets(activeModalExercise)}
-                    className={`horus-complete-exercise w-full py-3 px-4 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 ${
-                      isLightTheme
-                        ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20'
-                        : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30'
+                    onClick={() => setShowExerciseInfo(!showExerciseInfo)}
+                    className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${
+                      showExerciseInfo
+                        ? 'bg-accent/20 text-accent'
+                        : (isLightTheme
+                            ? 'bg-zinc-100 border border-zinc-250 text-zinc-500 hover:text-zinc-950'
+                            : 'bg-zinc-900 border border-white/5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800')
                     }`}
                   >
-                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                    <span>Concluir Todas as Séries Deste Exercício</span>
+                    <HelpCircle size={14} strokeWidth={2.5} />
                   </button>
+                </div>
+                <div className="w-12 h-0.5 bg-accent rounded"></div>
+              </div>
 
+                  <div className="horus-prescription"><div><strong>{activeModalExercise.sets}</strong><span>Séries</span></div><div><strong>{activeModalExercise.reps}</strong><span>{interpretPrescription(activeModalExercise).kind === 'time' ? 'Tempo' : 'Repetições'}</span></div><div><strong>{activeModalExercise.rest}</strong><span>Descanso</span></div></div>
                   {/* Standard Coaching Directives */}
                   <AnimatePresence>
                     {showExerciseInfo && (
@@ -1361,146 +1349,26 @@ export const WorkoutView: React.FC = () => {
                     )}
                   </AnimatePresence>
 
-                  {/* Interactive steppers controller section */}
-                  <div className="space-y-1.5 pt-1">
-                    <div className={`flex items-center justify-between text-[7px] font-black uppercase tracking-widest px-0.5 leading-none ${
-                        isLightTheme ? 'text-zinc-550 font-bold' : 'text-white/40'
-                    }`}>
-                      <span>SÉRIES E REGISTRO DE CARGA</span>
-                      <span className="font-mono">PESO (KG) — {interpretPrescription(activeModalExercise).kind === 'time' ? 'SEG' : 'REPS'}</span>
-                    </div>
-
-                    <div className="space-y-1 max-h-[170px] overflow-y-auto no-scrollbar animate-fade-in">
-                      {getExercisePerformance(activeModalExercise).map((set, setIdx) => {
-                        const isSetCompleted = set.completed;
-                        return (
-                          <div
-                            key={setIdx}
-                            className={`horus-set-row ${isSetCompleted ? 'completed' : ''} grid grid-cols-12 items-center gap-1.5 p-1 px-1.5 rounded-lg border transition-all duration-300 ${
-                              isSetCompleted
-                                ? 'bg-[#00DDA2]/5 border-[#00DDA2]/25'
-                                : (isLightTheme ? 'bg-zinc-100 border-zinc-200' : 'bg-zinc-900/50 border-white/5')
-                            }`}
-                          >
-                            {/* Column 1: Row Title */}
-                            <div className="col-span-2 text-left shrink-0 leading-none">
-                              <span className={`text-sm font-black font-mono block ${isLightTheme ? 'text-zinc-950' : 'text-white'}`}>
-                                {interpretPrescription(activeModalExercise).drop
-                                  ? `S${Math.floor(setIdx / 2) + 1}${setIdx % 2 === 0 ? '' : '+'}`
-                                  : `S${setIdx + 1}`
-                                }
-                              </span>
-                              {interpretPrescription(activeModalExercise).drop && setIdx % 2 !== 0 ? (
-                                <span className="text-[6px] font-black text-orange-500 uppercase tracking-widest mt-0.5 block italic leading-none font-mono font-bold">
-                                  DROP
-                                </span>
-                              ) : setIdx === 0 ? (
-                                <span className="text-[6px] font-black text-accent uppercase tracking-widest mt-0.5 block italic leading-none font-mono font-bold">
-                                  REP
-                                </span>
-                              ) : null}
-                            </div>
-
-                            {/* Column 2: Weight Stepper */}
-                            <div className="col-span-4 select-none">
-                              <div className={`flex items-center justify-between border rounded-lg px-0.5 h-8 ${
-                                isLightTheme ? 'bg-white border-zinc-300' : 'bg-zinc-950/80 border-white/5'
-                              }`}>
-                                <button
-                                  aria-label={`Diminuir peso da série ${setIdx + 1}`}
-                                  onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -1)}
-                                  disabled={isSetCompleted}
-                                  className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
-                                    isLightTheme ? 'text-zinc-650 hover:text-zinc-950 font-black' : 'text-zinc-400 hover:text-white'
-                                  }`}
-                                >
-                                  -
-                                </button>
-                                <input
-                                  type="number"
-                                  inputMode="decimal"
-                                  value={set.weight === 0 ? '' : set.weight}
-                                  disabled={isSetCompleted}
-                                  onFocus={(e) => e.target.select()}
-                                  onChange={(e) => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight: parseFloat(e.target.value) || 0 })}
-                                  className={`w-9 bg-transparent text-center font-bold font-mono text-xs focus:outline-none placeholder:text-zinc-700 disabled:opacity-80 ${
-                                    isLightTheme ? 'text-zinc-950 font-black' : 'text-white'
-                                  }`}
-                                  placeholder="0"
-                                />
-                                <button
-                                  aria-label={`Aumentar peso da série ${setIdx + 1}`}
-                                  onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 1)}
-                                  disabled={isSetCompleted}
-                                  className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
-                                    isLightTheme ? 'text-zinc-650 hover:text-zinc-950 font-black' : 'text-zinc-400 hover:text-white'
-                                  }`}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Column 3: Reps Stepper */}
-                            <div className="col-span-4 select-none">
-                              <div className={`flex items-center justify-between border rounded-lg px-0.5 h-8 ${
-                                isLightTheme ? 'bg-white border-zinc-300' : 'bg-zinc-950/80 border-white/5'
-                              }`}>
-                                <button
-                                  aria-label={`Diminuir repetições ou tempo da série ${setIdx + 1}`}
-                                  onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}
-                                  disabled={isSetCompleted}
-                                  className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
-                                    isLightTheme ? 'text-zinc-650 hover:text-zinc-950 font-black' : 'text-zinc-400 hover:text-white'
-                                  }`}
-                                >
-                                  -
-                                </button>
-                                <input
-                                  type="number"
-                                  inputMode="decimal"
-                                  value={interpretPrescription(activeModalExercise).kind === 'time' ? (set.durationSeconds ?? 0) : (set.reps === 0 ? '' : set.reps)}
-                                  disabled={isSetCompleted}
-                                  onFocus={(e) => e.target.select()}
-                                  onChange={(e) => handleUpdateModalSet(activeModalExercise.id, setIdx, interpretPrescription(activeModalExercise).kind === 'time' ? { durationSeconds: Number(e.target.value) } : { reps: Number(e.target.value) })}
-                                  className={`w-9 bg-transparent text-center font-bold font-mono text-xs focus:outline-none placeholder:text-zinc-700 disabled:opacity-80 ${
-                                    isLightTheme ? 'text-zinc-950 font-black' : 'text-white'
-                                  }`}
-                                  placeholder="0"
-                                />
-                                <button
-                                  aria-label={`Aumentar repetições ou tempo da série ${setIdx + 1}`}
-                                  onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}
-                                  disabled={isSetCompleted}
-                                  className={`px-1.5 h-full flex items-center justify-center font-bold text-xs active:scale-95 transition-all font-mono disabled:opacity-45 ${
-                                    isLightTheme ? 'text-zinc-650 hover:text-zinc-950 font-black' : 'text-zinc-400 hover:text-white'
-                                  }`}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Column 4: Glowing check indicator */}
-                            <div className="col-span-2 flex items-center justify-end pr-0.5">
-                              <button
-                                aria-label={`${isSetCompleted ? 'Desmarcar' : 'Concluir'} série ${setIdx + 1}`}
-                                onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: !isSetCompleted })}
-                                className={`w-7 h-7 rounded-sm border flex items-center justify-center active:scale-95 transition-all ${
-                                  isSetCompleted
-                                    ? 'bg-[#00DDA2] border-[#00DDA2] text-white shadow-[0_0_8px_rgba(0,221,162,0.25)]'
-                                    : (isLightTheme ? 'bg-zinc-100 border-zinc-200 text-zinc-400 hover:text-zinc-950' : 'bg-zinc-950 border-white/5 text-zinc-600 hover:text-zinc-400')
-                                }`}
-                              >
-                                <Check size={14} strokeWidth={4} />
-                              </button>
-                            </div>
+                  <section className="horus-register">
+                    <h3>Registrar série</h3>
+                    {(() => {
+                      const sets = getExercisePerformance(activeModalExercise);
+                      const setIdx = sets.findIndex(set => !set.completed);
+                      const set = sets[setIdx];
+                      const timed = interpretPrescription(activeModalExercise).kind === 'time';
+                      return <>
+                        {set && <>
+                          <p>Série {setIdx + 1} de {sets.length}{interpretPrescription(activeModalExercise).drop && setIdx % 2 !== 0 ? ' • Drop set' : ''}</p>
+                          <div className="horus-register-fields">
+                            <label>Carga (kg)<div className="horus-stepper"><button aria-label="Diminuir carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -1)}>−</button><input type="number" min="0" inputMode="decimal" value={set.weight} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight: Math.max(0, parseFloat(event.target.value) || 0) })} /><button aria-label="Aumentar carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 1)}>+</button></div></label>
+                            <label>{timed ? 'Tempo (seg)' : 'Repetições'}<div className="horus-stepper"><button aria-label="Diminuir repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}>−</button><input type="number" min="0" inputMode="numeric" value={timed ? (set.durationSeconds ?? 0) : set.reps} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, timed ? { durationSeconds: Math.max(0, Number(event.target.value)) } : { reps: Math.max(0, Number(event.target.value)) })} /><button aria-label="Aumentar repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}>+</button></div></label>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
+                          <button className="horus-action" onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: true })}><Check size={18} />Concluir série</button>
+                        </>}
+                        <p>Séries</p><div className="horus-series" aria-live="polite">{sets.map((item, index) => <button key={index} className={item.completed ? 'completed' : index === setIdx ? 'active' : ''} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}>{item.completed ? <Check size={18} /> : index + 1}</button>)}</div>
+                      </>;
+                    })()}
+                  </section>
                   {/* Manual video/tutorial guide link */}
                   <div className="pt-2 text-center leading-none">
                     <a

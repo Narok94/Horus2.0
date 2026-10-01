@@ -61,8 +61,8 @@ export const HistoryView: React.FC = () => {
     <header className="horus-page-header"><h1>Histórico</h1><p>Acompanhe seus treinos e evolução.</p></header>
     <div className="horus-filters">{['Todos', 'Peito', 'Costas', 'Pernas', 'Ombros'].map(label => <button key={label} className={filter === label ? 'active' : ''} onClick={() => setFilter(label)}>{label}</button>)}</div>
     <div className="horus-history-list">{history.map(entry => <button key={entry.id} className="horus-history-row horus-card" onClick={() => { setSelected(entry); setTab('Exercícios'); setExpanded(null); }}>
-      <span className={`horus-muscle-icon ${groupColor(entry)}`}>{groupOf(entry) === 'Ombros' ? <Activity size={30} /> : <Dumbbell size={30} strokeWidth={1.5} />}</span>
-      <span className="horus-row-copy"><span className="horus-date">{dateLabel(entry.date)}</span><strong>{entry.workoutTitle}</strong><small>{entry.exercises.length} exercícios • {completedSets(entry)} séries</small></span><CheckCircle2 className="horus-green shrink-0" size={24} /><ChevronRight size={18} className="shrink-0" />
+      <span className={`horus-muscle-icon ${groupColor(entry)}`}>{entry.exercises[0] ? <ExerciseThumbnail name={entry.exercises[0].name} /> : <Dumbbell size={30} strokeWidth={1.5} />}</span>
+      <span className="horus-row-copy"><span className="horus-date">{dateLabel(entry.date)}</span><strong>{entry.workoutTitle}</strong><small>{entry.exercises.length} exercícios • {entry.duration === undefined ? 'Duração não registrada' : `${Math.floor(entry.duration / 60)} min`}</small><small className="horus-green">Concluído</small></span><CheckCircle2 className="horus-green shrink-0" size={24} /><ChevronRight size={18} className="shrink-0" />
     </button>)}</div>
     {!history.length && <div className="horus-card horus-information"><Dumbbell size={28} /><h2>Nenhum treino registrado</h2><p>Seus treinos concluídos aparecerão aqui.</p></div>}
   </section>;
