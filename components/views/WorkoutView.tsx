@@ -757,6 +757,7 @@ export const WorkoutView: React.FC = () => {
                    <Dumbbell size={14} className="text-accent shrink-0" />
                 </div>
 
+            <div className="horus-summary-count border rounded-xl p-3 flex items-center justify-between text-left"><div><p>Exercícios concluídos</p><strong>{selectedWorkout.exercises.filter(ex => getExercisePerformance(ex).every(set => set.completed)).length} / {selectedWorkout.exercises.length}</strong></div><CheckCircle2 size={22} /></div>
           </div>
 
           {" "}
@@ -890,7 +891,7 @@ export const WorkoutView: React.FC = () => {
                       ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg'
                       : 'bg-[#0e0e12]/70 border-white/5 hover:border-accent/40 hover:bg-[#121217]/90'
                   } ${
-                    isAllCompleted ? 'opacity-40' : 'opacity-100'
+                    isAllCompleted ? 'horus-exercise-completed' : 'opacity-100'
                   }`}
                 >
                   <div className="flex items-center min-w-0 flex-1">
@@ -1147,7 +1148,7 @@ export const WorkoutView: React.FC = () => {
                     exit={{ height: 0, opacity: 0, y: -10 }}
                     className="overflow-hidden"
                   >
-                    <div className={`p-3 rounded-lg border text-center space-y-2 ${
+                    <div className={`horus-rest-card p-3 rounded-lg border text-center space-y-2 ${
                       isLightTheme ? 'bg-zinc-50 border-accent/40' : 'bg-gradient-to-br from-zinc-900 to-zinc-950 border-accent/20'
                     }`}>
                        <div className="space-y-0.5 leading-none">
@@ -1304,7 +1305,7 @@ export const WorkoutView: React.FC = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className={`border rounded-xl p-3 space-y-2.5 text-left leading-relaxed mt-4 ${
+                        <div className={`horus-technical-info border rounded-xl p-3 space-y-2.5 text-left leading-relaxed mt-4 ${
                           isLightTheme ? 'border-zinc-250 bg-zinc-50' : 'border-white/5 bg-[#121216]/50'
                         }`}>
                           <div>
