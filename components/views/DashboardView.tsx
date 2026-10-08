@@ -7,9 +7,7 @@ import {
   Flame,
   LogOut,
 
-  Bell,
 
-  X,
   Clock,
   Calendar,
   Dumbbell,
@@ -37,7 +35,6 @@ export const DashboardView: React.FC = () => {
     selectedWorkout: currentSelected
   } = useStore();
 
-  const [showNotificationDrawer, setShowNotificationDrawer] = useState<boolean>(false);
   const [unavailableAvatar, setUnavailableAvatar] = useState<string | null>(null);
   const [, setCurrentTime] = useState<Date>(new Date());
 
@@ -136,84 +133,269 @@ export const DashboardView: React.FC = () => {
     setActiveTab(AppTab.WORKOUT);
   };
 
-  return <section className="horus-screen horus-home">
-    <header className="horus-home-header">
-      <div className="horus-home-identity"><span className="horus-home-avatar">{user.avatar && unavailableAvatar !== user.avatar ? <img src={user.avatar} alt="Foto de perfil" onError={() => setUnavailableAvatar(user.avatar || null)} /> : getInitials(user.name)}</span><div><p>Olá, {user.name.split(' ')[0]} 👋</p><h1>Pronto para evoluir hoje?</h1><small>Disciplina hoje, resultado sempre.</small></div></div>
-      <div className="horus-home-tools"><span className="horus-icon-button horus-green" title="Dados salvos neste dispositivo"><CheckCircle2 size={17} /></span><button className="horus-icon-button" aria-label="Notificações" onClick={() => { handleVibrate(15); setShowNotificationDrawer(!showNotificationDrawer); }}><Bell size={18} /></button><button className="horus-icon-button" aria-label="Sair" title="Sair" onClick={() => { handleVibrate(15); logout(); }}><LogOut size={17} /></button></div>
-    </header>
-    <div className="horus-today-card horus-card">
-      <div className="horus-today-eyebrow"><span>Treino de hoje</span><span className="horus-today-symbol"><Dumbbell size={25} strokeWidth={1.5} /></span></div>
-      <h2>{nextWorkout ? nextWorkout.title : 'TREINO RESGATADO'}</h2><p>{nextWorkout ? nextWorkout.description : 'Carregando suas séries...'}</p>
-      <div className="horus-today-stats"><span><Dumbbell size={17} /><strong>{nextWorkout?.exercises?.length || 0}</strong> exercícios</span><span><Clock size={17} /><strong>45</strong> min estimados</span></div>
-      <button className="horus-action horus-today-start" onClick={startActiveWorkout}><Play size={17} fill="currentColor" />{isWorkoutActive ? 'Continuar treino' : 'Iniciar treino'}</button>
-      <button className="horus-today-all" onClick={viewWorkoutsList}>Todos os treinos <Dumbbell size={15} /></button>
-    </div>
-    <div className="horus-week horus-card">
-      <div className="horus-week-title"><h2>Frequência semanal</h2><span>{currentWeekWorkoutsCount}<small>/7 dias</small></span></div>
-      <div className="horus-week-days">{weekDays.map((dia, idx) => {
-        const dateStr = weekDates[idx]; const isToday = currentDayIndex === idx; const treinou = user.checkIns?.includes(dateStr) || false;
-        return <button key={idx} className={`${isToday ? 'today' : ''} ${treinou ? 'completed' : ''}`} aria-label={`${dia}${treinou ? ', concluído' : ''}${isToday ? ', hoje' : ''}`} onClick={() => handleToggleDay(dia, dateStr, treinou)}><span>{dia}</span><span className="horus-day-mark">{treinou ? <CheckCircle2 size={19} /> : <span className="horus-day-dot" />}</span></button>;
-      })}</div>
-    </div>
-    <div className="horus-home-metrics">
-      <div className="horus-card"><span className="horus-small-icon"><Flame size={19} className="horus-orange" /></span><small>Sequência</small><strong>{user.streak || 0}<span> dias</span></strong><p>Mantenha o ritmo</p></div>
-      <div className="horus-card"><span className="horus-small-icon"><Clock size={19} /></span><small>Tempo total</small><strong>{user.totalWorkouts > 0 ? `${Math.max(1, Math.round((user.totalWorkouts * 45) / 60))}h` : '0h'}</strong><p>Estimado</p></div>
-      <div className="horus-card"><span className="horus-small-icon"><Calendar size={19} /></span><small>Recomendado</small><strong className="horus-recommendation" title={nextWorkout ? nextWorkout.title : ''}>{nextWorkout ? nextWorkout.title : 'Nenhum'}</strong><p>Sua sequência</p></div>
-    </div>
-        {showNotificationDrawer && (
-          <div className="horus-home-notifications fixed inset-y-0 right-0 z-50 w-full max-w-xs bg-white border-l border-zinc-200 shadow-2xl flex flex-col justify-between overflow-hidden animate-fade-in">
-            <div className="pt-12 pb-4 px-4 sm:p-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
-              <h4 className="text-xs font-black tracking-widest text-[#2563EB] uppercase flex items-center gap-1.5 leading-none">
-                <Bell size={13} />
-                CENTRAL DE NOTIFICAÇÕES
-              </h4>
-              <button
-                onClick={() => {
-                  handleVibrate(15);
-                  setShowNotificationDrawer(false);
-                }}
-                className="p-1.5 bg-zinc-100 hover:bg-zinc-200 hover:text-black text-zinc-500 rounded-lg cursor-pointer transition-colors"
-              >
-                <X size={14} />
-              </button>
+  return (
+      <div className="horus-original-dashboard w-full min-h-screen flex flex-col justify-start gap-3 bg-transparent text-zinc-950 font-sans antialiased select-none relative pt-12 sm:pt-6 pb-40 px-1">
+
+        {/* 1. HEADER COUPE - EXTREME CLEAN */}
+        <header className="flex justify-between items-center shrink-0">
+          <div className="flex items-center gap-2.5">
+            {/* Round bold initial avatar */}
+            <div className="w-10 h-10 rounded-full bg-[#2563EB] text-white flex items-center justify-center font-black text-xs tracking-tight shadow-md shrink-0">
+              {user.avatar && unavailableAvatar !== user.avatar ? <img className="w-full h-full object-cover rounded-full" src={user.avatar} alt="Foto de perfil" onError={() => setUnavailableAvatar(user.avatar || null)} /> : getInitials(user.name)}
             </div>
-
-            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 no-scrollbar text-left">
-              <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-2xl space-y-1">
-                <span className="text-[8px] font-black tracking-widest text-[#2563EB] uppercase">NOVO TREINO DISPONÍVEL</span>
-                <p className="text-[11px] font-extrabold text-zinc-950">Seu Treino A foi atualizado!</p>
-                <p className="text-[10px] text-zinc-500 font-medium">Confira suas cargas de agachamento e supino antes de treinar.</p>
-                <span className="text-[8.5px] font-bold text-[#2563EB]/80 block pt-1">Há 10 minutos</span>
-              </div>
-
-              <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-2xl space-y-1">
-                <span className="text-[8px] font-black tracking-widest text-zinc-400 uppercase">SISTEMA</span>
-                <p className="text-[11px] font-extrabold text-zinc-950">Conquista Desbloqueada 🚀</p>
-                <p className="text-[10px] text-zinc-500 font-medium">Você completou 12 dias de sequência hoje! Continue focado.</p>
-                <span className="text-[8.5px] font-bold text-zinc-400 block pt-1">Há 2 horas</span>
-              </div>
-
-              <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-2xl space-y-1">
-                <span className="text-[8px] font-black tracking-widest text-zinc-400 uppercase">SISTEMA</span>
-                <p className="text-[11px] font-extrabold text-zinc-950">Check-in Automático</p>
-                <p className="text-[10px] text-zinc-500 font-medium">Você marcou presença na academia hoje por geolocalização.</p>
-                <span className="text-[8.5px] font-bold text-zinc-400 block pt-1">Ontem</span>
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-zinc-100 bg-zinc-50/50 text-center">
-              <button
-                onClick={() => {
-                  handleVibrate(15);
-                  setShowNotificationDrawer(false);
-                }}
-                className="text-[10px] font-black text-[#2563EB] tracking-wider uppercase hover:underline cursor-pointer"
-              >
-                FECHAR NOTIFICAÇÕES
-              </button>
+            <div className="text-left leading-none">
+              <span className="text-zinc-500 text-[10px] font-extrabold flex items-center gap-1 leading-none uppercase tracking-wider">
+                Olá, {user.name.split(' ')[0]} 👋
+              </span>
+              <h1 className="text-[17px] font-[900] text-zinc-950 tracking-tighter leading-none mt-1 font-sans">
+                Pronto para evoluir hoje?
+              </h1>
+              <p className="text-zinc-400 text-[9px] font-medium leading-none mt-0.5">
+                Disciplina hoje, resultado sempre.
+              </p>
             </div>
           </div>
-        )}
 
-  </section>;
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => {
+                handleVibrate(15);
+                logout();
+              }}
+              className="p-2 bg-white border border-zinc-200/60 text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-all rounded-xl cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.01)]"
+              aria-label="Sair"
+              title="Sair"
+            >
+              <LogOut size={12} />
+            </button>
+          </div>
+        </header>
+
+        {/* 2. CARD HERO PRINCIPAL - TREINO DE HOJE (Slimmer and more compact) */}
+        <div className="w-full bg-gradient-to-br from-[#2563EB] to-[#0A192F] rounded-[22px] p-4.5 md:py-4 text-white relative shadow-lg shadow-blue-900/10 overflow-hidden flex flex-col justify-between min-h-[195px] md:min-h-0 shrink-0">
+          {/* Subtle flare behind dumbbell */}
+          <div className="absolute -top-10 -right-10 w-36 h-36 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex justify-between items-start w-full relative z-10">
+            {/* Info Text Stack - Compact block spacing */}
+            <div className="space-y-2.5 text-left relative z-20 max-w-[75%]">
+              <span className="inline-block bg-white/10 text-white text-[8px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full border border-white/10 shrink-0 select-none backdrop-blur-sm">
+                TREINO DE HOJE
+              </span>
+
+              <div className="space-y-1">
+                <h2 className="text-[24px] sm:text-[28px] font-extrabold tracking-tight uppercase leading-tight m-0 p-0 text-white drop-shadow-sm pr-2">
+                  {nextWorkout ? nextWorkout.title : 'TREINO RESGATADO'}
+                </h2>
+                <p className="text-white/85 text-[12px] font-medium tracking-wide leading-snug line-clamp-2 pr-2">
+                  {nextWorkout ? nextWorkout.description : 'Carregando suas séries...'}
+                </p>
+              </div>
+
+              {/* Dynamic stats row */}
+              <div className="flex items-center gap-3.5 pt-0.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-white shrink-0">
+                    <Clock size={11} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex flex-col text-left leading-none justify-center">
+                    <span className="text-[11px] font-black text-white">45</span>
+                    <span className="text-[7.5px] text-white/50 font-black uppercase tracking-wider mt-0.5">minutos</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <div className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-white shrink-0">
+                    <Dumbbell size={11} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex flex-col text-left leading-none justify-center">
+                    <span className="text-[11px] font-black text-white">{nextWorkout?.exercises?.length || 0}</span>
+                    <span className="text-[7.5px] text-white/50 font-black uppercase tracking-wider mt-0.5">exercícios</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Premium 3D Isometric Dumbbell SVG Graphic - Repositioned and resized for compactness */}
+            <div className="absolute right-[-15px] top-[-15px] w-28 h-28 pointer-events-none select-none opacity-40 z-0">
+              <svg viewBox="0 0 200 200" className="w-full h-full object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="barGradientPremium" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#CBD5E1" />
+                    <stop offset="50%" stopColor="#94A3B8" />
+                    <stop offset="100%" stopColor="#475569" />
+                  </linearGradient>
+                  <linearGradient id="plateGradientPremium" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#475569" />
+                    <stop offset="60%" stopColor="#1E293B" />
+                    <stop offset="100%" stopColor="#0F172A" />
+                  </linearGradient>
+                  <linearGradient id="blueGlowPremium" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#1D4ED8" />
+                  </linearGradient>
+                  <filter id="paintsShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="4" dy="8" stdDeviation="4" floodColor="#000000" floodOpacity="0.35" />
+                  </filter>
+                </defs>
+                <ellipse cx="100" cy="158" rx="45" ry="8" fill="#000000" opacity="0.25" filter="blur(5px)" />
+                <g transform="rotate(-26 100 100)" filter="url(#paintsShadow)">
+                  <ellipse cx="50" cy="100" rx="14" ry="32" fill="url(#plateGradientPremium)" />
+                  <ellipse cx="43" cy="100" rx="14" ry="34" fill="url(#plateGradientPremium)" />
+                  <ellipse cx="35" cy="100" rx="14" ry="36" fill="url(#plateGradientPremium)" />
+                  <rect x="42" y="94" width="116" height="12" rx="2.5" fill="url(#barGradientPremium)" />
+                  <line x1="70" y1="94" x2="70" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <line x1="80" y1="94" x2="80" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <line x1="90" y1="94" x2="90" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <line x1="100" y1="94" x2="100" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <line x1="110" y1="94" x2="110" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <line x1="120" y1="94" x2="120" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <line x1="130" y1="94" x2="130" y2="106" stroke="#334155" strokeWidth="0.8" />
+                  <ellipse cx="150" cy="100" rx="14" ry="32" fill="url(#plateGradientPremium)" />
+                  <ellipse cx="158" cy="100" rx="14" ry="34" fill="url(#blueGlowPremium)" />
+                  <ellipse cx="166" cy="100" rx="14" ry="36" fill="url(#plateGradientPremium)" />
+                  <ellipse cx="165" cy="100" rx="8" ry="18" fill="#2563EB" stroke="#60A5FA" strokeWidth="1" />
+                  <text x="165" y="104.5" fill="#FFFFFF" fontSize="12" fontWeight="950" fontFamily="sans-serif" textAnchor="middle" transform="rotate(26 165 100)">H</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          {/* Compact CTA Trigger padding */}
+          <div className="flex flex-col gap-2 mt-3.5 relative z-10 w-full">
+            <button
+              onClick={startActiveWorkout}
+              className="w-full bg-white hover:bg-zinc-150 active:scale-[0.98] text-[#2563EB] font-black uppercase text-[10px] py-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 tracking-wider shadow-md border-0"
+            >
+              <Play size={11} className="fill-[#2563EB] stroke-none" />
+              <span>{isWorkoutActive ? 'CONTINUAR TREINO' : 'INICIAR TREINO'}</span>
+            </button>
+
+            <button
+              onClick={viewWorkoutsList}
+              className="w-full bg-white/10 hover:bg-white/20 active:scale-[0.98] text-white border border-white/20 font-black uppercase text-[10px] py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 tracking-wider backdrop-blur-sm"
+            >
+              <Dumbbell size={11} className="text-white" />
+              <span>TODOS OS TREINOS</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Wrapper for side-by-side md: Grid */}
+        <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-4 w-full">
+          {/* 3. WEEK FREQUENCY DISPLAY (Premium Blue Background and White Text) */}
+          <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-[20px] p-4 space-y-3.5 text-left shadow-lg shadow-blue-900/5 shrink-0">
+            <div className="flex justify-between items-center h-4 leading-none">
+              <h3 className="text-[9px] font-black tracking-widest uppercase text-white font-sans">
+                FREQUÊNCIA SEMANAL
+              </h3>
+              <span className="bg-white/10 border border-white/10 text-white px-2.5 py-1 rounded-full text-[9px] font-black tracking-tight leading-none">
+                {currentWeekWorkoutsCount}/7 dias
+              </span>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 pt-0.5">
+              {weekDays.map((dia, idx) => {
+                const dateStr = weekDates[idx];
+                const isToday = currentDayIndex === idx;
+                const treinou = user.checkIns?.includes(dateStr) || false;
+
+                return (
+                  <button
+                    key={idx}
+                    aria-label={`${dia}${treinou ? ", concluído" : ""}${isToday ? ", hoje" : ""}`}
+                    onClick={() => handleToggleDay(dia, dateStr, treinou)}
+                    className="flex flex-col items-center gap-1.5 cursor-pointer bg-transparent border-0 outline-none p-0 focus:outline-none"
+                  >
+                    <span className={`text-[9px] font-extrabold tracking-wider ${
+                      isToday ? 'text-white font-black scale-105' : 'text-white/60'
+                    }`}>
+                      {dia}
+                    </span>
+                    <div className="relative">
+                      {treinou ? (
+                        <div className="w-7 h-7 rounded-full bg-white text-[#2563EB] flex items-center justify-center shadow shadow-black/15">
+                          <CheckCircle2 size={12} className="text-[#2563EB] fill-[#2563EB]/15 animate-fade" />
+                        </div>
+                      ) : (
+                        <div className="w-7 h-7 rounded-full border border-white/20 bg-white/5 flex hover:bg-white/10 transition-colors" />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 4. SUMMARY METRIC TRIPLE CARDS (Premium Blue Background and White Text) */}
+          <div className="grid grid-cols-3 gap-2 w-full shrink-0 md:flex md:flex-row md:gap-3">
+            {/* Card 1: Sequência */}
+            <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] min-w-0 md:flex-1">
+              <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-orange-400 shrink-0">
+                <Flame size={12} className="fill-orange-400/20" />
+              </div>
+
+              <div className="leading-none space-y-0.5">
+                <span className="text-[7px] font-black uppercase tracking-wider text-white/50">
+                  SEQUÊNCIA
+                </span>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-lg font-extrabold text-white leading-none">{user.streak || 0}</span>
+                  <span className="text-[9px] font-bold text-white/70 leading-none">dias</span>
+                </div>
+              </div>
+
+              <p className="text-[8px] text-white/80 font-medium leading-none">
+                Mantenha o ritmo!
+              </p>
+            </div>
+
+            {/* Card 2: Tempo Total */}
+            <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] md:flex-1">
+              <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-blue-200 shrink-0">
+                <Clock size={12} />
+              </div>
+
+              <div className="leading-none space-y-0.5">
+                <span className="text-[7px] font-black uppercase tracking-wider text-white/50">
+                  TEMPO TOTAL
+                </span>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-lg font-extrabold text-white leading-none">
+                    {user.totalWorkouts > 0 ? `${Math.max(1, Math.round((user.totalWorkouts * 45) / 60))}h` : '0h'}
+                  </span>
+                  <span className="text-[9px] font-bold text-white/70 leading-none flex items-center">dedicado</span>
+                </div>
+              </div>
+
+              <p className="text-[8px] text-white/80 font-medium leading-none">
+                Treino consistente
+              </p>
+            </div>
+
+            {/* Card 3: Próximo Treino */}
+            <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] md:flex-1">
+              <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-indigo-300 shrink-0">
+                <Calendar size={12} />
+              </div>
+
+              <div className="leading-none space-y-0.5">
+                <span className="text-[7px] font-black uppercase tracking-wider text-white/50">
+                  RECOMENDADO
+                </span>
+                <div className="space-y-0.5">
+                  <span className="text-[12px] font-black text-white block leading-none truncate">{nextWorkout ? nextWorkout.title : 'Nenhum'}</span>
+                  <span className="text-[8px] font-bold text-white/60 block leading-none">Sua sequência</span>
+                </div>
+              </div>
+
+              <p className="text-[8px] text-white/80 font-bold leading-none truncate" title={nextWorkout ? nextWorkout.description : ''}>
+                {nextWorkout ? nextWorkout.description : 'Treinos em dia.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+  );
 };
