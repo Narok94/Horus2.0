@@ -74,8 +74,8 @@ const AppContent: React.FC = () => {
 
   // Cor de destaque da aplicação.
   useEffect(() => {
-    const accentColor = '#0875F5';
-    const accentRgb = '8, 117, 245';
+    const accentColor = '#2563EB';
+    const accentRgb = '37, 99, 235';
 
     const root = document.documentElement;
     root.style.setProperty('--accent-color', accentColor);
@@ -282,7 +282,7 @@ const AppContent: React.FC = () => {
               whileHover={{ scale: 1.01, boxShadow: '0 6px 20px rgba(29, 78, 216, 0.25)' }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full bg-[#1D4ED8] text-white font-black text-xs uppercase tracking-[0.2em] h-[52px] rounded-2xl transition-all flex justify-center items-center gap-2 cursor-pointer border-0 mt-2 shadow-[0_4px_12px_rgba(29,78,216,0.15)]"
+              className="horus-login-submit w-full bg-[#1D4ED8] text-white font-black text-xs uppercase tracking-[0.2em] h-[52px] rounded-2xl transition-all flex justify-center items-center gap-2 cursor-pointer border-0 mt-2 shadow-[0_4px_12px_rgba(29,78,216,0.15)]"
             >
               <Play size={12} className="fill-white text-white ml-0.5" /> ENTRAR
             </motion.button>
