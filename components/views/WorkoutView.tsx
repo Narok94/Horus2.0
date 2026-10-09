@@ -1,3 +1,4 @@
+import { getExerciseThumbnail, getThumbnailPlan, retryThumbnail } from '../../src/utils/workoutThumbnails';
 import { interpretPrescription, createInitialPerformance, getRestSeconds } from '../../src/utils/workoutPrescription';
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -896,8 +897,8 @@ export const WorkoutView: React.FC = () => {
                 >
                   <div className="flex items-center min-w-0 flex-1">
                     <span className="horus-workout-thumbnail">
-                      <img src={details.gif} alt={ex.name} loading="lazy" referrerPolicy="no-referrer"
-                        onError={event => { event.currentTarget.dataset.unavailable = 'true'; }} />
+                      <img src={getExerciseThumbnail(ex, getThumbnailPlan(user?.username, selectedWorkout || undefined)) || details.gif} alt={ex.name} loading="lazy" referrerPolicy="no-referrer"
+                        onError={event => { if (!retryThumbnail(event.currentTarget, details.gif)) event.currentTarget.dataset.unavailable = 'true'; }} />
                       <Dumbbell className="horus-workout-thumbnail-fallback" size={23} strokeWidth={1.5} aria-hidden="true" />
                     </span>
 
@@ -1258,13 +1259,13 @@ export const WorkoutView: React.FC = () => {
                     isLightTheme ? 'bg-white border-zinc-250' : 'bg-zinc-950 border-white/5'
                   }`}>
                     <img
-                      key={activeModalExercise.id}
-                      src={getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif}
+                      key={`${activeModalExercise.id}-${showExerciseInfo}`}
+                      src={(!showExerciseInfo && getExerciseThumbnail(activeModalExercise, getThumbnailPlan(user?.username, selectedWorkout || undefined))) || getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif}
                       alt={activeModalExercise.name}
                       className="max-h-[150px] w-auto max-w-[200px] rounded-lg object-contain"
                       loading="lazy"
                       referrerPolicy="no-referrer"
-                      onError={event => { event.currentTarget.dataset.unavailable = 'true'; }}
+                      onError={event => { if (!retryThumbnail(event.currentTarget, getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif)) event.currentTarget.dataset.unavailable = 'true'; }}
                     />
                     <div className="horus-gif-fallback"><Dumbbell size={30} strokeWidth={1.5} /><span>Demonstração indisponível</span><small>Consulte o guia técnico abaixo</small></div>
                     <span className="absolute bottom-1.5 px-2 py-0.5 rounded bg-black/60 border border-white/5 font-mono text-[6px] font-bold text-zinc-400 uppercase tracking-widest leading-none">DEMONSTRAÇÃO DE EXECUÇÃO</span>

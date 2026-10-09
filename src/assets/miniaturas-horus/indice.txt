@@ -1,0 +1,92 @@
+MINIATURAS HORUS
+Estrutura:
+- treino-principal/divisoes
+- treino-principal/exercicios
+- treino-feminino/divisoes
+- treino-feminino/exercicios
+
+Observação: os nomes dos arquivos estão em minúsculo e separados por hífen.
+Nesta primeira versão, 'agachamento-barra-guiada' e 'hack' usam a representação visual mais próxima disponível no lote; 'leg-45-afundo' foi montado como miniatura dupla.
+
+TREINO PRINCIPAL - DIVISÕES
+- treino-a-peito-e-biceps.png
+- treino-b-quadriceps-e-panturrilha.png
+- treino-c-costas-e-triceps.png
+- treino-d-ombro-panturrilha-e-trapezio.png
+- treino-e-posterior-de-perna-gluteo-e-cardio.png
+
+TREINO PRINCIPAL - EXERCÍCIOS
+- abdominal-supra.png
+- afundo.png
+- agachamento-livre.png
+- cadeira-abdutora.png
+- cadeira-extensora.png
+- cadeira-flexora.png
+- cardio-bike.png
+- cardio-esteira.png
+- crucifixo-na-maquina.png
+- desenvolvimento-halteres.png
+- elevacao-frontal-halteres.png
+- elevacao-lateral-halteres.png
+- elevacao-pelvica.png
+- encolhimento-ombros.png
+- leg-press-45.png
+- mesa-flexora.png
+- panturrilha-em-pe.png
+- panturrilha-sentada-2.png
+- panturrilha-sentada.png
+- prancha-abdominal.png
+- puxada-alta-pulley-frente.png
+- remada-cavalinho.png
+- remada-curvada-barra.png
+- remada-sentada.png
+- rosca-alternada-halteres.png
+- rosca-direta-barra.png
+- rosca-martelo.png
+- stiff.png
+- supino-inclinado-halteres.png
+- supino-inclinado-maquina.png
+- supino-reto-barra.png
+- triceps-frances.png
+- triceps-pulley-corda.png
+- triceps-testa-barra-w.png
+
+TREINO FEMININO - DIVISÕES
+- treino-a-peito-e-triceps.png
+- treino-b-quadriceps.png
+- treino-c-costas-e-biceps.png
+- treino-d-posterior-e-gluteo.png
+- treino-e-ombro.png
+
+TREINO FEMININO - EXERCÍCIOS
+- agachamento-barra-guiada.png
+- bulgaro.png
+- cadeira-abdutora.png
+- cadeira-adutora.png
+- cadeira-extensora.png
+- cadeira-flexora.png
+- crucifixo-inverso.png
+- desenvolvimento-aberto-barra.png
+- elevacao-lateral.png
+- encolhimento-ombro.png
+- frontal-com-halteres.png
+- hack.png
+- leg-45-afundo.png
+- levantamento-pelvico.png
+- mesa-flexora.png
+- panturrilha-em-pe.png
+- panturrilha-sentada.png
+- peck-deck.png
+- pulley-aberto.png
+- pulley-triangulo.png
+- remada-sentada.png
+- rosca-direta-barra-w.png
+- rosca-martelo-corda.png
+- rosca-scott-barra-w.png
+- stiff-com-halteres.png
+- supino-inclinado.png
+- supino-reto.png
+- triceps-corda.png
+- triceps-frances.png
+- triceps-pulley.png
+

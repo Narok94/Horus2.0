@@ -1,3 +1,6 @@
+import { getExerciseThumbnail, getThumbnailPlan, retryThumbnail } from '../../src/utils/workoutThumbnails';
+import type { ThumbnailPlan } from '../../src/utils/workoutThumbnails';
+import { getExerciseDetails } from '../../src/utils/exerciseUtils';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, ChevronRight, Clock3, Dumbbell, Flame } from 'lucide-react';
 import { useStore } from '../../store';
@@ -12,6 +15,11 @@ const groupOf = (entry: WorkoutHistoryEntry) => {
   if (/quadríceps|posterior|glúteo|pernas/.test(title)) return 'Pernas';
   if (/ombro/.test(title)) return 'Ombros';
   return 'Todos';
+};
+
+const ExerciseThumbnail = ({ name, plan }: { name: string; plan: ThumbnailPlan }) => {
+  const [unavailable, setUnavailable] = useState(false);
+  return unavailable ? <Dumbbell size={22} /> : <img className="w-11 h-12 object-contain rounded-lg shrink-0" src={getExerciseThumbnail({ name }, plan) || getExerciseDetails(name).gif} alt="" loading="lazy" onError={event => { if (!retryThumbnail(event.currentTarget, getExerciseDetails(name).gif)) setUnavailable(true); }} />;
 };
 
 export const HistoryView: React.FC = () => {
@@ -55,7 +63,7 @@ export const HistoryView: React.FC = () => {
             return <div key={key}>
               <button onClick={() => setExpanded(open ? null : key)} className="w-full rounded-2xl p-3.5 flex items-center gap-3 text-left bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg">
                 <span className="w-9 h-9 rounded-xl bg-white/15 border border-white/10 grid place-items-center font-mono text-xs font-black">{index + 1}</span>
-                <span className="min-w-0 flex-1"><strong className="block text-xs font-black uppercase tracking-tight leading-tight">{ex.name}</strong><small className="block mt-1 text-[9px] text-white/60 font-mono">{ex.performance.filter(s => s.completed).length} séries registradas</small></span>
+                <ExerciseThumbnail name={ex.name} plan={getThumbnailPlan(user.username, { id: selected.workoutId })} /><span className="min-w-0 flex-1"><strong className="block text-xs font-black uppercase tracking-tight leading-tight">{ex.name}</strong><small className="block mt-1 text-[9px] text-white/60 font-mono">{ex.performance.filter(s => s.completed).length} séries registradas</small></span>
                 <ChevronRight size={16} className={`transition-transform ${open ? 'rotate-90' : ''}`} />
               </button>
               {open && <div className="mx-2 -mt-1 rounded-b-2xl bg-[#0A192F] text-white/80 border border-white/10 border-t-0 p-3 space-y-1.5">{ex.performance.map((set, i) => <div key={i} className="flex items-center justify-between text-[10px] font-mono"><span>Série {i + 1}</span><span>{set.weight} kg · {set.durationSeconds !== undefined ? `${set.durationSeconds}s` : `${set.reps} reps`} {set.completed ? '✓' : '—'}</span></div>)}</div>}
@@ -83,7 +91,7 @@ export const HistoryView: React.FC = () => {
       <div className="space-y-3 px-1">
         {history.map(entry => <button key={entry.id} onClick={() => { setSelected(entry); setExpanded(null); }} className="w-full rounded-2xl p-4 text-left bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 text-white shadow-lg active:scale-[0.99] transition-transform">
           <div className="flex items-start gap-3">
-            <div className="w-11 h-11 rounded-xl bg-white/15 border border-white/10 grid place-items-center shrink-0"><Dumbbell size={18} /></div>
+            <div className="w-11 h-11 rounded-xl bg-white/15 border border-white/10 grid place-items-center shrink-0">{entry.exercises[0] ? <ExerciseThumbnail name={entry.exercises[0].name} plan={getThumbnailPlan(user.username, { id: entry.workoutId })} /> : <Dumbbell size={18} />}</div>
             <div className="min-w-0 flex-1">
               <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-white/55">{dateLabel(entry.date)}</span>
               <h2 className="text-[14px] font-black uppercase tracking-tight leading-tight mt-1">{entry.workoutTitle}</h2>

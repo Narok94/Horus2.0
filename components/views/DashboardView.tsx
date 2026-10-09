@@ -1,3 +1,4 @@
+import { getDivisionThumbnail, getThumbnailPlan } from '../../src/utils/workoutThumbnails';
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store';
 import { AppTab } from '../../types';
@@ -35,6 +36,7 @@ export const DashboardView: React.FC = () => {
     selectedWorkout: currentSelected
   } = useStore();
 
+  const [unavailableDivision, setUnavailableDivision] = useState<string | null>(null);
   const [unavailableAvatar, setUnavailableAvatar] = useState<string | null>(null);
   const [, setCurrentTime] = useState<Date>(new Date());
 
@@ -113,6 +115,10 @@ export const DashboardView: React.FC = () => {
     const nextWorkoutIndex = lastWorkoutIndex > -1 ? (lastWorkoutIndex + 1) % workouts.length : 0;
     nextWorkout = workouts[nextWorkoutIndex] || workouts[0] || null;
   }
+
+  const heroWorkout = isWorkoutActive && currentSelected ? currentSelected : nextWorkout;
+  const heroThumbnail = heroWorkout ? getDivisionThumbnail(heroWorkout, getThumbnailPlan(user?.username, heroWorkout)) : undefined;
+  const showHeroThumbnail = !!heroThumbnail && unavailableDivision !== heroThumbnail;
 
   const startActiveWorkout = () => {
     handleVibrate(40);
@@ -217,8 +223,8 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* Premium 3D Isometric Dumbbell SVG Graphic - Repositioned and resized for compactness */}
-            <div className="absolute right-[-15px] top-[-15px] w-28 h-28 pointer-events-none select-none opacity-40 z-0">
-              <svg viewBox="0 0 200 200" className="w-full h-full object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className={`absolute right-[-15px] top-[-15px] w-28 h-28 pointer-events-none select-none z-0 ${showHeroThumbnail ? 'opacity-100' : 'opacity-40'}`}>
+              {showHeroThumbnail ? <img src={heroThumbnail} alt="" className="w-full h-full object-contain" onError={() => setUnavailableDivision(heroThumbnail!)} /> : (<svg viewBox="0 0 200 200" className="w-full h-full object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="barGradientPremium" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#CBD5E1" />
@@ -257,7 +263,7 @@ export const DashboardView: React.FC = () => {
                   <ellipse cx="165" cy="100" rx="8" ry="18" fill="#2563EB" stroke="#60A5FA" strokeWidth="1" />
                   <text x="165" y="104.5" fill="#FFFFFF" fontSize="12" fontWeight="950" fontFamily="sans-serif" textAnchor="middle" transform="rotate(26 165 100)">H</text>
                 </g>
-              </svg>
+              </svg>)}
             </div>
           </div>
 
