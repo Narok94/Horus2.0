@@ -560,7 +560,7 @@ body:has(.horus-detail) .horus-bottom-nav { display:block; }.horus-detail { padd
 .performance-division-open { flex-shrink:0; position:absolute; right:12px; bottom:13px; width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:var(--performance-blue); color:#fff; z-index:3; }
 .performance-footer { display:flex; justify-content:center; align-items:center; gap:6px; color:var(--performance-muted); font-size:10px; margin-top:20px; }
 #root .horus-app-shell .horus-bottom-nav { background:#07101F !important; border-color:#22314A !important; box-shadow:0 -6px 24px #0004; }.horus-bottom-nav button svg,.horus-bottom-nav button span { color:#B5C5DA !important; }.horus-bottom-nav button:has(.bg-accent) svg,.horus-bottom-nav button:has(.bg-accent) span { color:#7299FF !important; }
-.performance-shell .horus-original-dashboard { color:#fff; min-height:0; padding-top:24px; padding-bottom:110px; }.performance-shell .horus-original-dashboard h1 { color:#fff !important; }.performance-shell .horus-original-dashboard header p { color:var(--performance-muted) !important; }.performance-shell .horus-original-dashboard [class*="text-zinc-"] { color:var(--performance-muted) !important; }
+.performance-shell .horus-original-dashboard { color:#fff; min-height:0; padding-top:12px; padding-bottom:0; }.performance-shell .horus-original-dashboard h1 { color:#fff !important; }.performance-shell .horus-original-dashboard header p { color:var(--performance-muted) !important; }.performance-shell .horus-original-dashboard [class*="text-zinc-"] { color:var(--performance-muted) !important; }
 .performance-shell .horus-original-dashboard [class*="bg-gradient-to-"] { background:var(--performance-card) !important; box-shadow:none; }.performance-today { background:var(--performance-card) !important; }.performance-today button:first-child { background:var(--performance-blue) !important; color:#fff !important; }.performance-today button:first-child svg { color:#fff !important; fill:currentColor; }.performance-today button:last-child { background:var(--performance-inset) !important; color:#fff !important; border-color:var(--performance-line) !important; }.performance-today h2 { font-size:22px; }.performance-hero-art { right:4px !important; top:0 !important; width:100px !important; height:160px !important; overflow:hidden; mask-image:linear-gradient(to right,transparent,#000 25%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 8%,#000 74%,transparent); mask-composite:intersect; }.performance-hero-art img { position:absolute; inset:0; width:100%; max-width:none; height:100%; object-fit:cover; object-position:center; }
 #root .horus-app-shell .horus-execution,#root .horus-app-shell .horus-workout-summary { background:var(--performance-bg) !important; color:#fff !important; padding-top:24px; }
 #root .horus-app-shell .horus-execution [class*="text-zinc-"],#root .horus-app-shell .horus-exercise-modal [class*="text-zinc-"] { color:var(--performance-muted) !important; }
@@ -593,3 +593,31 @@ body:has(.horus-detail) .horus-bottom-nav { display:block; }.horus-detail { padd
 /* Blend artwork without the hard edge of a second gradient layer. */
 .performance-division::after { display:none; }
 .performance-division .performance-anatomy { mask-image:linear-gradient(to right,transparent,#000 35%,#000 88%,transparent),linear-gradient(to bottom,transparent,#000 10%,#000 82%,transparent); }
+
+/* iOS standalone: apply the top inset once at the mobile shell. */
+html, body, #root {
+  min-height:100%;
+  min-height:100dvh;
+}
+body { margin:0; }
+#root .performance-shell {
+  --mobile-nav-height:65px;
+  --mobile-content-end-gap:16px;
+  padding-top:max(12px,var(--safe-top));
+}
+#root .performance-shell .horus-main-content {
+  flex-grow:0;
+  flex-basis:auto;
+  padding-bottom:calc(var(--mobile-nav-height) + var(--safe-bottom) + var(--mobile-content-end-gap));
+}
+#root .performance-shell .horus-original-dashboard,
+#root .performance-shell .performance-workouts,
+#root .performance-shell .horus-execution {
+  min-height:0;
+  padding-top:12px !important;
+  padding-bottom:0 !important;
+}
+#root .horus-app-shell .horus-bottom-nav {
+  padding-bottom:var(--safe-bottom);
+}
+#root .horus-app-shell .horus-bottom-nav>div { height:64px; }
