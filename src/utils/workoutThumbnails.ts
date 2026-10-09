@@ -2,6 +2,11 @@
 import type { Exercise, WorkoutRoutine } from '../../types';
 
 export type ThumbnailPlan = 'treino-principal' | 'treino-feminino';
+const divisionAssets = import.meta.glob<string>('../assets/miniaturas-horus/*.png', { eager: true, import: 'default', query: '?url' });
+const divisionFiles: Record<ThumbnailPlan, Record<string, string>> = {
+  'treino-principal': { a: 'peito-biceps', b: 'quadriceps-panturrilha-abdomen', c: 'costas-triceps', d: 'ombros-trapezio-abdomen', e: 'posterior-gluteo-cardio' },
+  'treino-feminino': { a: 'peito-triceps', b: 'quadriceps', c: 'costas-biceps', d: 'posterior-gluteo', e: 'ombro' }
+};
 const assets = import.meta.glob<string>('../assets/miniaturas-horus/*/{divisoes,exercicios}/*.png', { eager: true, import: 'default', query: '?url' });
 export const normalizeThumbnailName = (name: string) => name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[º°ª]/g, '').replace(/\b(com|de|do|da|na|no)\b/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const thumbnails = new Map(Object.entries(assets).map(([path, url]) => {
@@ -41,6 +46,9 @@ export function getExerciseThumbnail(exercise: Pick<Exercise, 'name' | 'catalogE
 export function getDivisionThumbnail(workout: Pick<WorkoutRoutine, 'id' | 'title'>, plan: ThumbnailPlan): string | undefined {
   const letter = workout.id.match(/^(?:h|t2)-([a-e])$/i)?.[1] || workout.title.match(/treino\s+([a-e])\b/i)?.[1];
   if (!letter) return;
+  const filename = divisionFiles[plan][letter.toLowerCase()];
+  const image = divisionAssets[`../assets/miniaturas-horus/${filename}.png`];
+  if (image) return image;
   const prefix = `${plan}/divisoes/treino-${letter.toLowerCase()}-`;
   return [...thumbnails].find(([key]) => key.startsWith(prefix))?.[1];
 }
