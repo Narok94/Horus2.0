@@ -47,6 +47,7 @@ const AppContent: React.FC = () => {
     isLoggedIn,
     activeTab,
     selectedWorkout,
+    showSummary,
 
     theme,
     setUser,
@@ -319,7 +320,7 @@ const AppContent: React.FC = () => {
   ];
 
   return (
-    <div className={`horus-app-shell ${activeTab === AppTab.HISTORY || activeTab === AppTab.PROFILE ? 'account-light-shell' : ''} ${activeTab === AppTab.DASHBOARD ? 'dashboard-refined-shell' : ''} ${activeTab === AppTab.WORKOUT || activeTab === AppTab.DASHBOARD ? 'performance-shell' : ''} min-h-[100dvh] relative flex flex-col ${
+    <div className={`horus-app-shell ${activeTab === AppTab.WORKOUT && showSummary ? 'completion-light-shell' : ''} ${activeTab === AppTab.HISTORY || activeTab === AppTab.PROFILE ? 'account-light-shell' : ''} ${activeTab === AppTab.DASHBOARD ? 'dashboard-refined-shell' : ''} ${activeTab === AppTab.WORKOUT || activeTab === AppTab.DASHBOARD ? 'performance-shell' : ''} min-h-[100dvh] relative flex flex-col ${
       isPremiumScreen ? "bg-[#F5F7FA] text-slate-900" : isLightUser
         ? "bg-[#F5F7FA] text-gray-900 border-zinc-200"
         : "bg-[#050505] text-white"

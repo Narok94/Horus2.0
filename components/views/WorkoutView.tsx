@@ -1,6 +1,8 @@
+import { createWorkoutShareImage } from '../../src/utils/workoutShareImage';
 import { getDivisionThumbnail, getExerciseThumbnail, getThumbnailPlan, retryThumbnail, retryExerciseDetail } from '../../src/utils/workoutThumbnails';
 import { interpretPrescription, createInitialPerformance, getRestSeconds } from '../../src/utils/workoutPrescription';
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../../store';
 import {
@@ -58,12 +60,32 @@ export const WorkoutView: React.FC = () => {
   } = useStore();
 
   const isLightTheme = true;
-  const accentColor = '#2563EB';
+
 
   const [capturedImage, setCapturedImage] = React.useState<string | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [shareImage, setShareImage] = React.useState<string | null>(null);
+  const [showPhotoPreview, setShowPhotoPreview] = React.useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setShareImage(null);
+    if (!capturedImage || !showSummary || !selectedWorkout) { setIsGeneratingImage(false); return; }
+    setIsGeneratingImage(true);
+    createWorkoutShareImage(capturedImage, selectedWorkout.title, workoutDuration || 0)
+      .then(image => { if (!cancelled) setShareImage(image); })
+      .catch(() => { if (!cancelled) addToast?.('Não foi possível gerar a imagem. Tente outra foto.', 'error'); })
+      .finally(() => { if (!cancelled) setIsGeneratingImage(false); });
+    return () => { cancelled = true; };
+  }, [capturedImage, showSummary, selectedWorkout?.title, workoutDuration, addToast]);
+
+  useEffect(() => {
+    if (!showPhotoPreview) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setShowPhotoPreview(false); };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [showPhotoPreview]);
   const timerIntervalRef = useRef<number | null>(null);
   const wakeLockRef = useRef<any>(null);
 
@@ -319,104 +341,12 @@ export const WorkoutView: React.FC = () => {
   };
 
   const downloadSummaryImage = () => {
-    if (!canvasRef.current || !capturedImage) return;
-    setIsGeneratingImage(true);
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = capturedImage;
-
-    img.onload = () => {
-      // Set canvas size to match image or a standard social media size
-      const targetWidth = 1080;
-      const targetHeight = 1350; // 4:5 aspect ratio
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
-      // Draw background image (proportional crop)
-      const imgAspect = img.width / img.height;
-      const targetAspect = targetWidth / targetHeight;
-      let drawW, drawH, drawX, drawY;
-
-      if (imgAspect > targetAspect) {
-        drawH = targetHeight;
-        drawW = targetHeight * imgAspect;
-        drawX = (targetWidth - drawW) / 2;
-        drawY = 0;
-      } else {
-        drawW = targetWidth;
-        drawH = targetWidth / imgAspect;
-        drawX = 0;
-        drawY = (targetHeight - drawH) / 2;
-      }
-
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
-
-      // Dark Overlay at bottom for better readability
-      const gradient = ctx.createLinearGradient(0, targetHeight * 0.4, 0, targetHeight);
-      gradient.addColorStop(0, 'rgba(0,0,0,0)');
-      gradient.addColorStop(0.7, 'rgba(0,0,0,0.6)');
-      gradient.addColorStop(1, 'rgba(0,0,0,0.9)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, targetHeight * 0.4, targetWidth, targetHeight * 0.6);
-
-      // Add "HORUS TRAINING" Branding (TOP LEFT)
-      ctx.font = '900 40px sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.textAlign = 'left';
-      ctx.fillText('HORUS TRAINING', 60, 100);
-
-      // Accent Line
-      ctx.fillStyle = accentColor;
-      ctx.fillRect(60, 115, 60, 8);
-
-      // Infer Focus
-      const focusText = selectedWorkout.title.toLowerCase().includes('superior') ? 'SUPERIORES' :
-                        selectedWorkout.title.toLowerCase().includes('inferior') || selectedWorkout.title.toLowerCase().includes('perna') ? 'INFERIORES' :
-                        selectedWorkout.title.toLowerCase().includes('abd') ? 'ABDÔMEN' : 'COMPLETO';
-
-      // Focus Tag (BOTTOM)
-      ctx.font = '900 24px sans-serif';
-      ctx.fillStyle = '#EC4899';
-      ctx.fillText(focusText, 60, targetHeight - 480);
-
-      // Add Workout Title
-      ctx.font = 'italic 900 90px sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(selectedWorkout.title.toUpperCase(), 60, targetHeight - 380);
-
-      // Stats Label
-      ctx.font = '900 24px sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.fillText('DURAÇÃO TOTAL', 60, targetHeight - 270);
-
-      // Elapsed Time
-      ctx.font = '900 120px sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(workoutDuration ? formatTime(workoutDuration) : '00:00', 60, targetHeight - 150);
-
-      // PRO PERFORMANCE branding (BOTTOM RIGHT)
-      ctx.save();
-      ctx.translate(targetWidth - 60, targetHeight - 150);
-      ctx.rotate(-Math.PI / 2);
-      ctx.font = '900 20px sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.textAlign = 'right';
-      ctx.fillText('PRO PERFORMANCE', 0, 0);
-      ctx.restore();
-
-      // Trigger download
-      const link = document.createElement('a');
-      link.download = `horus-fit-victory-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      setIsGeneratingImage(false);
-      handleVibrate(30);
-    };
+    if (!shareImage) return;
+    const link = document.createElement('a');
+    link.download = `horus-gym-${Date.now()}.png`;
+    link.href = shareImage;
+    link.click();
+    handleVibrate(30);
   };
 
   // Helper config mapping from title
@@ -622,164 +552,30 @@ export const WorkoutView: React.FC = () => {
   };
 
   if (showSummary) {
-    return (
-      <div className={`horus-workout-summary h-full max-h-full overflow-y-auto flex flex-col justify-center py-4 px-1 text-center bg-transparent font-sans antialiased selection:bg-accent/30 select-none w-full max-w-sm md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto space-y-4 my-auto ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
-
-          {/* HEADER COMPACTO */}
-          <div className={`horus-summary-heading flex items-center gap-3 ${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/90 border-white/5'} border p-3 rounded-xl shrink-0 shadow-sm`}>
-            <div className="w-9 h-9 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center text-accent shrink-0">
-               <CheckCircle2 size={18} className="text-accent" strokeWidth={3} />
-            </div>
-            <div className="text-left leading-none">
-              <h1 className={`text-base font-[950] ${isLightTheme ? 'text-zinc-950' : 'text-white'} uppercase tracking-tight italic`}>Missão <span className="text-accent">Cumprida!</span></h1>
-              <p className={`${isLightTheme ? 'text-zinc-500 font-bold' : 'text-white/40'} text-[8px] mt-1 uppercase tracking-widest font-mono font-black`}>REGISTRO SALVO COM SUCESSO</p>
-            </div>
-          </div>
-
-          {" "}
-          {/* FOTO DE VITÓRIA EXTRA COMPACTA */}
-          <div className={`${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/90 border-white/5'} border p-2 rounded-xl space-y-2 shrink-0 shadow-sm`}>
-            <div className="flex items-center justify-between px-1.5">
-               <span className={`text-[8px] font-black ${isLightTheme ? 'text-zinc-500' : 'text-white/45'} uppercase tracking-widest font-mono`}>Foto de Vitória</span>
-               {capturedImage && (
-                 <button onClick={() => setCapturedImage(null)} className={`transition-colors ${isLightTheme ? 'text-zinc-400 hover:text-red-650' : 'text-white/40 hover:text-red-500'}`}>
-                    <Trash2 size={12} />
-                 </button>
-               )}
-            </div>
-
-            {!capturedImage ? (
-              <button
-                onClick={() => {
-                  try {
-                    fileInputRef.current?.click();
-                  } catch (err) {
-                    console.error("Erro abrir câmera:", err);
-                    if (addToast) addToast("Permissão de câmera negada", "error");
-                  }
-                }}
-                className={`w-full h-24 border border-dashed rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${isLightTheme ? 'border-zinc-300 hover:border-accent bg-zinc-50' : 'border-white/10 hover:border-accent/30 bg-white/[0.01]'}`}
-              >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isLightTheme ? 'bg-zinc-100 border-zinc-200' : 'bg-white/[0.02] border-white/5'}`}>
-                  <Camera size={14} className="text-accent" />
-                </div>
-                <p className="text-[8px] font-black text-accent/90 uppercase tracking-widest">Registrar Vitória</p>
-              </button>
-            ) : (
-              <div className="space-y-1.5">
-                <div className="relative group rounded-xl overflow-hidden border border-white/10 h-28">
-                  <img src={capturedImage} alt="Victory" className="w-full h-full object-cover" />
-
-                  <div className="absolute inset-0 p-3 flex flex-col justify-between pointer-events-none">
-                    <div className="text-left font-black leading-none">
-                      <p className="text-white font-[950] text-xs tracking-tighter uppercase">HORUS TRAINING</p>
-                      <div className="w-6 h-0.5 bg-accent mt-1"></div>
-                    </div>
-
-                    <div className="space-y-1.5 text-left">
-                      <div>
-                        <p className="text-accent font-[900] text-[7px] uppercase tracking-widest leading-none">
-                          {selectedWorkout.title.toLowerCase().includes('superior') ? 'SUPERIORES' :
-                           selectedWorkout.title.toLowerCase().includes('inferior') || selectedWorkout.title.toLowerCase().includes('perna') ? 'INFERIORES' :
-                           selectedWorkout.title.toLowerCase().includes('abd') ? 'ABDÔMEN' : 'COMPLETO'}
-                        </p>
-                        <h2 className="text-white font-black text-xs tracking-tight uppercase italic leading-none mt-0.5 truncate">{selectedWorkout.title}</h2>
-                      </div>
-
-                      <div className="flex items-end justify-between leading-none">
-                        <div className="text-left">
-                          <p className="text-white/40 text-[6.5px] font-black uppercase tracking-widest">DURAÇÃO TOTAL</p>
-                          <p className="text-sm font-black text-white font-mono mt-0.5">
-                            {workoutDuration ? formatTime(workoutDuration) : '00:00'}
-                          </p>
-                        </div>
-                        <div className="text-white/20 text-[6px] font-mono font-black uppercase tracking-widest whitespace-nowrap">
-                          PRO PERFORMANCE
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none"></div>
-
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
-                     <button
-                       onClick={downloadSummaryImage}
-                       disabled={isGeneratingImage}
-                       className="w-9 h-9 rounded-full bg-accent text-black flex items-center justify-center shadow-lg active:scale-95 transition-all"
-                     >
-                       {isGeneratingImage ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <Download size={16} />}
-                     </button>
-                  </div>
-                </div>
-
-                <motion.button
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  onClick={downloadSummaryImage}
-                  disabled={isGeneratingImage}
-                  className="w-full py-1.5 bg-accent/10 border border-accent/20 text-accent font-black text-[8px] uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all text-center"
-                >
-                  {isGeneratingImage ? (
-                    <>GERANDO... <div className="w-2.5 h-2.5 border border-accent/30 border-t-accent rounded-full animate-spin"></div></>
-                  ) : (
-                    <>SALVAR NA GALERIA <Download size={10} /></>
-                  )}
-                </motion.button>
-              </div>
-            )}
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageCapture}
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-            />
-            <canvas ref={canvasRef} className="hidden" />
-          </div>
-
-          {/* METRICAS DE PERFORMANCE EXTRA COMPACTAS */}
-          <div className="horus-summary-metrics grid grid-cols-2 gap-2 mt-1 shrink-0">
-             <div className={`${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/80 border-white/5'} border p-2 rounded-xl flex items-center justify-between gap-1 shadow-sm font-sans text-left`}>
-                <div className="leading-none min-w-0">
-                   <p className={`text-[7.5px] font-black ${isLightTheme ? 'text-zinc-500' : 'text-white/40'} uppercase tracking-widest font-mono truncate`}>DURAÇÃO</p>
-                   <span className={`text-xs font-black ${isLightTheme ? 'text-zinc-950 font-[900]' : 'text-white'} font-mono mt-0.5 block italic`}>{workoutDuration ? formatTime(workoutDuration) : '00:00'}</span>
-                </div>
-                <Clock size={14} className="text-accent shrink-0" />
-             </div>
-
-                <div className={`${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/80 border-white/5'} border p-2 rounded-xl flex items-center justify-between gap-1 shadow-sm font-sans text-left`}>
-                   <div className="leading-none min-w-0">
-                      <p className={`text-[7.5px] font-black ${isLightTheme ? 'text-zinc-500' : 'text-white/40'} uppercase tracking-widest font-mono truncate`}>CARGATONELADA (VOL)</p>
-                      <span className={`text-xs font-black ${isLightTheme ? 'text-zinc-950 font-[900]' : 'text-white'} font-mono mt-0.5 block italic`}>{calculateVolume()} kg</span>
-                   </div>
-                   <Dumbbell size={14} className="text-accent shrink-0" />
-                </div>
-
-            <div className="horus-summary-count border rounded-xl p-3 flex items-center justify-between text-left"><div><p>Exercícios concluídos</p><strong>{selectedWorkout.exercises.filter(ex => getExercisePerformance(ex).every(set => set.completed)).length} / {selectedWorkout.exercises.length}</strong></div><CheckCircle2 size={22} /></div>
-          </div>
-
-          {" "}
-          {/* MOTIVAÇÃO EXTRA SLIM */}
-          <div className={`${isLightTheme ? 'bg-white border-zinc-200' : 'bg-[#0c0c0c]/90 border-white/5'} border py-1.5 px-3 rounded-lg shrink-0`}>
-             <p className="text-accent font-bold italic text-[8.5px] uppercase tracking-wider">
-               "A constância é a mãe da evolução. Parabéns por hoje!"
-             </p>
-          </div>
-
-          {/* BOTÃO VOLTAR PARA O DASHBOARD */}
-          <div className="shrink-0 pt-1">
-            <button
-              onClick={closeSummary}
-              className={`w-full bg-accent hover:bg-accent/90 ${isLightTheme ? 'text-white' : 'text-[#050505]'} font-[950] py-3.5 rounded-xl shadow-[0_0_15px_rgba(var(--accent-color-rgb),0.25)] text-center active:scale-95 text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 font-sans shrink-0`}
-            >
-              <LayoutDashboard size={14} /> VOLTAR PARA O DASHBOARD
-            </button>
-          </div>
-      </div>
-    );
+    return <section className="horus-workout-summary horus-completion">
+      <header className="horus-completion-heading">
+        <CheckCircle2 size={44} strokeWidth={1.8} />
+        <div><h1>Treino concluído!</h1><p>Seu treino foi salvo no histórico.</p></div>
+      </header>
+      <div className="horus-completion-info"><h2>{selectedWorkout.title}</h2><p><Clock size={16} />{formatTime(workoutDuration || 0)} de treino</p><div className="horus-completion-details"><span>{calculateVolume()} kg de volume</span><span>{selectedWorkout.exercises.filter(ex => getExercisePerformance(ex).every(set => set.completed)).length}/{selectedWorkout.exercises.length} exercícios concluídos</span></div></div>
+      <section className="horus-completion-photo">
+        <div className="horus-completion-photo-heading"><h3>Foto do treino</h3>{capturedImage && <button aria-label="Remover foto" onClick={() => { setCapturedImage(null); setShowPhotoPreview(false); }}><Trash2 size={18} /></button>}</div>
+        {!capturedImage ? <button className="horus-capture-photo" onClick={() => fileInputRef.current?.click()}><Camera size={26} /><span>Tirar ou escolher foto</span><small>Crie sua imagem com a marca HÓRUS GYM</small></button> : shareImage ? <>
+          <button className="horus-share-thumbnail" aria-label="Ampliar imagem do treino" onClick={() => setShowPhotoPreview(true)}><img src={shareImage} alt="Foto do treino com divisão, duração e marca HÓRUS GYM" /></button>
+          <p className="horus-photo-hint">Toque na imagem para ampliar e conferir.</p>
+        </> : <p role="status">{isGeneratingImage ? 'Preparando sua imagem…' : 'Escolha outra foto para tentar novamente.'}</p>}
+        {capturedImage && <button className="horus-save-photo" onClick={downloadSummaryImage} disabled={!shareImage || isGeneratingImage}><Download size={18} />Salvar imagem</button>}
+        <input type="file" ref={fileInputRef} onChange={handleImageCapture} accept="image/*" capture="environment" className="hidden" />
+      </section>
+      <button className="horus-completion-home" onClick={closeSummary}><LayoutDashboard size={18} />Voltar para o início</button>
+      {showPhotoPreview && shareImage && createPortal(<div className="horus-photo-preview" role="dialog" aria-modal="true" aria-label="Pré-visualização da imagem do treino" onClick={() => setShowPhotoPreview(false)}>
+        <div className="horus-photo-preview-panel" onClick={event => event.stopPropagation()}>
+          <header><h2>Sua imagem</h2><button autoFocus aria-label="Fechar preview da foto" onClick={() => setShowPhotoPreview(false)}><X size={22} /></button></header>
+          <img src={shareImage} alt="Imagem final que será salva: divisão, duração e HÓRUS GYM" />
+          <button className="horus-save-photo" onClick={downloadSummaryImage}><Download size={18} />Salvar imagem</button>
+        </div>
+      </div>, document.body)}
+    </section>;
   }
 
   const divisionThumbnail = getDivisionThumbnail(selectedWorkout, getThumbnailPlan(user?.username, selectedWorkout));

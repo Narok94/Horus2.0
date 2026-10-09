@@ -694,6 +694,38 @@ body { margin:0; }
 .horus-success-summary dt { color:#BCCBE0; }
 .horus-success-summary dd { font-weight:600; }
 .horus-exercise-success+.horus-action { width:100%; margin-top:20px; }
+/* Only the full workout completion and its photo viewer use these surfaces. */
+#root .horus-app-shell.completion-light-shell { background:#F5F7FA !important; color:#172238 !important; }
+#root .completion-light-shell .horus-main-content { padding-inline:16px; }
+#root .horus-app-shell .horus-workout-summary.horus-completion { background:transparent !important; color:#172238 !important; padding:16px 0 0; min-height:0; display:flex; flex-direction:column; gap:16px; font-family:var(--font-sans); font-weight:400; }
+.horus-completion-heading { display:flex; align-items:center; gap:12px; }
+.horus-completion-heading>svg { flex-shrink:0; color:#3268FF; }
+#root .horus-completion h1 { font-family:var(--font-sans); font-size:24px; font-weight:800; line-height:1.2; letter-spacing:-.02em; text-transform:none; font-style:normal; color:#172238; }
+.horus-completion-heading p { color:#64748B; font-size:12px; line-height:1.5; margin-top:4px; }
+.horus-completion-info { padding:16px; background:#FFF; border:1px solid #DFE5ED; border-radius:18px; box-shadow:0 3px 12px #17223806; }
+#root .horus-completion h2 { color:#172238; font-family:var(--font-sans); font-size:19px; font-weight:700; line-height:1.3; }
+.horus-completion-info p { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:13px; color:#56657B; }
+.horus-completion-info svg { color:#3268FF; }
+.horus-completion-details { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:8px; color:#64748B; font-size:11px; line-height:1.4; }
+.horus-completion-photo { padding:14px; background:#FFF; border:1px solid #DFE5ED; border-radius:18px; box-shadow:0 3px 12px #17223806; }
+.horus-completion-photo-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.horus-completion-photo h3 { font-size:14px; font-weight:600; }
+.horus-completion-photo-heading button { display:grid; place-items:center; min-width:36px; min-height:36px; color:#64748B; }
+.horus-capture-photo { width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:26px 12px; border:1px dashed #C8D6E9; border-radius:12px; background:#F5F8FC; color:#3268FF; font-size:14px; font-weight:600; }
+.horus-capture-photo small { font-size:11px; color:#64748B; font-weight:400; }
+.horus-share-thumbnail { width:100%; display:block; background:#F5F7FA; border-radius:12px; overflow:hidden; }
+.horus-share-thumbnail img { width:100%; height:260px; object-fit:contain; }
+.horus-photo-hint { text-align:center; color:#64748B; font-size:11px; margin:10px 0; }
+.horus-save-photo,.horus-completion-home { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; padding:12px; border-radius:12px; font-family:var(--font-sans); font-size:14px; font-weight:600; background:#3268FF; color:#FFF; }
+.horus-save-photo:disabled { opacity:.55; }
+.horus-completion-home { background:#EAF0FF; color:#2457E2; }
+.horus-photo-preview { position:fixed; inset:0; z-index:140; background:#F5F7FA; padding:max(12px,var(--safe-top)) 12px max(12px,var(--safe-bottom)); display:flex; justify-content:center; }
+.horus-photo-preview-panel { width:100%; max-width:520px; height:100%; min-height:0; display:flex; flex-direction:column; gap:12px; }
+.horus-photo-preview-panel header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.horus-photo-preview-panel h2 { font-family:var(--font-sans); font-size:19px; font-weight:700; color:#172238; }
+.horus-photo-preview-panel header button { min-width:44px; min-height:44px; display:grid; place-items:center; color:#172238; }
+.horus-photo-preview-panel>img { width:100%; flex:1; min-height:0; object-fit:contain; }
+.horus-photo-preview-panel>.horus-save-photo { flex-shrink:0; }
 /* Existing completion state gets a check, a distinct surface and a struck label. */
 #root .horus-app-shell .horus-exercise-modal .horus-set-history>button.completed {
   background:#12394B;
