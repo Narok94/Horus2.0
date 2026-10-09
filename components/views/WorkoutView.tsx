@@ -1,4 +1,4 @@
-import { getExerciseThumbnail, getThumbnailPlan, retryThumbnail } from '../../src/utils/workoutThumbnails';
+import { getDivisionThumbnail, getExerciseThumbnail, getThumbnailPlan, retryThumbnail, retryExerciseDetail } from '../../src/utils/workoutThumbnails';
 import { interpretPrescription, createInitialPerformance, getRestSeconds } from '../../src/utils/workoutPrescription';
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -782,6 +782,8 @@ export const WorkoutView: React.FC = () => {
     );
   }
 
+  const divisionThumbnail = getDivisionThumbnail(selectedWorkout, getThumbnailPlan(user?.username, selectedWorkout));
+
   // Calculate global statistics
 
   const completedSets = selectedWorkout.exercises.reduce((acc, ex) => {
@@ -812,6 +814,7 @@ export const WorkoutView: React.FC = () => {
           ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10'
           : 'border-white/5 bg-gradient-to-br from-zinc-950/90 to-zinc-900/50'
       }`}>
+        {divisionThumbnail && <div className="performance-anatomy performance-selected-art" data-plan={getThumbnailPlan(user?.username, selectedWorkout)} aria-hidden="true"><img src={divisionThumbnail} alt="" onError={event => { event.currentTarget.hidden = true; }} /></div>}
         {/* Play Icon centering frame */}
         <div className={`mx-auto w-8 h-8 rounded-lg flex items-center justify-center text-accent ${
           isLightTheme ? 'bg-white/15 border border-white/10 text-white' : 'bg-accent/10 border border-accent/20'
@@ -821,7 +824,7 @@ export const WorkoutView: React.FC = () => {
 
         <div className="space-y-1">
           <h2 className={`text-xs font-black italic tracking-tight uppercase leading-none ${isLightTheme ? 'text-white/80' : 'text-white/60'}`}>
-            TREINO SELECIONADO <span className="text-white font-[950] italic">{getWorkoutFocus(selectedWorkout)}</span>
+            TREINO SELECIONADO <span className="text-white font-[950] italic">{getWorkoutFocus(selectedWorkout)}</span><small className="performance-selected-count">{selectedWorkout.exercises.length} exercícios</small>
           </h2>
         </div>
 
@@ -988,16 +991,17 @@ export const WorkoutView: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-5 leading-normal">
                         {/* Animated Video/GIF */}
                         <div className="md:col-span-4 flex flex-col justify-start items-center">
-                          <div className={`relative rounded-xl overflow-hidden border w-full max-w-[200px] h-40 flex items-center justify-center ${
+                          <div className={`horus-exercise-media relative rounded-xl overflow-hidden border w-full max-w-[200px] h-40 flex items-center justify-center ${
                             isLightTheme ? 'bg-white border-zinc-250' : 'bg-zinc-950 border-white/5'
                           }`}>
                             <img
                               src={details.gif}
+                              onError={event => retryExerciseDetail(event.currentTarget, getExerciseThumbnail(ex, getThumbnailPlan(user?.username, selectedWorkout)))}
                               alt={ex.name}
                               className="max-h-[150px] w-auto max-w-[180px] rounded-lg object-contain"
                               loading="lazy"
                               referrerPolicy="no-referrer"
-                            />
+                            /><div className="horus-gif-fallback"><Dumbbell size={30} /><span>Demonstração indisponível</span></div>
                           </div>
                           <span className={`text-[7px] uppercase tracking-widest font-mono font-black mt-2 ${isLightTheme ? 'text-zinc-500' : 'text-zinc-500'}`}>GIF Demonstrativo Oficial</span>
                           <button
@@ -1265,7 +1269,7 @@ export const WorkoutView: React.FC = () => {
                       className="max-h-[150px] w-auto max-w-[200px] rounded-lg object-contain"
                       loading="lazy"
                       referrerPolicy="no-referrer"
-                      onError={event => { if (!retryThumbnail(event.currentTarget, getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif)) event.currentTarget.dataset.unavailable = 'true'; }}
+                      onError={event => { if (showExerciseInfo) retryExerciseDetail(event.currentTarget, getExerciseThumbnail(activeModalExercise, getThumbnailPlan(user?.username, selectedWorkout || undefined))); else if (!retryThumbnail(event.currentTarget, getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif)) event.currentTarget.dataset.unavailable = 'true'; }}
                     />
                     <div className="horus-gif-fallback"><Dumbbell size={30} strokeWidth={1.5} /><span>Demonstração indisponível</span><small>Consulte o guia técnico abaixo</small></div>
                     <span className="absolute bottom-1.5 px-2 py-0.5 rounded bg-black/60 border border-white/5 font-mono text-[6px] font-bold text-zinc-400 uppercase tracking-widest leading-none">DEMONSTRAÇÃO DE EXECUÇÃO</span>

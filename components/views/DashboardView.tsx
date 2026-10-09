@@ -178,7 +178,7 @@ export const DashboardView: React.FC = () => {
         </header>
 
         {/* 2. CARD HERO PRINCIPAL - TREINO DE HOJE (Slimmer and more compact) */}
-        <div className="w-full bg-gradient-to-br from-[#2563EB] to-[#0A192F] rounded-[22px] p-4.5 md:py-4 text-white relative shadow-lg shadow-blue-900/10 overflow-hidden flex flex-col justify-between min-h-[195px] md:min-h-0 shrink-0">
+        <div className="performance-today w-full bg-gradient-to-br from-[#2563EB] to-[#0A192F] rounded-[22px] p-4.5 md:py-4 text-white relative shadow-lg shadow-blue-900/10 overflow-hidden flex flex-col justify-between min-h-[195px] md:min-h-0 shrink-0">
           {/* Subtle flare behind dumbbell */}
           <div className="absolute -top-10 -right-10 w-36 h-36 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -223,7 +223,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* Premium 3D Isometric Dumbbell SVG Graphic - Repositioned and resized for compactness */}
-            <div className={`absolute right-[-15px] top-[-15px] w-28 h-28 pointer-events-none select-none z-0 ${showHeroThumbnail ? 'opacity-100' : 'opacity-40'}`}>
+            <div data-plan={getThumbnailPlan(user.username, heroWorkout || undefined)} className={`performance-hero-art absolute right-[-15px] top-[-15px] w-28 h-28 pointer-events-none select-none z-0 ${showHeroThumbnail ? 'opacity-100' : 'opacity-40'}`}>
               {showHeroThumbnail ? <img src={heroThumbnail} alt="" className="w-full h-full object-contain" onError={() => setUnavailableDivision(heroThumbnail!)} /> : (<svg viewBox="0 0 200 200" className="w-full h-full object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="barGradientPremium" x1="0%" y1="0%" x2="100%" y2="100%">

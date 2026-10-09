@@ -53,3 +53,13 @@ export function retryThumbnail(image: HTMLImageElement, gif: string): boolean {
   }
   return false;
 }
+
+// Details prefer animation, then the matching static asset, then the view placeholder.
+export function retryExerciseDetail(image: HTMLImageElement, thumbnail?: string): void {
+  if (thumbnail && image.getAttribute('src') !== thumbnail && image.dataset.thumbnailRetry !== 'true') {
+    image.dataset.thumbnailRetry = 'true';
+    image.src = thumbnail;
+    return;
+  }
+  image.dataset.unavailable = 'true';
+}
