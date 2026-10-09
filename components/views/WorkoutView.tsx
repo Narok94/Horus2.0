@@ -1097,7 +1097,7 @@ export const WorkoutView: React.FC = () => {
       {/* Floating Single Exercise Detailed Modal Window / Premium Bottom Sheet */}
       <AnimatePresence>
         {activeModalExercise && (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm">
+          <div className="horus-exercise-overlay fixed inset-0 z-[120] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm">
             {/* Dismiss the exercise sheet by tapping outside it. */}
             <motion.div
                initial={{ opacity: 0 }}
@@ -1123,12 +1123,12 @@ export const WorkoutView: React.FC = () => {
                   <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded font-mono ${
                     isLightTheme ? 'bg-zinc-100 text-zinc-950 font-black' : 'bg-accent text-[#050505]'
                   }`}>
-                    SÉRIE ATIVA
+                    {getExercisePerformance(activeModalExercise).every(set => set.completed) ? 'Concluído' : 'Série ativa'}
                   </span>
                   <span className={`text-[10px] font-black uppercase font-mono tracking-wider ${
                     isLightTheme ? 'text-zinc-500 font-bold' : 'text-zinc-400'
                   }`}>
-                    {activeModalExercise.muscleGroup.toUpperCase()}
+                    {activeModalExercise.muscleGroup}
                   </span>
                 </div>
 
@@ -1144,111 +1144,26 @@ export const WorkoutView: React.FC = () => {
                 </button>
               </div>
 
-              {/* Active Rest Countdown Timer Panel (Depicted in image 3) */}
-              <AnimatePresence>
-                {modalRestTimeLeft !== null && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0, y: -10 }}
-                    animate={{ height: "auto", opacity: 1, y: 0 }}
-                    exit={{ height: 0, opacity: 0, y: -10 }}
-                    className="overflow-hidden"
-                  >
-                    <div className={`horus-rest-card p-3 rounded-lg border text-center space-y-2 ${
-                      isLightTheme ? 'bg-zinc-50 border-accent/40' : 'bg-gradient-to-br from-zinc-900 to-zinc-950 border-accent/20'
-                    }`}>
-                       <div className="space-y-0.5 leading-none">
-                        <span className={`text-[6.5px] font-black uppercase tracking-widest block ${
-                          isLightTheme ? 'text-zinc-500 font-bold' : 'text-zinc-400'
-                        }`}>
-                          INTERVALO ATIVO DE REPOUSO
-                        </span>
-                        <h3 className="text-2xl font-black text-accent font-mono leading-none tracking-tight animate-pulse pt-0.5">
-                          {modalRestTimeLeft}s
-                        </h3>
-                      </div>
-
-                      {/* Display set descriptor text natively */}
-                      <p className={`text-[7.5px] font-black uppercase tracking-wider leading-relaxed px-1 ${
-                        isLightTheme ? 'text-zinc-650' : 'text-zinc-400'
-                      }`}>
-                        PRÓXIMA: <span className={`${isLightTheme ? 'text-zinc-950 font-bold' : 'text-white'} font-semibold`}>{getNextSetLabelForTimer(activeModalExercise)}</span> DE <span className={`${isLightTheme ? 'text-zinc-950 font-bold' : 'text-white'} font-semibold`}>{activeModalExercise.name.toUpperCase()}</span>
-                      </p>
-
-                      {/* Control Panel centered rows */}
-                      <div className="flex items-center justify-center gap-2 pt-0.5">
-                        {/* Subtract 10s */}
-                        <button
-                          onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}
-                          className={`w-7 h-7 rounded-full border text-[9px] font-bold flex items-center justify-center active:scale-90 transition-all font-mono ${
-                            isLightTheme ? 'bg-white border-zinc-250 text-zinc-950 font-black' : 'bg-zinc-950 border-white/5 text-zinc-300 hover:text-white'
-                          }`}
-                        >
-                          -10
-                        </button>
-
-                        {/* Play / Pause Toggle button */}
-                        <button
-                          onClick={() => setIsModalRestPaused(p => !p)}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-all text-white ${
-                            isModalRestPaused ? 'bg-emerald-600' : 'bg-accent text-white'
-                          }`}
-                        >
-                          {isModalRestPaused ? (
-                            <Play size={11} className="fill-white ml-0.5 text-white" />
-                          ) : (
-                            <Pause size={11} className="fill-white text-white" />
-                          )}
-                        </button>
-
-                        {/* Add 10s */}
-                        <button
-                          onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}
-                          className={`w-7 h-7 rounded-full border text-[9px] font-bold flex items-center justify-center active:scale-90 transition-all font-mono ${
-                            isLightTheme ? 'bg-white border-zinc-250 text-zinc-950 font-black' : 'bg-zinc-950 border-white/5 text-zinc-300 hover:text-white'
-                          }`}
-                        >
-                          +10
-                        </button>
-
-                        {/* Skip rest completely */}
-                        <button
-                          onClick={() => setModalRestTimeLeft(null)}
-                          className={`w-7 h-7 rounded-full border flex items-center justify-center active:scale-90 transition-all ${
-                            isLightTheme ? 'bg-white border-zinc-250 text-zinc-950 font-black' : 'bg-zinc-950 border-white/5 text-zinc-300 hover:text-white'
-                          }`}
-                        >
-                          <SkipForward size={11} />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Victory Success Flash Transition Cover */}
-              <AnimatePresence>
-                {exerciseCompletedSuccess && (
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    className="p-4 rounded-xl bg-gradient-to-b from-[#00DDA2]/10 to-[#00DDA2]/20 border border-[#00DDA2]/30 text-center space-y-2 relative z-30"
-                  >
-                    <div className="mx-auto w-10 h-10 rounded-full bg-[#00DDA2] flex items-center justify-center text-[#050505]">
-                      <Check size={20} strokeWidth={4} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black italic tracking-tighter text-white uppercase leading-none">
-                        EXERCÍCIO CONCLUÍDO! 🔥
-                      </h3>
-                      <p className="text-[7.5px] font-black text-[#00DDA2] uppercase tracking-[0.2em] mt-1.5">
-                        Todas as séries registradas
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
+              {getExercisePerformance(activeModalExercise).every(set => set.completed) && (() => {
+                const sets = getExercisePerformance(activeModalExercise);
+                const timed = interpretPrescription(activeModalExercise).kind === 'time';
+                const averageWeight = sets.reduce((total, set) => total + set.weight, 0) / sets.length;
+                const totalReps = sets.reduce((total, set) => total + set.reps, 0);
+                const totalSeconds = sets.reduce((total, set) => total + (set.durationSeconds || 0), 0);
+                return <section className="horus-exercise-success" aria-live="polite">
+                  <CheckCircle2 className="horus-success-check" size={60} strokeWidth={1.6} />
+                  <h2>Exercício concluído!</h2>
+                  <h3>{activeModalExercise.name}</h3>
+                  <p>{activeModalExercise.muscleGroup}</p>
+                  <h4>Resumo do exercício</h4>
+                  <dl className="horus-success-summary">
+                    <div><dt>Séries realizadas</dt><dd>{sets.length} de {sets.length}</dd></div>
+                    <div><dt>Carga média</dt><dd>{Number(averageWeight.toFixed(1))} kg</dd></div>
+                    <div><dt>{timed ? 'Tempo executado' : 'Total de repetições'}</dt><dd>{timed ? totalSeconds + ' s' : totalReps + ' reps'}</dd></div>
+                  </dl>
+                  <div className="horus-set-history">{sets.map((set, index) => <button key={index} aria-label={`Série ${index + 1}, concluída; toque para desmarcar`} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><Check size={16} /><span>Série {index + 1}</span><strong>{set.weight} kg · {timed ? (set.durationSeconds || 0) + ' s' : set.reps + ' reps'}</strong></button>)}</div>
+                </section>;
+              })()}
               {getExercisePerformance(activeModalExercise).every(set => set.completed) && <button className="horus-action" onClick={() => {
                 const next = selectedWorkout.exercises[selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) + 1];
                 setModalRestTimeLeft(null);
@@ -1256,9 +1171,9 @@ export const WorkoutView: React.FC = () => {
                 else { setActiveModalExercise(null); setExerciseCompletedSuccess(false); }
               }}>{selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) < selectedWorkout.exercises.length - 1 ? 'Próximo exercício' : 'Voltar para finalizar treino'}<ChevronRight size={18} /></button>}
               {/* Exercise details and per-set controls use the existing session handlers. */}
-              {activeModalExercise && (
+              {!getExercisePerformance(activeModalExercise).every(set => set.completed) && (
                 <div className="horus-exercise-content space-y-4 pb-2">
-                  <p className="horus-current-label">Exercício atual</p>
+                  <p className="horus-current-label">Exercício {selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) + 1} de {selectedWorkout.exercises.length} · {activeModalExercise.muscleGroup}</p>
                   <button type="button" aria-label="Abrir detalhe completo do exercício" onClick={() => setShowExerciseInfo(true)} className={`horus-exercise-media relative rounded-xl overflow-hidden h-44 w-full flex flex-col items-center justify-center p-1.5 shadow-inner border animate-fade-in ${
                     isLightTheme ? 'bg-white border-zinc-250' : 'bg-zinc-950 border-white/5'
                   }`}>
@@ -1300,7 +1215,7 @@ export const WorkoutView: React.FC = () => {
                 <p className="horus-compact-meta">{activeModalExercise.sets} séries • {activeModalExercise.reps}{interpretPrescription(activeModalExercise).kind === 'time' ? '' : ' reps'}</p>
               </div>
 
-                  <div className="horus-prescription"><div><strong>{activeModalExercise.sets}</strong><span>Séries</span></div><div><strong>{activeModalExercise.reps}</strong><span>{interpretPrescription(activeModalExercise).kind === 'time' ? 'Tempo' : 'Repetições'}</span></div><div><strong>{activeModalExercise.rest}</strong><span>Descanso</span></div></div>
+                  <div className="horus-prescription"><div><strong>{activeModalExercise.sets}</strong><span>Séries</span></div><div><strong>{activeModalExercise.reps}</strong><span>{interpretPrescription(activeModalExercise).kind === 'time' ? 'Tempo' : 'Repetições'}</span></div><div><strong>{activeModalExercise.rest}s</strong><span>Descanso</span></div></div>
                   {/* Standard Coaching Directives */}
                   <AnimatePresence>
                     {showExerciseInfo && (
@@ -1339,6 +1254,13 @@ export const WorkoutView: React.FC = () => {
                   </AnimatePresence>
 
                   {showExerciseInfo && <button className="horus-action" onClick={() => setShowExerciseInfo(false)}>Voltar para registrar série</button>}
+                  {modalRestTimeLeft !== null && <div className="horus-rest-inline" role="status">
+                    <div><span>{isModalRestPaused ? 'Descanso pausado' : 'Descanso'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div>
+                    <button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button>
+                    <button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button>
+                    <button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button>
+                    <button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button>
+                  </div>}
                   <section className="horus-register">
                     <h3>Registrar série</h3>
                     {(() => {
@@ -1355,7 +1277,7 @@ export const WorkoutView: React.FC = () => {
                           </div>
                           <button className="horus-action" onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: true })}><Check size={18} />Concluir série</button>
                         </>}
-                        <p>Séries</p><div className="horus-series" aria-live="polite">{sets.map((item, index) => <button key={index} className={item.completed ? 'completed' : index === setIdx ? 'active' : ''} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}>{item.completed ? <Check size={18} /> : index + 1}</button>)}</div>
+                        <div className="horus-set-history" aria-live="polite">{sets.map((item, index) => <button key={index} className={item.completed ? 'completed' : index === setIdx ? 'active' : ''} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}>{item.completed ? <Check size={16} /> : <span className="horus-set-number">{index + 1}</span>}<span>Série {index + 1}</span><strong>{item.completed ? `${item.weight} kg · ${timed ? (item.durationSeconds || 0) + ' s' : item.reps + ' reps'}` : index === setIdx ? 'Atual' : 'Aguardando'}</strong></button>)}</div>
                       </>;
                     })()}
                   </section>

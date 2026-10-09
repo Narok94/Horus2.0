@@ -622,55 +622,82 @@ body { margin:0; }
 }
 #root .horus-app-shell .horus-bottom-nav>div { height:64px; }
 
-/* Home only: light surfaces, readable hierarchy and natural mobile flow. */
-#root .horus-app-shell.dashboard-light-shell {
-  background:#F5F7FA !important;
-  color:#172238 !important;
-}
-#root .dashboard-light-shell .horus-main-content { padding-left:16px; padding-right:16px; }
-#root .dashboard-light-shell .horus-original-dashboard { padding-left:0; padding-right:0; gap:14px; color:#172238; }
-#root .dashboard-light-shell .horus-original-dashboard header { min-height:64px; }
-#root .dashboard-light-shell .horus-original-dashboard header>div:first-child { gap:12px; }
-#root .dashboard-light-shell .horus-original-dashboard header>div:first-child>div:first-child { width:44px; height:44px; }
-#root .dashboard-light-shell .horus-original-dashboard header span { color:#172238 !important; font-size:18px; line-height:1.25; letter-spacing:-.02em; text-transform:none; }
-#root .dashboard-light-shell .horus-original-dashboard h1 { color:#344258 !important; font-size:15px; line-height:1.3; font-weight:700; letter-spacing:-.02em; }
-#root .dashboard-light-shell .horus-original-dashboard header p { color:#64748B !important; font-size:10px; line-height:1.4; margin-top:4px; }
-#root .dashboard-light-shell .horus-original-dashboard [class*="bg-gradient-to-"] { background:#FFF !important; border:1px solid #DFE5ED; box-shadow:0 3px 12px #17223806; }
-#root .dashboard-light-shell .performance-today { padding:20px 18px; min-height:0; color:#172238; }
-#root .dashboard-light-shell .performance-today>div:first-child { display:none; }
-#root .dashboard-light-shell .performance-today>div:nth-child(2)>div:first-child { max-width:66%; }
-#root .dashboard-light-shell .performance-today h2 { font-size:26px; line-height:1.15; color:#172238; text-shadow:none; }
-#root .dashboard-light-shell .performance-today p { color:#56657B; font-size:12px; line-height:1.5; }
-#root .dashboard-light-shell .performance-today span { color:#344258; }
-#root .dashboard-light-shell .performance-today [class*="bg-white/"] { background:#EDF2F8; border-color:#DFE5ED; }
-#root .dashboard-light-shell .performance-today svg { color:#3268FF; }
-#root .dashboard-light-shell .performance-today .performance-hero-art { width:126px !important; height:192px !important; right:-14px !important; top:-2px !important; mask-image:linear-gradient(to right,transparent,#000 35%,#000 70%,transparent),linear-gradient(to bottom,transparent,#000 20%,#000 64%,transparent); }
-#root .dashboard-light-shell .performance-today>div:last-child { margin-top:20px; gap:10px; }
-#root .dashboard-light-shell .performance-today button:first-child { min-height:48px; font-size:12px; }
-#root .dashboard-light-shell .performance-today button:first-child span { color:#FFF; }
-#root .dashboard-light-shell .performance-today button:last-child { min-height:44px; background:#F5F7FA !important; color:#3268FF !important; border-color:#DFE5ED !important; font-size:11px; }
-#root .dashboard-light-shell .performance-today button:last-child span,#root .dashboard-light-shell .performance-today button:last-child svg { color:#3268FF !important; }
-#root .dashboard-light-shell .dashboard-frequency { padding:20px 16px; }
-#root .dashboard-light-shell .dashboard-frequency h3 { color:#172238; font-size:12px; letter-spacing:.06em; }
-#root .dashboard-light-shell .dashboard-frequency>div:first-child>span { color:#3268FF; background:#EDF3FF; border-color:#DBE6FF; font-size:11px; }
-#root .dashboard-light-shell .dashboard-frequency button { gap:10px; }
-#root .dashboard-light-shell .dashboard-frequency button>span { color:#56657B; font-size:11px; }
-#root .dashboard-light-shell .dashboard-frequency button[aria-label*="hoje"]>span { color:#3268FF; }
-#root .dashboard-light-shell .dashboard-frequency button>div>div { width:32px; height:32px; border:1px solid #CCD6E4; background:#F5F7FA; }
-#root .dashboard-light-shell .dashboard-frequency button[aria-label*="concluído"]>div>div { background:#3268FF; border-color:#3268FF; }
-#root .dashboard-light-shell .dashboard-frequency button[aria-label*="concluído"] svg { color:#FFF; width:18px; height:18px; }
-#root .dashboard-light-shell .dashboard-metrics { gap:8px; }
-#root .dashboard-light-shell .dashboard-metrics>div { min-width:0; min-height:156px; padding:14px 10px; gap:8px; justify-content:flex-start; }
-#root .dashboard-light-shell .dashboard-metrics>div>* { margin-block:0; }
-#root .dashboard-light-shell .dashboard-metrics>div>div:first-child { width:34px; height:34px; background:#EDF3FF; color:#3268FF; }
-#root .dashboard-light-shell .dashboard-metrics svg { width:18px; height:18px; }
-#root .dashboard-light-shell .dashboard-metrics span { color:#56657B; font-size:10px; line-height:1.3; }
-#root .dashboard-light-shell .dashboard-metrics [class*="text-lg"] { color:#172238; font-size:26px; line-height:1.1; }
-#root .dashboard-light-shell .dashboard-metrics [class*="text-[12px]"] { color:#172238; font-size:14px; white-space:normal; line-height:1.2; }
-#root .dashboard-light-shell .dashboard-metrics [class*="items-baseline"] { flex-wrap:wrap; column-gap:3px; }
-#root .dashboard-light-shell .dashboard-metrics p { color:#64748B; font-size:9px; line-height:1.4; white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+/* Refined Home uses the approved dark palette without affecting other tabs. */
+#root .dashboard-refined-shell .horus-main-content { padding-inline:14px; }
+#root .dashboard-refined-shell .horus-original-dashboard { padding-inline:0; gap:14px; }
+#root .dashboard-refined-shell .horus-original-dashboard header { min-height:58px; }
+#root .dashboard-refined-shell .horus-original-dashboard header span { font-size:16px; font-weight:700; line-height:1.3; text-transform:none; letter-spacing:0; color:#F1F5FC !important; }
+#root .dashboard-refined-shell .horus-original-dashboard h1 { font-size:15px; line-height:1.3; font-weight:600; letter-spacing:0; }
+#root .dashboard-refined-shell .horus-original-dashboard header p { font-size:10px; line-height:1.4; margin-top:4px; }
+#root .dashboard-refined-shell .performance-today { padding:18px; min-height:0; border:1px solid #23334B; }
+#root .dashboard-refined-shell .performance-today h2 { font-size:24px; font-weight:700; text-transform:none; line-height:1.2; letter-spacing:-.02em; }
+#root .dashboard-refined-shell .performance-today>div:nth-child(2)>div:first-child { max-width:70%; }
+#root .dashboard-refined-shell .performance-today .performance-hero-art { width:120px !important; height:174px !important; right:-6px !important; }
+#root .dashboard-refined-shell .performance-today>div:last-child { gap:10px; margin-top:18px; }
+#root .dashboard-refined-shell .performance-today button { min-height:44px; font-family:var(--font-sans); font-size:11px; font-weight:700; font-style:normal; letter-spacing:.04em; }
+#root .dashboard-refined-shell .dashboard-frequency { padding:18px 16px; }
+#root .dashboard-refined-shell .dashboard-frequency h3 { font-size:11px; font-weight:700; letter-spacing:.06em; }
+#root .dashboard-refined-shell .dashboard-frequency button>span { font-size:10px; }
+#root .dashboard-refined-shell .dashboard-frequency button>div>div { width:30px; height:30px; }
+#root .dashboard-refined-shell .dashboard-metrics>div { padding:14px 10px; min-height:136px; justify-content:flex-start; gap:8px; }
+#root .dashboard-refined-shell .dashboard-metrics>div>* { margin-block:0; }
+#root .dashboard-refined-shell .dashboard-metrics>div>div:first-child { width:30px; height:30px; }
+#root .dashboard-refined-shell .dashboard-metrics svg { width:16px; height:16px; }
+#root .dashboard-refined-shell .dashboard-metrics span { font-weight:600; }
+#root .dashboard-refined-shell .dashboard-metrics [class*="text-lg"] { font-size:24px; font-weight:700; }
+#root .dashboard-refined-shell .dashboard-metrics [class*="text-[7px]"] { font-size:8px; letter-spacing:.03em; }
+#root .dashboard-refined-shell .dashboard-metrics [class*="text-[12px]"] { font-size:13px; line-height:1.25; white-space:normal; }
+#root .dashboard-refined-shell .dashboard-metrics p { font-size:9px; line-height:1.4; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; white-space:normal; overflow:hidden; }
+
+/* A single exercise panel: prescription, rest, input and progress are divisions. */
+#root .horus-exercise-overlay { padding: max(12px,var(--safe-top)) 12px max(12px,var(--safe-bottom)); }
+#root .horus-app-shell .horus-exercise-modal { padding:18px; max-height:calc(100dvh - max(12px,var(--safe-top)) - max(12px,var(--safe-bottom))); border-radius:22px; font-weight:400; }
+#root .horus-app-shell .horus-exercise-modal h2 { font-family:var(--font-sans); font-size:21px; font-weight:700; font-style:normal; text-transform:none; line-height:1.25; letter-spacing:-.02em; }
+#root .horus-app-shell .horus-exercise-modal .horus-current-label { font-size:11px; text-transform:none; letter-spacing:0; }
+#root .horus-app-shell .horus-exercise-modal .horus-exercise-media { height:110px; }
+#root .horus-app-shell .horus-exercise-modal .horus-exercise-media img { max-height:110px; max-width:170px; }
+#root .horus-app-shell .horus-exercise-detail .horus-exercise-media { height:180px; }
+#root .horus-app-shell .horus-exercise-detail .horus-exercise-media img { max-height:175px; }
+#root .horus-app-shell .horus-exercise-modal .horus-compact-meta { display:none; }
+#root .horus-app-shell .horus-exercise-modal .horus-prescription { display:grid; grid-column:1/-1; padding:10px 0 14px; background:transparent !important; border:0 !important; border-bottom:1px solid #23334B !important; border-radius:0; box-shadow:none; margin-top:0; }
+#root .horus-app-shell .horus-exercise-modal .horus-prescription strong { font-size:16px; font-weight:600; }
+#root .horus-app-shell .horus-exercise-modal .horus-prescription span { font-size:10px; }
+#root .horus-app-shell .horus-exercise-modal .horus-register { padding:0; background:transparent !important; border:0 !important; border-radius:0 !important; box-shadow:none; }
+#root .horus-app-shell .horus-exercise-modal .horus-rest-inline { grid-column:1/-1; }
+#root .horus-app-shell .horus-exercise-modal .horus-register h3 { font-family:var(--font-sans); font-size:20px; font-style:normal; font-weight:700; text-transform:none; letter-spacing:0; }
+#root .horus-app-shell .horus-exercise-modal .horus-register p { font-size:11px; font-weight:400; }
+#root .horus-app-shell .horus-exercise-modal .horus-register label { font-size:12px; font-weight:500; }
+#root .horus-app-shell .horus-exercise-modal .horus-stepper { border-radius:10px; background:#101E34 !important; }
+#root .horus-app-shell .horus-exercise-modal .horus-stepper button { width:32px; height:44px; min-width:32px; background:transparent !important; font-size:19px; }
+#root .horus-app-shell .horus-exercise-modal .horus-stepper input { font-family:var(--font-sans); font-size:25px; font-weight:700; letter-spacing:0; }
+#root .horus-app-shell .horus-exercise-modal .horus-action { min-height:48px; font-family:var(--font-sans); font-size:14px; font-weight:700; font-style:normal; text-transform:none; letter-spacing:0; }
+#root .horus-app-shell .horus-exercise-modal .horus-rest-inline { display:flex; align-items:center; gap:6px; padding:10px 0; border-bottom:1px solid #23334B; margin-top:0; }
+.horus-rest-inline>div { display:flex; flex-direction:column; margin-right:auto; }
+.horus-rest-inline span { color:#BCCBE0; font-size:10px; }
+.horus-rest-inline strong { color:#91B0FF; font-size:22px; font-variant-numeric:tabular-nums; font-weight:600; }
+.horus-rest-inline button { min-height:40px; min-width:28px; padding:4px; font-size:10px; color:#BCCBE0; }
+.horus-rest-inline button:last-child { color:#91B0FF; }
+.horus-set-history { display:grid; margin-top:14px; }
+#root .horus-app-shell .horus-exercise-modal .horus-set-history>button,.horus-set-history>div { display:flex; align-items:center; gap:8px; min-height:34px; padding:6px 0; border-bottom:1px solid #23334B; background:transparent; text-align:left; font-size:11px; font-weight:400; color:#BCCBE0; }
+.horus-set-history strong { margin-left:auto; font-size:11px; font-weight:500; }
+.horus-set-history svg { color:#7299FF; flex-shrink:0; }
+.horus-set-number { width:16px; text-align:center; color:#BCCBE0; }
+.horus-set-history .active .horus-set-number { color:#7299FF; }
+.horus-exercise-success { text-align:center; padding:14px 0 0; }
+.horus-success-check { margin:0 auto 16px; color:#3268FF; }
+#root .horus-app-shell .horus-exercise-success h2 { font-size:25px; }
+.horus-exercise-success h3 { margin-top:10px; font-size:17px; font-weight:600; line-height:1.4; }
+.horus-exercise-success>p { font-size:12px; margin-top:4px; }
+.horus-exercise-success h4 { text-align:left; font-size:13px; font-weight:600; margin-top:24px; }
+.horus-success-summary { margin-top:8px; }
+.horus-success-summary>div { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #23334B; font-size:12px; text-align:left; }
+.horus-success-summary dt { color:#BCCBE0; }
+.horus-success-summary dd { font-weight:600; }
+.horus-exercise-success+.horus-action { width:100%; margin-top:20px; }
 @media(max-width:380px) {
-  #root .dashboard-light-shell .performance-today { padding-block:16px; }
-  #root .dashboard-light-shell .dashboard-frequency { padding-block:18px; }
-  #root .dashboard-light-shell .dashboard-metrics>div { min-height:148px; padding-block:12px; gap:6px; }
+  #root .dashboard-refined-shell .horus-original-dashboard { gap:12px; }
+  #root .dashboard-refined-shell .performance-today { padding:16px; }
+  #root .dashboard-refined-shell .performance-today h2 { font-size:22px; }
+  #root .dashboard-refined-shell .dashboard-frequency { padding-block:16px; }
+  #root .dashboard-refined-shell .dashboard-metrics>div { padding-block:12px; gap:6px; }
 }
