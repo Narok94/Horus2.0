@@ -290,7 +290,7 @@ export const DashboardView: React.FC = () => {
         {/* Wrapper for side-by-side md: Grid */}
         <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-4 w-full">
           {/* 3. WEEK FREQUENCY DISPLAY (Premium Blue Background and White Text) */}
-          <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-[20px] p-4 space-y-3.5 text-left shadow-lg shadow-blue-900/5 shrink-0">
+          <div className="dashboard-frequency bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-[20px] p-4 space-y-3.5 text-left shadow-lg shadow-blue-900/5 shrink-0">
             <div className="flex justify-between items-center h-4 leading-none">
               <h3 className="text-[9px] font-black tracking-widest uppercase text-white font-sans">
                 FREQUÊNCIA SEMANAL
@@ -334,7 +334,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* 4. SUMMARY METRIC TRIPLE CARDS (Premium Blue Background and White Text) */}
-          <div className="grid grid-cols-3 gap-2 w-full shrink-0 md:flex md:flex-row md:gap-3">
+          <div className="dashboard-metrics grid grid-cols-3 gap-2 w-full shrink-0 md:flex md:flex-row md:gap-3">
             {/* Card 1: Sequência */}
             <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] min-w-0 md:flex-1">
               <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-orange-400 shrink-0">
