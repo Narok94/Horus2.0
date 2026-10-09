@@ -53,7 +53,7 @@ export const ProfileView: React.FC = () => {
   ];
 
   return (
-    <section className="w-full min-h-screen flex flex-col justify-start pt-12 sm:pt-6 px-3 pb-32 bg-transparent font-sans antialiased select-none relative text-zinc-950">
+    <section className="horus-profile w-full min-h-screen flex flex-col justify-start pt-12 sm:pt-6 px-3 pb-32 bg-transparent font-sans antialiased select-none relative text-zinc-950">
       <div className="space-y-1 px-1 shrink-0 mb-4 text-left">
         <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#2563EB] font-mono">Configurações</span>
         <h1 className="text-xl font-extrabold tracking-tight leading-none mt-1 text-zinc-950 font-[900]">Meu Perfil</h1>
@@ -62,9 +62,9 @@ export const ProfileView: React.FC = () => {
 
       <div className="w-full space-y-4 px-1">
         <input ref={photoInput} type="file" accept="image/*" className="hidden" onChange={selectPhoto} />
-        <div className="rounded-2xl p-4 flex items-center justify-between gap-4 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+        <div className="horus-profile-identity rounded-2xl p-4 flex items-center justify-between gap-4 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
           <div className="flex items-center gap-3.5 min-w-0">
-            <button onClick={() => photoInput.current?.click()} className="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden text-base font-black shrink-0 border bg-white/15 border-white/10 text-white relative">
+            <button aria-label="Trocar foto de perfil" onClick={() => photoInput.current?.click()} className="horus-profile-avatar w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden text-base font-black shrink-0 border bg-white/15 border-white/10 text-white relative">
               {user.avatar && !photoError ? <img src={user.avatar} alt="Foto de perfil" className="w-full h-full object-cover" onError={() => setPhotoError(true)} /> : initials}
               <span className="absolute right-1 bottom-1 w-5 h-5 rounded-full bg-white text-[#2563EB] grid place-items-center"><Edit2 size={10} /></span>
             </button>
@@ -74,7 +74,7 @@ export const ProfileView: React.FC = () => {
               <p className="text-[9px] font-mono font-bold leading-none uppercase text-white/80">{user.goal || 'Atleta'}</p>
             </div>
           </div>
-          <button onClick={() => { setName(user.name); setGoal(user.goal || 'Atleta'); setPanel('edit'); }} className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border bg-white/15 border-white/10 text-white"><Edit2 size={13} /></button>
+          <button aria-label="Editar perfil" onClick={() => { setName(user.name); setGoal(user.goal || 'Atleta'); setPanel('edit'); }} className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border bg-white/15 border-white/10 text-white"><Edit2 size={13} /></button>
         </div>
 
         <div className="grid grid-cols-2 gap-3.5">

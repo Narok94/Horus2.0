@@ -1,4 +1,4 @@
-import { getExerciseThumbnail, getThumbnailPlan, retryThumbnail } from '../../src/utils/workoutThumbnails';
+import { getDivisionThumbnail, getExerciseThumbnail, getThumbnailPlan, retryThumbnail } from '../../src/utils/workoutThumbnails';
 import type { ThumbnailPlan } from '../../src/utils/workoutThumbnails';
 import { getExerciseDetails } from '../../src/utils/exerciseUtils';
 import React, { useEffect, useState } from 'react';
@@ -37,8 +37,8 @@ export const HistoryView: React.FC = () => {
     const duration = seconds === undefined ? '—' : `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
     return (
-      <section className="w-full min-h-screen flex flex-col justify-start pt-8 sm:pt-6 px-3 pb-32 bg-transparent font-sans text-zinc-950">
-        <button onClick={() => setSelected(null)} className="w-10 h-10 rounded-xl bg-white border border-zinc-200 shadow-sm grid place-items-center mb-3"><ArrowLeft size={18} /></button>
+      <section className="horus-history horus-history-detail w-full min-h-screen flex flex-col justify-start pt-8 sm:pt-6 px-3 pb-32 bg-transparent font-sans text-zinc-950">
+        <button aria-label="Voltar ao Histórico" onClick={() => setSelected(null)} className="w-10 h-10 rounded-xl bg-white border border-zinc-200 shadow-sm grid place-items-center mb-3"><ArrowLeft size={18} /></button>
 
         <div className="rounded-[22px] p-4 bg-gradient-to-br from-[#2563EB] to-[#0A192F] border border-white/10 text-white shadow-lg mb-3">
           <span className="text-[8px] font-mono font-black uppercase tracking-[0.22em] text-white/60">{dateLabel(selected.date)}</span>
@@ -77,21 +77,21 @@ export const HistoryView: React.FC = () => {
   const history = user.history.filter(entry => filter === 'Todos' || groupOf(entry) === filter);
 
   return (
-    <section className="w-full min-h-screen flex flex-col justify-start pt-12 sm:pt-6 px-3 pb-32 bg-transparent font-sans text-zinc-950">
+    <section className="horus-history w-full min-h-screen flex flex-col justify-start pt-12 sm:pt-6 px-3 pb-32 bg-transparent font-sans text-zinc-950">
       <div className="space-y-1 px-1 shrink-0 mb-4 text-left">
         <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#2563EB] font-mono">Evolução</span>
         <h1 className="text-xl font-extrabold tracking-tight leading-none mt-1 text-zinc-950 font-[900]">Histórico</h1>
         <p className="text-xs leading-normal text-zinc-500 font-semibold">Acompanhe seus treinos concluídos.</p>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 mb-4">
-        {['Todos','Peito','Costas','Pernas','Ombros'].map(label => <button key={label} onClick={() => setFilter(label)} className={`shrink-0 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider border transition-all ${filter === label ? 'bg-[#2563EB] border-[#2563EB] text-white' : 'bg-white border-zinc-200 text-zinc-500'}`}>{label}</button>)}
+      <div className="horus-history-filters flex gap-2 overflow-x-auto no-scrollbar px-1 mb-4">
+        {['Todos','Peito','Costas','Pernas','Ombros'].map(label => <button key={label} aria-pressed={filter === label} onClick={() => setFilter(label)} className={`shrink-0 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider border transition-all ${filter === label ? 'bg-[#2563EB] border-[#2563EB] text-white' : 'bg-white border-zinc-200 text-zinc-500'}`}>{label}</button>)}
       </div>
 
       <div className="space-y-3 px-1">
-        {history.map(entry => <button key={entry.id} onClick={() => { setSelected(entry); setExpanded(null); }} className="w-full rounded-2xl p-4 text-left bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 text-white shadow-lg active:scale-[0.99] transition-transform">
+        {history.map(entry => <button key={entry.id} onClick={() => { setSelected(entry); setExpanded(null); }} className="horus-history-entry w-full rounded-2xl p-4 text-left bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 text-white shadow-lg active:scale-[0.99] transition-transform">
           <div className="flex items-start gap-3">
-            <div className="w-11 h-11 rounded-xl bg-white/15 border border-white/10 grid place-items-center shrink-0">{entry.exercises[0] ? <ExerciseThumbnail name={entry.exercises[0].name} plan={getThumbnailPlan(user.username, { id: entry.workoutId })} /> : <Dumbbell size={18} />}</div>
+            <div className="horus-history-art w-11 h-11 rounded-xl bg-white/15 border border-white/10 grid place-items-center shrink-0">{getDivisionThumbnail({ id: entry.workoutId, title: entry.workoutTitle }, getThumbnailPlan(user.username, { id: entry.workoutId })) ? <img src={getDivisionThumbnail({ id: entry.workoutId, title: entry.workoutTitle }, getThumbnailPlan(user.username, { id: entry.workoutId }))} alt="" loading="lazy" /> : entry.exercises[0] ? <ExerciseThumbnail name={entry.exercises[0].name} plan={getThumbnailPlan(user.username, { id: entry.workoutId })} /> : <Dumbbell size={18} />}</div>
             <div className="min-w-0 flex-1">
               <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-white/55">{dateLabel(entry.date)}</span>
               <h2 className="text-[14px] font-black uppercase tracking-tight leading-tight mt-1">{entry.workoutTitle}</h2>

@@ -694,6 +694,59 @@ body { margin:0; }
 .horus-success-summary dt { color:#BCCBE0; }
 .horus-success-summary dd { font-weight:600; }
 .horus-exercise-success+.horus-action { width:100%; margin-top:20px; }
+/* Existing completion state gets a check, a distinct surface and a struck label. */
+#root .horus-app-shell .horus-exercise-modal .horus-set-history>button.completed {
+  background:#12394B;
+  border-color:#2D7185;
+  border-left:3px solid #49D6CA;
+  border-radius:8px;
+  padding-inline:8px;
+  margin-block:3px;
+  color:#D8F8F4;
+}
+.horus-set-history>button.completed>span { text-decoration:line-through; text-decoration-thickness:1.5px; }
+.horus-set-history>button.completed>svg { color:#49D6CA; }
+#root .horus-app-shell .horus-exercise-modal .horus-set-history>button.active { border-left:3px solid #3268FF; padding-left:8px; color:#E5EDFF; }
+
+/* History and Profile have light surfaces scoped to their tabs. */
+#root .horus-app-shell.account-light-shell { background:#F5F7FA !important; color:#172238 !important; padding-top:max(12px,var(--safe-top)); }
+#root .account-light-shell .horus-main-content { flex-grow:0; flex-basis:auto; padding-inline:16px; padding-bottom:calc(81px + var(--safe-bottom)); }
+#root .account-light-shell .horus-history,#root .account-light-shell .horus-profile { padding:12px 0 0; min-height:0; }
+#root .account-light-shell .horus-history h1,#root .account-light-shell .horus-profile h1 { font-family:var(--font-sans); font-size:26px; font-weight:800; line-height:1.25; letter-spacing:-.02em; color:#172238; text-transform:none; }
+#root .account-light-shell .horus-history h2 { font-family:var(--font-sans); font-size:18px; font-weight:800; line-height:1.25; letter-spacing:0; text-transform:none; }
+#root .account-light-shell .horus-history .font-mono,#root .account-light-shell .horus-profile .font-mono { font-family:var(--font-sans); }
+#root .account-light-shell .horus-history [class*="bg-gradient-to-"],#root .account-light-shell .horus-profile [class*="bg-gradient-to-"] { background:#FFF !important; color:#172238; border:1px solid #DFE5ED; border-radius:18px; box-shadow:0 3px 12px #17223806; }
+#root .account-light-shell .horus-history [class*="text-white"],#root .account-light-shell .horus-profile [class*="text-white"] { color:#56657B; }
+#root .account-light-shell .horus-history h1,#root .account-light-shell .horus-history h2,#root .account-light-shell .horus-history strong,#root .account-light-shell .horus-profile h2,#root .account-light-shell .horus-profile strong { color:#172238; }
+#root .account-light-shell .horus-history [class*="bg-white/"],#root .account-light-shell .horus-profile [class*="bg-white/"] { background:#EDF3FF; border-color:#DBE6FF; color:#3268FF; }
+#root .account-light-shell .horus-history [class*="text-emerald"],#root .account-light-shell .horus-profile [class*="text-amber"] { color:#3268FF; }
+#root .account-light-shell .horus-history-entry { padding:14px; }
+#root .account-light-shell .horus-history-entry>div { align-items:center; }
+#root .account-light-shell .horus-history-entry h2 { margin-top:4px; }
+#root .account-light-shell .horus-history-entry [class*="text-[8px]"] { font-size:10px; line-height:1.4; letter-spacing:0; text-transform:none; }
+#root .account-light-shell .horus-history-art { width:54px; height:64px; overflow:hidden; background:#EDF3FF; border:0; }
+.horus-history-art>img { width:100%; height:100%; object-fit:cover; }
+#root .account-light-shell .horus-history-filters { flex-wrap:wrap; gap:6px; overflow:visible; }
+#root .account-light-shell .horus-history-filters button { font-size:11px; min-height:36px; padding-inline:10px; font-weight:700; letter-spacing:0; text-transform:none; }
+#root .account-light-shell .horus-history-filters button[aria-pressed="true"] { background:#3268FF; color:#FFF; }
+#root .account-light-shell .horus-history-detail [class*="bg-[#0A192F]"] { background:#EDF2F8; border-color:#DFE5ED; color:#344258; }
+#root .account-light-shell .horus-history-detail [class*="text-[9px]"],#root .account-light-shell .horus-history-detail [class*="text-[10px]"],#root .account-light-shell .horus-history-detail [class*="text-[8px]"] { font-size:11px; line-height:1.4; letter-spacing:0; text-transform:none; }
+#root .account-light-shell .horus-history-detail button strong { font-size:14px; text-transform:none; line-height:1.3; }
+#root .account-light-shell .horus-profile-identity { gap:10px; padding:16px 14px; }
+#root .account-light-shell .horus-profile-avatar { width:64px; height:64px; color:#3268FF; background:#EDF3FF; }
+#root .account-light-shell .horus-profile-identity h2 { font-size:18px; line-height:1.25; text-transform:none; font-weight:800; white-space:normal; color:#172238 !important; }
+#root .account-light-shell .horus-history-detail svg { color:#3268FF; }
+#root .account-light-shell .horus-profile-identity [class*="text-[7.5px]"],#root .account-light-shell .horus-profile-identity p { font-size:11px; line-height:1.4; text-transform:none; letter-spacing:0; }
+#root .account-light-shell .horus-profile button[aria-label="Editar perfil"] { min-width:40px; min-height:44px; color:#3268FF; }
+#root .account-light-shell .horus-profile [class*="grid-cols-2"] { gap:12px; }
+#root .account-light-shell .horus-profile [class*="grid-cols-2"]>div { padding:16px; }
+#root .account-light-shell .horus-profile [class*="grid-cols-2"] strong { font-size:18px; font-weight:700; }
+#root .account-light-shell .horus-profile [class*="text-[7.5px]"] { font-size:10px; line-height:1.4; letter-spacing:.04em; }
+#root .account-light-shell .horus-profile [class*="text-[8px]"] { font-size:10px; line-height:1.4; letter-spacing:0; }
+#root .account-light-shell .horus-profile [class*="bg-white/10"] { background:#DFE5ED; }
+#root .account-light-shell .horus-profile button>[class*="flex-1"] { font-size:13px; font-weight:700; text-transform:none; }
+#root .account-light-shell .horus-profile .fixed button[class*="bg-[#2563EB]"] { color:#FFF; }
+#root .account-light-shell .horus-profile .fixed button[class*="bg-zinc-900"] { color:#FFF; }
 @media(max-width:380px) {
   #root .dashboard-refined-shell .horus-original-dashboard { gap:12px; }
   #root .dashboard-refined-shell .performance-today { padding:16px; }

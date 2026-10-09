@@ -1161,7 +1161,7 @@ export const WorkoutView: React.FC = () => {
                     <div><dt>Carga média</dt><dd>{Number(averageWeight.toFixed(1))} kg</dd></div>
                     <div><dt>{timed ? 'Tempo executado' : 'Total de repetições'}</dt><dd>{timed ? totalSeconds + ' s' : totalReps + ' reps'}</dd></div>
                   </dl>
-                  <div className="horus-set-history">{sets.map((set, index) => <button key={index} aria-label={`Série ${index + 1}, concluída; toque para desmarcar`} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><Check size={16} /><span>Série {index + 1}</span><strong>{set.weight} kg · {timed ? (set.durationSeconds || 0) + ' s' : set.reps + ' reps'}</strong></button>)}</div>
+                  <div className="horus-set-history">{sets.map((set, index) => <button key={index} className="completed" aria-label={`Série ${index + 1}, concluída; toque para desmarcar`} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><Check size={16} /><span>Série {index + 1}</span><strong>{set.weight} kg · {timed ? (set.durationSeconds || 0) + ' s' : set.reps + ' reps'}</strong></button>)}</div>
                 </section>;
               })()}
               {getExercisePerformance(activeModalExercise).every(set => set.completed) && <button className="horus-action" onClick={() => {
