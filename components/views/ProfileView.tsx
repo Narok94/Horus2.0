@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Edit2, Trophy, Zap, Dumbbell, Flame, Settings, CircleHelp, ChevronRight, X, Check, LogOut } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Check, ChevronRight, CircleHelp, Dumbbell, Edit2, Flame, LogOut, Settings, Trophy, X, Zap } from 'lucide-react';
 import { useStore } from '../../store';
 
 export const ProfileView: React.FC = () => {
@@ -9,6 +9,9 @@ export const ProfileView: React.FC = () => {
   const [goal, setGoal] = useState('');
   const photoInput = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState(false);
+
+  if (!user) return null;
+
   const selectPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
@@ -37,29 +40,96 @@ export const ProfileView: React.FC = () => {
     };
     image.src = url;
   };
-  if (!user) return null;
+
   const now = new Date();
   const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const monthDays = new Set(user.checkIns.filter(date => date.startsWith(month))).size;
-  const initials = user.name.trim().slice(0, 2).toUpperCase();
+  const initials = user.name.trim().split(/\s+/).map(part => part[0]).join('').slice(0, 2).toUpperCase() || 'AT';
   const achievements = [
-    { label: 'Primeiro Treino', icon: Trophy, color: 'cyan', unlocked: user.badges?.some(b => b.id === 'first_workout') },
-    { label: 'Consistência', icon: Zap, color: 'gold', unlocked: user.badges?.some(b => b.id === 'ten_workouts') },
-    { label: 'Hábito', icon: Dumbbell, color: 'white', unlocked: user.badges?.some(b => b.id === 'seven_day_streak') },
-    { label: 'Foco', icon: Flame, color: 'rose', unlocked: user.badges?.some(b => /foco/i.test(b.name)) }
+    { label: 'Primeiro treino', icon: Trophy, unlocked: user.badges?.some(b => b.id === 'first_workout') },
+    { label: 'Consistência', icon: Zap, unlocked: user.badges?.some(b => b.id === 'ten_workouts') },
+    { label: 'Hábito', icon: Dumbbell, unlocked: user.badges?.some(b => b.id === 'seven_day_streak') },
+    { label: 'Foco', icon: Flame, unlocked: user.badges?.some(b => /foco/i.test(b.name)) }
   ];
-  return <section className="horus-screen horus-profile">
-    <header className="horus-page-header"><h1>Meu Perfil</h1><p>Monitore sua evolução e personalize sua experiência.</p></header>
-    <div className="horus-user-card"><input ref={photoInput} type="file" accept="image/*" className="hidden" aria-label="Selecionar foto de perfil" onChange={selectPhoto} /><button className="horus-avatar horus-photo-avatar" aria-label={user.avatar ? 'Trocar foto de perfil' : 'Selecionar foto de perfil'} onClick={() => photoInput.current?.click()}>{user.avatar && !photoError ? <img src={user.avatar} alt="Foto de perfil" onError={() => setPhotoError(true)} /> : initials}<span className="horus-photo-edit"><Edit2 size={13} /></span></button><div className="flex-1 min-w-0"><h2>{user.name}</h2><p>{user.goal || 'Atleta'}</p></div><button className="horus-edit-button" aria-label="Editar perfil" onClick={() => { setName(user.name); setGoal(user.goal || 'Atleta'); setPanel('edit'); }}><Edit2 size={22} /></button></div>
-    <div className="horus-consistency"><h2><span className="horus-small-icon"><Flame size={22} /></span>Consistência</h2><div className="horus-consistency-grid"><div><strong>{user.totalWorkouts}</strong><span>Treinos<br />realizados</span></div><div><strong>{user.streak}</strong><span>Dias<br />em sequência</span></div><div><strong>{monthDays}</strong><span>Dias<br />no mês</span></div></div></div>
-    <div className="horus-section-title"><h2>Conquistas</h2><button onClick={() => setPanel('badges')}>Ver todas <ChevronRight size={16} /></button></div>
-    <div className="horus-achievements">{achievements.map(item => <button key={item.label} className="horus-achievement" onClick={() => setPanel('badges')} aria-label={`${item.label}${item.unlocked ? ', conquistado' : ', não conquistado'}`}><span className={`horus-badge-icon ${item.color}`}><item.icon size={28} /></span><span>{item.label}</span></button>)}</div>
-    <div className="horus-profile-links"><button className="horus-card" onClick={() => setPanel('settings')}><span className="horus-small-icon"><Settings size={25} /></span><span>Configurações</span><ChevronRight size={22} /></button><button className="horus-card" onClick={() => setPanel('help')}><span className="horus-small-icon"><CircleHelp size={25} /></span><span>Ajuda e Suporte</span><ChevronRight size={22} /></button></div>
-    {panel && <div className="horus-modal-backdrop" onClick={() => setPanel(null)}><div className="horus-modal horus-card" role="dialog" aria-modal="true" aria-label={panel === 'edit' ? 'Editar perfil' : panel === 'settings' ? 'Configurações' : panel === 'help' ? 'Ajuda e Suporte' : 'Conquistas'} onClick={event => event.stopPropagation()}><button className="horus-modal-close" aria-label="Fechar" onClick={() => setPanel(null)}><X size={22} /></button>
-      {panel === 'edit' && <form onSubmit={event => { event.preventDefault(); updateUserProfile({ name: name.trim() || user.name, goal: goal.trim() || 'Atleta' }); setPanel(null); }}><h2>Editar perfil</h2><button type="button" className="horus-photo-select" onClick={() => photoInput.current?.click()}>{user.avatar ? 'Trocar foto de perfil' : 'Selecionar foto de perfil'}</button><label>Nome<input value={name} onChange={event => setName(event.target.value)} /></label><label>Identificação esportiva<input value={goal} onChange={event => setGoal(event.target.value)} /></label><button className="horus-action" type="submit"><Check size={18} />Salvar</button></form>}
-      {panel === 'settings' && <><h2>Configurações</h2><button className="horus-action" onClick={toggleTheme}>Tema do aplicativo: {theme === 'light' ? 'claro' : 'escuro'}</button><button className="horus-action" onClick={logout}><LogOut size={18} />Sair da conta</button></>}
-      {panel === 'help' && <><h2>Ajuda e Suporte</h2><p>Selecione uma rotina em Treinos e registre suas séries durante a execução. Consulte os resultados na aba Histórico.</p><p>Os dados ficam salvos neste navegador. Evite limpar os dados do site para manter seus registros.</p></>}
-      {panel === 'badges' && <><h2>Suas conquistas</h2>{user.badges?.length ? user.badges.map(badge => <div className="horus-badge-detail" key={badge.id}><Trophy size={22} /><div><strong>{badge.name}</strong><p>{badge.description}</p></div></div>) : <p>Suas conquistas aparecerão aqui conforme você treina.</p>}</>}
-    </div></div>}
-  </section>;
+
+  return (
+    <section className="w-full min-h-screen flex flex-col justify-start pt-12 sm:pt-6 px-3 pb-32 bg-transparent font-sans antialiased select-none relative text-zinc-950">
+      <div className="space-y-1 px-1 shrink-0 mb-4 text-left">
+        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#2563EB] font-mono">Configurações</span>
+        <h1 className="text-xl font-extrabold tracking-tight leading-none mt-1 text-zinc-950 font-[900]">Meu Perfil</h1>
+        <p className="text-xs leading-normal text-zinc-500 font-semibold">Monitore sua evolução e dados de atleta.</p>
+      </div>
+
+      <div className="w-full space-y-4 px-1">
+        <input ref={photoInput} type="file" accept="image/*" className="hidden" onChange={selectPhoto} />
+        <div className="rounded-2xl p-4 flex items-center justify-between gap-4 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <button onClick={() => photoInput.current?.click()} className="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden text-base font-black shrink-0 border bg-white/15 border-white/10 text-white relative">
+              {user.avatar && !photoError ? <img src={user.avatar} alt="Foto de perfil" className="w-full h-full object-cover" onError={() => setPhotoError(true)} /> : initials}
+              <span className="absolute right-1 bottom-1 w-5 h-5 rounded-full bg-white text-[#2563EB] grid place-items-center"><Edit2 size={10} /></span>
+            </button>
+            <div className="min-w-0 text-left">
+              <span className="text-[7.5px] font-mono font-extrabold uppercase tracking-widest block mb-1 text-white/60">Membro Horus</span>
+              <h2 className="text-[15px] font-black text-white uppercase tracking-tight leading-none truncate mb-1.5">{user.name}</h2>
+              <p className="text-[9px] font-mono font-bold leading-none uppercase text-white/80">{user.goal || 'Atleta'}</p>
+            </div>
+          </div>
+          <button onClick={() => { setName(user.name); setGoal(user.goal || 'Atleta'); setPanel('edit'); }} className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border bg-white/15 border-white/10 text-white"><Edit2 size={13} /></button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3.5">
+          <div className="p-4 rounded-2xl space-y-3 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+            <span className="text-[7.5px] font-extrabold tracking-[0.2em] uppercase font-mono block text-white/60">Consistência</span>
+            <div className="space-y-2">
+              <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">TOTAL</span><strong className="font-mono text-xs">{user.totalWorkouts || 0}</strong></div>
+              <div className="h-px bg-white/10" />
+              <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">STREAK</span><strong className="font-mono text-xs text-amber-300">{user.streak || 0} dias</strong></div>
+            </div>
+          </div>
+          <div className="p-4 rounded-2xl space-y-3 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+            <span className="text-[7.5px] font-extrabold tracking-[0.2em] uppercase font-mono block text-white/60">Este mês</span>
+            <div className="space-y-2">
+              <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">DIAS</span><strong className="font-mono text-xs">{monthDays}</strong></div>
+              <div className="h-px bg-white/10" />
+              <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">BADGES</span><strong className="font-mono text-xs">{user.badges?.length || 0}</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3 text-left">
+          <span className="text-[7.5px] font-extrabold tracking-[0.2em] uppercase font-mono block px-0.5 text-zinc-500">Galeria de Conquistas</span>
+          <div className="grid grid-cols-4 gap-2">
+            {achievements.map(item => {
+              const Icon = item.icon;
+              return <button key={item.label} onClick={() => setPanel('badges')} className={`flex flex-col items-center justify-center text-center py-2.5 px-1 rounded-2xl border transition-all ${item.unlocked ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-transparent text-white shadow-md' : 'bg-zinc-100 border-zinc-200 text-zinc-500'}`}>
+                <div className={`p-1.5 rounded-xl border ${item.unlocked ? 'bg-white/15 border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-400'}`}><Icon size={14} /></div>
+                <p className="text-[8px] font-black uppercase tracking-tight mt-1.5 truncate max-w-full">{item.label.split(' ')[0]}</p>
+              </button>;
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <button onClick={() => setPanel('settings')} className="w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><Settings size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Configurações</span><ChevronRight size={18} /></button>
+          <button onClick={() => setPanel('help')} className="w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><CircleHelp size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Ajuda e Suporte</span><ChevronRight size={18} /></button>
+        </div>
+      </div>
+
+      {panel && <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setPanel(null)}>
+        <div className="w-full max-w-sm rounded-2xl bg-white border border-zinc-200 p-5 shadow-2xl relative text-left" onClick={e => e.stopPropagation()}>
+          <button className="absolute right-3 top-3 w-8 h-8 rounded-lg bg-zinc-100 grid place-items-center" onClick={() => setPanel(null)}><X size={16} /></button>
+          {panel === 'edit' && <form className="space-y-4" onSubmit={e => { e.preventDefault(); updateUserProfile({ name: name.trim() || user.name, goal: goal.trim() || 'Atleta' }); setPanel(null); }}>
+            <h2 className="text-lg font-black uppercase">Editar atleta</h2>
+            <button type="button" onClick={() => photoInput.current?.click()} className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs">Trocar foto</button>
+            <label className="block text-xs font-bold">Nome<input className="mt-1 w-full border border-zinc-200 rounded-xl px-3 py-3" value={name} onChange={e => setName(e.target.value)} /></label>
+            <label className="block text-xs font-bold">Identificação esportiva<input className="mt-1 w-full border border-zinc-200 rounded-xl px-3 py-3" value={goal} onChange={e => setGoal(e.target.value)} /></label>
+            <button className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2"><Check size={15} />Salvar</button>
+          </form>}
+          {panel === 'settings' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Configurações</h2><button className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs" onClick={toggleTheme}>Tema: {theme === 'light' ? 'claro' : 'escuro'}</button><button className="w-full bg-zinc-900 text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2" onClick={logout}><LogOut size={15} />Sair</button></div>}
+          {panel === 'help' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Ajuda e Suporte</h2><p className="text-sm text-zinc-600">Selecione uma rotina em Treinos e registre suas séries durante a execução. Consulte os resultados na aba Histórico.</p></div>}
+          {panel === 'badges' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Suas conquistas</h2>{user.badges?.length ? user.badges.map(b => <div key={b.id} className="rounded-xl bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white p-3"><strong className="text-sm">{b.name}</strong><p className="text-xs text-white/70 mt-1">{b.description}</p></div>) : <p className="text-sm text-zinc-600">Suas conquistas aparecerão aqui conforme você treina.</p>}</div>}
+        </div>
+      </div>}
+    </section>
+  );
 };
