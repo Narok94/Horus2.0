@@ -5,6 +5,7 @@ import App from './App';
 import './src/index.css';
 import './src/personal.css';
 import './src/background.css';
+import './src/cards.css';
 
 console.info('[HORUS BUILD]', import.meta.env.VITE_BUILD_SHA);
 

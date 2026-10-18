@@ -557,8 +557,8 @@ export const WorkoutView: React.FC = () => {
         <CheckCircle2 size={44} strokeWidth={1.8} />
         <div><h1>Treino concluído!</h1><p>Seu treino foi salvo no histórico.</p></div>
       </header>
-      <div className="horus-completion-info"><h2>{selectedWorkout.title}</h2><p><Clock size={16} />{formatTime(workoutDuration || 0)} de treino</p><div className="horus-completion-details"><span>{calculateVolume()} kg de volume</span><span>{selectedWorkout.exercises.filter(ex => getExercisePerformance(ex).every(set => set.completed)).length}/{selectedWorkout.exercises.length} exercícios concluídos</span></div></div>
-      <section className="horus-completion-photo">
+      <div className="horus-completion-info horus-blue-card"><h2>{selectedWorkout.title}</h2><p><Clock size={16} />{formatTime(workoutDuration || 0)} de treino</p><div className="horus-completion-details"><span>{calculateVolume()} kg de volume</span><span>{selectedWorkout.exercises.filter(ex => getExercisePerformance(ex).every(set => set.completed)).length}/{selectedWorkout.exercises.length} exercícios concluídos</span></div></div>
+      <section className="horus-completion-photo horus-blue-card">
         <div className="horus-completion-photo-heading"><h3>Foto do treino</h3>{capturedImage && <button aria-label="Remover foto" onClick={() => { setCapturedImage(null); setShowPhotoPreview(false); }}><Trash2 size={18} /></button>}</div>
         {!capturedImage ? <button className="horus-capture-photo" onClick={() => fileInputRef.current?.click()}><Camera size={26} /><span>Tirar ou escolher foto</span><small>Crie sua imagem com a marca HÓRUS GYM</small></button> : shareImage ? <>
           <button className="horus-share-thumbnail" aria-label="Ampliar imagem do treino" onClick={() => setShowPhotoPreview(true)}><img src={shareImage} alt="Foto do treino com divisão, duração e marca HÓRUS GYM" /></button>
@@ -605,7 +605,7 @@ export const WorkoutView: React.FC = () => {
       </header>
 
       {/* Selected Workout Upper Banner matching attachment 1 */}
-      <div className={`horus-selected-workout ${isWorkoutActive ? 'horus-session-active' : ''} relative overflow-hidden rounded-xl border p-3 text-center space-y-2 shadow-lg shrink-0 mt-1.5 ${
+      <div className={`horus-selected-workout horus-blue-card ${isWorkoutActive ? 'horus-session-active' : ''} relative overflow-hidden rounded-xl border p-3 text-center space-y-2 shadow-lg shrink-0 mt-1.5 ${
         isLightTheme
           ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10'
           : 'border-white/5 bg-gradient-to-br from-zinc-950/90 to-zinc-900/50'
@@ -686,7 +686,7 @@ export const WorkoutView: React.FC = () => {
               <div key={ex.id} className="space-y-2">
                 <div
                   onClick={handleCardClick}
-                  className={`horus-execution-exercise group relative overflow-hidden rounded-xl border p-3 active:scale-[0.99] transition-all duration-300 cursor-pointer flex items-center justify-between gap-3 shadow-md ${
+                  className={`horus-execution-exercise horus-blue-card group relative overflow-hidden rounded-xl border p-3 active:scale-[0.99] transition-all duration-300 cursor-pointer flex items-center justify-between gap-3 shadow-md ${
                     isLightTheme
                       ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg'
                       : 'bg-[#0e0e12]/70 border-white/5 hover:border-accent/40 hover:bg-[#121217]/90'
@@ -780,7 +780,7 @@ export const WorkoutView: React.FC = () => {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className={`overflow-hidden border rounded-xl px-4 py-4 ${
+                      className={`horus-blue-card overflow-hidden border rounded-xl px-4 py-4 ${
                         isLightTheme ? 'bg-zinc-50 border-zinc-250 shadow-inner' : 'bg-[#0c0c0e]/90 border-white/5'
                       }`}
                     >
@@ -1011,7 +1011,7 @@ export const WorkoutView: React.FC = () => {
                 <p className="horus-compact-meta">{activeModalExercise.sets} séries • {activeModalExercise.reps}{interpretPrescription(activeModalExercise).kind === 'time' ? '' : ' reps'}</p>
               </div>
 
-                  <div className="horus-prescription"><div><strong>{activeModalExercise.sets}</strong><span>Séries</span></div><div><strong>{activeModalExercise.reps}</strong><span>{interpretPrescription(activeModalExercise).kind === 'time' ? 'Tempo' : 'Repetições'}</span></div><div><strong>{activeModalExercise.rest}s</strong><span>Descanso</span></div></div>
+                  <div className="horus-prescription horus-blue-card"><div><strong>{activeModalExercise.sets}</strong><span>Séries</span></div><div><strong>{activeModalExercise.reps}</strong><span>{interpretPrescription(activeModalExercise).kind === 'time' ? 'Tempo' : 'Repetições'}</span></div><div><strong>{activeModalExercise.rest}s</strong><span>Descanso</span></div></div>
                   {/* Standard Coaching Directives */}
                   <AnimatePresence>
                     {showExerciseInfo && (
@@ -1021,7 +1021,7 @@ export const WorkoutView: React.FC = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className={`horus-technical-info border rounded-xl p-3 space-y-2.5 text-left leading-relaxed mt-4 ${
+                        <div className={`horus-technical-info horus-blue-card border rounded-xl p-3 space-y-2.5 text-left leading-relaxed mt-4 ${
                           isLightTheme ? 'border-zinc-250 bg-zinc-50' : 'border-white/5 bg-[#121216]/50'
                         }`}>
                           <div>
@@ -1050,7 +1050,7 @@ export const WorkoutView: React.FC = () => {
                   </AnimatePresence>
 
                   {showExerciseInfo && <button className="horus-action" onClick={() => setShowExerciseInfo(false)}>Voltar para registrar série</button>}
-                  {modalRestTimeLeft !== null && <div className="horus-rest-inline" role="status">
+                  {modalRestTimeLeft !== null && <div className="horus-rest-inline horus-blue-card" role="status">
                     <div><span>{isModalRestPaused ? 'Descanso pausado' : 'Descanso'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div>
                     <button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button>
                     <button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button>

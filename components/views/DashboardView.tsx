@@ -139,7 +139,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
     setActiveTab(AppTab.WORKOUT);
   };
 
-  if (compact) return <article className="personal-card personal-workout"><span className="personal-eyebrow">TREINO DE HOJE</span><div className="personal-workout-copy"><h2>{heroWorkout?.title || 'Suas fichas de treino'}</h2><p>{heroWorkout ? '45 min · '+heroWorkout.exercises.length+' exercícios' : 'Veja suas rotinas'}</p></div>{showHeroThumbnail && <img className="personal-workout-art" src={heroThumbnail} alt="" onError={() => setUnavailableDivision(heroThumbnail || null)}/>}<button className="personal-primary" onClick={startActiveWorkout}><Play size={16}/>{isWorkoutActive ? 'Continuar treino' : 'Iniciar treino'}</button></article>;
+  if (compact) return <article className="personal-card personal-workout horus-blue-card"><span className="personal-eyebrow">TREINO DE HOJE</span><div className="personal-workout-copy"><h2>{heroWorkout?.title || 'Suas fichas de treino'}</h2><p>{heroWorkout ? '45 min · '+heroWorkout.exercises.length+' exercícios' : 'Veja suas rotinas'}</p></div>{showHeroThumbnail && <img className="personal-workout-art" src={heroThumbnail} alt="" onError={() => setUnavailableDivision(heroThumbnail || null)}/>}<button className="personal-primary" onClick={startActiveWorkout}><Play size={16}/>{isWorkoutActive ? 'Continuar treino' : 'Iniciar treino'}</button></article>;
 
   return (
       <div className="horus-original-dashboard w-full min-h-screen flex flex-col justify-start gap-3 bg-transparent text-zinc-950 font-sans antialiased select-none relative pt-12 sm:pt-6 pb-40 px-1">
@@ -180,7 +180,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
         </header>
 
         {/* 2. CARD HERO PRINCIPAL - TREINO DE HOJE (Slimmer and more compact) */}
-        <div className="performance-today w-full bg-gradient-to-br from-[#2563EB] to-[#0A192F] rounded-[22px] p-4.5 md:py-4 text-white relative shadow-lg shadow-blue-900/10 overflow-hidden flex flex-col justify-between min-h-[195px] md:min-h-0 shrink-0">
+        <div className="horus-blue-card performance-today w-full bg-gradient-to-br from-[#2563EB] to-[#0A192F] rounded-[22px] p-4.5 md:py-4 text-white relative shadow-lg shadow-blue-900/10 overflow-hidden flex flex-col justify-between min-h-[195px] md:min-h-0 shrink-0">
           {/* Subtle flare behind dumbbell */}
           <div className="absolute -top-10 -right-10 w-36 h-36 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -292,7 +292,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
         {/* Wrapper for side-by-side md: Grid */}
         <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-4 w-full">
           {/* 3. WEEK FREQUENCY DISPLAY (Premium Blue Background and White Text) */}
-          <div className="dashboard-frequency bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-[20px] p-4 space-y-3.5 text-left shadow-lg shadow-blue-900/5 shrink-0">
+          <div className="horus-blue-card dashboard-frequency bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-[20px] p-4 space-y-3.5 text-left shadow-lg shadow-blue-900/5 shrink-0">
             <div className="flex justify-between items-center h-4 leading-none">
               <h3 className="text-[9px] font-black tracking-widest uppercase text-white font-sans">
                 FREQUÊNCIA SEMANAL
@@ -338,7 +338,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
           {/* 4. SUMMARY METRIC TRIPLE CARDS (Premium Blue Background and White Text) */}
           <div className="dashboard-metrics grid grid-cols-3 gap-2 w-full shrink-0 md:flex md:flex-row md:gap-3">
             {/* Card 1: Sequência */}
-            <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] min-w-0 md:flex-1">
+            <div className="horus-blue-card bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] min-w-0 md:flex-1">
               <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-orange-400 shrink-0">
                 <Flame size={12} className="fill-orange-400/20" />
               </div>
@@ -359,7 +359,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
             </div>
 
             {/* Card 2: Tempo Total */}
-            <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] md:flex-1">
+            <div className="horus-blue-card bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] md:flex-1">
               <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-blue-200 shrink-0">
                 <Clock size={12} />
               </div>
@@ -382,7 +382,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
             </div>
 
             {/* Card 3: Próximo Treino */}
-            <div className="bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] md:flex-1">
+            <div className="horus-blue-card bg-gradient-to-br from-[#2563EB] to-[#122C60] border border-white/10 rounded-xl p-3 space-y-1.5 flex flex-col justify-between text-left shadow-lg min-h-[96px] md:flex-1">
               <div className="w-6.5 h-6.5 rounded-full bg-white/15 flex items-center justify-center text-indigo-300 shrink-0">
                 <Calendar size={12} />
               </div>

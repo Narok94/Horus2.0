@@ -1,0 +1,76 @@
+/* Single source: the exact approved workout-card surface. */
+:root {
+  --horus-card-background:radial-gradient(ellipse at 76% 44%,#0A3992 0%,#08285E 38%,transparent 72%),
+    linear-gradient(115deg,#050F25 0%,#0A2351 52%,#020B24 100%);
+  --horus-card-border:#183968;
+  --horus-card-shadow:0 4px 18px #07173114;
+  --horus-card-muted:rgba(255,255,255,.78);
+  --horus-card-badge:rgba(255,255,255,.12);
+  --horus-card-badge-line:inset 0 0 0 1px rgba(255,255,255,.20);
+}
+/* Explicit opt-in: inputs, form panels, modal shells and navigation stay light.
+   Specificity also overrides the legacy light personal/account palettes. */
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card {
+  background:var(--horus-card-background) !important;
+  border-color:var(--horus-card-border) !important;
+  box-shadow:var(--horus-card-shadow) !important;
+  color:#FFF !important;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(p,small,span,time,svg,li,dt,dd,[class*="text-zinc"],[class*="text-white"]) {
+  color:var(--horus-card-muted) !important;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(h1,h2,h3,h4,strong,b):not(.horus-card-muted),
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-next-time,
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .text-lg {
+  color:#FFF !important;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(.personal-eyebrow,.personal-between>button,.personal-row-actions button,.personal-link) {
+  color:#C9DAFF !important;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(.personal-tag,.performance-division-badge,[class*="bg-white/"],.horus-profile-avatar) {
+  background:var(--horus-card-badge) !important;
+  box-shadow:var(--horus-card-badge-line);
+  border-color:#FFFFFF33 !important;
+  color:#FFF !important;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-progress { background:#FFFFFF26; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-progress span { background:#7BA5FF; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(.personal-note,.personal-delete),
+#root .horus-app-shell.horus-app-shell .personal-quick.horus-blue-card>div+div { border-color:#FFFFFF33; }
+#root .horus-app-shell.horus-app-shell .personal-empty.horus-blue-card { border-style:solid; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-check { color:var(--horus-card-muted); }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-check>span { border-color:#B6CAED; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card.meal-done { box-shadow:var(--horus-card-shadow),inset 3px 0 #82E3BA !important; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-check[aria-pressed="true"] { color:#A3F1CE !important; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .personal-check[aria-pressed="true"]>span { background:#247354; border-color:#82E3BA; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is([class*="text-emerald"],[class*="text-emerald"] *) { color:#A3F1CE !important; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is([class*="text-amber"],[class*="text-orange"]) { color:#FFE0A3 !important; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is([class*="text-red"],.personal-delete button:first-of-type) { color:#FFB9C2 !important; }
+/* Primary actions remain electric blue, with the same subtle play-button edge. */
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(.personal-primary,.horus-action,.horus-save-photo) {
+  background:#2867FF !important; color:#FFF !important;
+  box-shadow:inset 0 0 0 1px #FFFFFF40,0 3px 12px #06163855,0 0 10px #2867FF33;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card :is(.personal-primary,.horus-action,.horus-save-photo) * { color:#FFF !important; }
+/* Preserve the locked/unlocked distinction without changing the card surface. */
+#root .horus-app-shell.horus-app-shell .horus-profile .horus-blue-card.horus-blue-card>div[class*="bg-white"] {
+  background:#FFFFFF14; border-color:#FFFFFF33; color:#B5C8E8;
+}
+#root .horus-app-shell.horus-app-shell .horus-profile .horus-blue-card.horus-blue-card>div[class*="text-zinc-400"] svg { opacity:.5; }
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .horus-capture-photo {
+  background:#FFFFFF0F; border-color:#FFFFFF55; color:#FFF;
+}
+
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card .horus-profile-avatar>span {
+  background:#2867FF !important; color:#FFF !important;
+}
+#root .horus-app-shell.horus-app-shell .horus-blue-card.horus-blue-card>span.flex-1 { color:#FFF !important; }
+#root .horus-app-shell.horus-app-shell .horus-execution-exercise.horus-blue-card button[aria-label^="Abrir "] {
+  background:rgba(255,255,255,.12) !important; color:#FFF !important;
+}
+
+@media(hover:hover) {
+  #root .horus-app-shell.horus-app-shell :is(button,a).horus-blue-card:hover {
+    border-color:#3863A0 !important; box-shadow:0 6px 22px #07173124 !important;
+  }
+}

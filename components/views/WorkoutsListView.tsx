@@ -132,7 +132,7 @@ export const WorkoutsListView: React.FC = () => {
       const label = getWorkoutCardLabel(workout, index);
       const image = getDivisionThumbnail(workout, getThumbnailPlan(user.username, workout));
       const ThemeIcon = workoutThemes[index % workoutThemes.length].icon;
-      return <button type="button" className="performance-division" key={workout.id} aria-label={`Abrir ${label}: ${getWorkoutFocus(workout)}`} onClick={() => startWorkout(workout)}>
+      return <button type="button" className="performance-division horus-blue-card" key={workout.id} aria-label={`Abrir ${label}: ${getWorkoutFocus(workout)}`} onClick={() => startWorkout(workout)}>
         <div className="performance-division-copy"><div className="performance-division-meta"><span className="performance-division-badge">{label}</span><span>{workout.exercises.length} exercícios</span></div><h2>{getWorkoutFocus(workout)}</h2><p>{workout.description?.replace(/^Foco:\s*/i, '')}</p></div>
         <div className="performance-anatomy" data-plan={getThumbnailPlan(user.username, workout)} aria-hidden="true">{image ? <><img src={image} alt="" onError={event => { event.currentTarget.hidden = true; }} /><ThemeIcon className="performance-anatomy-fallback" size={42} /></> : <ThemeIcon size={42} />}</div>
         <span className="performance-division-open" aria-hidden="true"><Play size={18} fill="currentColor" /></span>

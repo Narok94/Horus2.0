@@ -794,10 +794,9 @@ body { margin:0; }
 #root .horus-app-shell .performance-workouts .performance-divisions .performance-division {
   display:flex; align-items:center;
   width:100%; min-height:148px; padding:16px 18px;
-  border:1px solid #183968; border-radius:22px;
-  background:radial-gradient(ellipse at 76% 44%,#0A3992 0%,#08285E 38%,transparent 72%),
-    linear-gradient(115deg,#050F25 0%,#0A2351 52%,#020B24 100%);
-  box-shadow:0 4px 18px #07173114; text-align:left; color:#FFF;
+  border:1px solid var(--horus-card-border); border-radius:22px;
+  background:var(--horus-card-background);
+  box-shadow:var(--horus-card-shadow); text-align:left; color:#FFF;
   transition:border-color .18s,box-shadow .18s;
 }
 .performance-workouts .performance-division-copy { width:58%; }
@@ -805,8 +804,8 @@ body { margin:0; }
   gap:8px; color:rgba(255,255,255,.78); font-size:11px; line-height:1.4;
 }
 #root .horus-app-shell .performance-workouts .performance-divisions .performance-division-badge {
-  padding:5px 9px; border-radius:8px; background:rgba(255,255,255,.12); color:#FFF;
-  font-weight:750; box-shadow:inset 0 0 0 1px rgba(255,255,255,.20); white-space:nowrap;
+  padding:5px 9px; border-radius:8px; background:var(--horus-card-badge); color:#FFF;
+  font-weight:750; box-shadow:var(--horus-card-badge-line); white-space:nowrap;
 }
 #root .horus-app-shell .performance-workouts .performance-divisions .performance-division h2 {
   margin:10px 0 6px; color:#FFF; font-size:18px; line-height:1.3;

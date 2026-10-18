@@ -62,7 +62,7 @@ export const ProfileView: React.FC = () => {
 
       <div className="w-full space-y-4 px-1">
         <input ref={photoInput} type="file" accept="image/*" className="hidden" onChange={selectPhoto} />
-        <div className="horus-profile-identity rounded-2xl p-4 flex items-center justify-between gap-4 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+        <div className="horus-blue-card horus-profile-identity rounded-2xl p-4 flex items-center justify-between gap-4 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
           <div className="flex items-center gap-3.5 min-w-0">
             <button aria-label="Trocar foto de perfil" onClick={() => photoInput.current?.click()} className="horus-profile-avatar w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden text-base font-black shrink-0 border bg-white/15 border-white/10 text-white relative">
               {user.avatar && !photoError ? <img src={user.avatar} alt="Foto de perfil" className="w-full h-full object-cover" onError={() => setPhotoError(true)} /> : initials}
@@ -78,7 +78,7 @@ export const ProfileView: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 gap-3.5">
-          <div className="p-4 rounded-2xl space-y-3 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+          <div className="horus-blue-card p-4 rounded-2xl space-y-3 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
             <span className="text-[7.5px] font-extrabold tracking-[0.2em] uppercase font-mono block text-white/60">Consistência</span>
             <div className="space-y-2">
               <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">TOTAL</span><strong className="font-mono text-xs">{user.totalWorkouts || 0}</strong></div>
@@ -86,7 +86,7 @@ export const ProfileView: React.FC = () => {
               <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">STREAK</span><strong className="font-mono text-xs text-amber-300">{user.streak || 0} dias</strong></div>
             </div>
           </div>
-          <div className="p-4 rounded-2xl space-y-3 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
+          <div className="horus-blue-card p-4 rounded-2xl space-y-3 border bg-gradient-to-br from-[#2563EB] to-[#122C60] border-white/10 text-white shadow-lg">
             <span className="text-[7.5px] font-extrabold tracking-[0.2em] uppercase font-mono block text-white/60">Este mês</span>
             <div className="space-y-2">
               <div className="flex justify-between items-baseline"><span className="text-[8px] uppercase tracking-wider text-white/70 font-mono">DIAS</span><strong className="font-mono text-xs">{monthDays}</strong></div>
@@ -101,7 +101,7 @@ export const ProfileView: React.FC = () => {
           <div className="grid grid-cols-4 gap-2">
             {achievements.map(item => {
               const Icon = item.icon;
-              return <button key={item.label} onClick={() => setPanel('badges')} className={`flex flex-col items-center justify-center text-center py-2.5 px-1 rounded-2xl border transition-all ${item.unlocked ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-transparent text-white shadow-md' : 'bg-zinc-100 border-zinc-200 text-zinc-500'}`}>
+              return <button key={item.label} onClick={() => setPanel('badges')} className={`horus-blue-card flex flex-col items-center justify-center text-center py-2.5 px-1 rounded-2xl border transition-all ${item.unlocked ? 'bg-gradient-to-br from-[#2563EB] to-[#122C60] border-transparent text-white shadow-md' : 'bg-zinc-100 border-zinc-200 text-zinc-500'}`}>
                 <div className={`p-1.5 rounded-xl border ${item.unlocked ? 'bg-white/15 border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-400'}`}><Icon size={14} /></div>
                 <p className="text-[8px] font-black uppercase tracking-tight mt-1.5 truncate max-w-full">{item.label.split(' ')[0]}</p>
               </button>;
@@ -110,8 +110,8 @@ export const ProfileView: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <button onClick={() => setPanel('settings')} className="w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><Settings size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Configurações</span><ChevronRight size={18} /></button>
-          <button onClick={() => setPanel('help')} className="w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><CircleHelp size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Ajuda e Suporte</span><ChevronRight size={18} /></button>
+          <button onClick={() => setPanel('settings')} className="horus-blue-card w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><Settings size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Configurações</span><ChevronRight size={18} /></button>
+          <button onClick={() => setPanel('help')} className="horus-blue-card w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><CircleHelp size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Ajuda e Suporte</span><ChevronRight size={18} /></button>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ export const ProfileView: React.FC = () => {
           </form>}
           {panel === 'settings' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Configurações</h2><button className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs" onClick={toggleTheme}>Tema: {theme === 'light' ? 'claro' : 'escuro'}</button><button className="w-full bg-zinc-900 text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2" onClick={logout}><LogOut size={15} />Sair</button></div>}
           {panel === 'help' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Ajuda e Suporte</h2><p className="text-sm text-zinc-600">Selecione uma rotina em Treinos e registre suas séries durante a execução. Consulte os resultados na aba Histórico.</p></div>}
-          {panel === 'badges' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Suas conquistas</h2>{user.badges?.length ? user.badges.map(b => <div key={b.id} className="rounded-xl bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white p-3"><strong className="text-sm">{b.name}</strong><p className="text-xs text-white/70 mt-1">{b.description}</p></div>) : <p className="text-sm text-zinc-600">Suas conquistas aparecerão aqui conforme você treina.</p>}</div>}
+          {panel === 'badges' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Suas conquistas</h2>{user.badges?.length ? user.badges.map(b => <div key={b.id} className="horus-blue-card rounded-xl bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white p-3"><strong className="text-sm">{b.name}</strong><p className="text-xs text-white/70 mt-1">{b.description}</p></div>) : <p className="text-sm text-zinc-600">Suas conquistas aparecerão aqui conforme você treina.</p>}</div>}
         </div>
       </div>}
     </section>
