@@ -791,33 +791,35 @@ body { margin:0; }
    Scope these rules to the list so execution and dashboard artwork stay independent. */
 #root .horus-app-shell .performance-workouts { padding:8px 0 24px; }
 .performance-workouts .performance-divisions { gap:12px; }
-#root .horus-app-shell .performance-workouts .performance-division {
+#root .horus-app-shell .performance-workouts .performance-divisions .performance-division {
   display:flex; align-items:center;
   width:100%; min-height:148px; padding:16px 18px;
-  border:1px solid #E0E7F1; border-radius:22px; background:#FFF;
-  box-shadow:0 4px 18px #14243E06; text-align:left; color:#14243E;
+  border:1px solid #183968; border-radius:22px;
+  background:radial-gradient(ellipse at 76% 44%,#0A3992 0%,#08285E 38%,transparent 72%),
+    linear-gradient(115deg,#050F25 0%,#0A2351 52%,#020B24 100%);
+  box-shadow:0 4px 18px #07173114; text-align:left; color:#FFF;
   transition:border-color .18s,box-shadow .18s;
 }
 .performance-workouts .performance-division-copy { width:58%; }
-#root .horus-app-shell .performance-workouts .performance-division-meta {
-  gap:8px; color:#61718A; font-size:11px; line-height:1.4;
+#root .horus-app-shell .performance-workouts .performance-divisions .performance-division-meta {
+  gap:8px; color:rgba(255,255,255,.78); font-size:11px; line-height:1.4;
 }
-#root .horus-app-shell .performance-workouts .performance-division-badge {
-  padding:5px 9px; border-radius:8px; background:#EDF2FF; color:#2459E8;
-  font-weight:750; box-shadow:none; white-space:nowrap;
+#root .horus-app-shell .performance-workouts .performance-divisions .performance-division-badge {
+  padding:5px 9px; border-radius:8px; background:rgba(255,255,255,.12); color:#FFF;
+  font-weight:750; box-shadow:inset 0 0 0 1px rgba(255,255,255,.20); white-space:nowrap;
 }
-#root .horus-app-shell .performance-workouts .performance-division h2 {
-  margin:10px 0 6px; color:#14243E; font-size:18px; line-height:1.3;
+#root .horus-app-shell .performance-workouts .performance-divisions .performance-division h2 {
+  margin:10px 0 6px; color:#FFF; font-size:18px; line-height:1.3;
   font-weight:800; letter-spacing:-.025em; overflow-wrap:normal;
 }
-#root .horus-app-shell .performance-workouts .performance-division p {
-  margin:0; color:#61718A; font-size:12px; line-height:1.5;
+#root .horus-app-shell .performance-workouts .performance-divisions .performance-division p {
+  margin:0; color:rgba(255,255,255,.78); font-size:12px; line-height:1.5;
 }
 .performance-workouts .performance-division .performance-anatomy {
   position:absolute; inset:0 0 0 auto; display:grid; place-items:center;
   width:45%; height:100%; padding:0; border-radius:0; border:0; box-shadow:none;
-  background:transparent; overflow:hidden; color:#2459E8;
-  /* Reveal the source artwork into the white card, without an inner frame. */
+  background:transparent; overflow:hidden; color:#B7D0FF;
+  /* Reveal the original blue lighting into the continuous navy surface. */
   mask-image:linear-gradient(to right,transparent 12%,#000 55%);
 }
 .performance-workouts .performance-anatomy img {
@@ -826,16 +828,16 @@ body { margin:0; }
   border:0; border-radius:0; padding:0; background:transparent; box-shadow:none;
   clip-path:none; mask-image:none;
 }
-#root .horus-app-shell .performance-workouts .performance-division-open {
-  position:absolute; right:12px; bottom:12px; width:44px; height:44px; background:#2459E8; color:#FFF;
-  box-shadow:0 4px 12px #2459E824;
+#root .horus-app-shell .performance-workouts .performance-divisions .performance-division-open {
+  position:absolute; right:12px; bottom:12px; width:44px; height:44px; background:#2867FF; color:#FFF;
+  box-shadow:inset 0 0 0 1px #FFFFFF40,0 3px 12px #06163855,0 0 10px #2867FF33;
 }
 .performance-workouts .performance-division-open svg { margin-left:2px; }
 .performance-workouts .performance-division:focus-visible { outline:3px solid #91AEFF; outline-offset:3px; }
 @media(hover:hover) {
-  #root .horus-app-shell .performance-workouts .performance-division:hover { border-color:#A8BFFB; box-shadow:0 6px 22px #2459E812; }
+  #root .horus-app-shell .performance-workouts .performance-divisions .performance-division:hover { border-color:#3863A0; box-shadow:0 6px 22px #07173124; }
 }
 @media(max-width:359px) {
-  #root .horus-app-shell .performance-workouts .performance-division { padding:12px; }
-  #root .horus-app-shell .performance-workouts .performance-division h2 { font-size:16px; }
+  #root .horus-app-shell .performance-workouts .performance-divisions .performance-division { padding:12px; }
+  #root .horus-app-shell .performance-workouts .performance-divisions .performance-division h2 { font-size:16px; }
 }
