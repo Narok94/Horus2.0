@@ -909,12 +909,13 @@ export const WorkoutView: React.FC = () => {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 20, opacity: 0, scale: 0.95 }}
               transition={{ type: "spring", damping: 28, stiffness: 220 }}
-              className={`horus-exercise-modal ${showExerciseInfo ? 'horus-exercise-detail' : 'horus-exercise-compact'} relative w-full sm:max-w-md p-5 rounded-2xl shadow-2xl overflow-hidden space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar pb-6 z-10 border ${
+              role="dialog" aria-modal="true" aria-label={activeModalExercise.name}
+              className={`horus-exercise-modal ${!showExerciseInfo && !getExercisePerformance(activeModalExercise).every(set => set.completed) ? 'horus-active-session' : ''} ${showExerciseInfo ? 'horus-exercise-detail' : 'horus-exercise-compact'} relative w-full sm:max-w-md p-5 rounded-2xl shadow-2xl overflow-hidden space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar pb-6 z-10 border ${
                 isLightTheme ? 'bg-white border-zinc-200 text-zinc-950 font-black' : 'bg-[#0c0c0f] border-white/10 text-white'
               }`}
             >
               {/* Header Container */}
-              <div className="flex items-center justify-between">
+              <div className="horus-modal-topbar flex items-center justify-between">
                 <div className="flex items-center gap-1.5 leading-none">
                   <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded font-mono ${
                     isLightTheme ? 'bg-zinc-100 text-zinc-950 font-black' : 'bg-accent text-[#050505]'
@@ -966,8 +967,37 @@ export const WorkoutView: React.FC = () => {
                 if (next) openExerciseModal(next);
                 else { setActiveModalExercise(null); setExerciseCompletedSuccess(false); }
               }}>{selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) < selectedWorkout.exercises.length - 1 ? 'Próximo exercício' : 'Voltar para finalizar treino'}<ChevronRight size={18} /></button>}
+              {/* Active registration is a new composition; session handlers stay unchanged. */}
+              {!showExerciseInfo && !getExercisePerformance(activeModalExercise).every(set => set.completed) && (() => {
+                const sets = getExercisePerformance(activeModalExercise);
+                const setIdx = sets.findIndex(set => !set.completed);
+                const set = sets[setIdx];
+                const completed = sets.filter(item => item.completed).length;
+                const timed = interpretPrescription(activeModalExercise).kind === 'time';
+                return <div className="active-set-layout">
+                  <div className="active-set-heading"><div><p>Exercício {selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) + 1} de {selectedWorkout.exercises.length}</p><h2>{activeModalExercise.name}</h2></div><button type="button" className="active-set-help" aria-label="Abrir informações do exercício" onClick={() => setShowExerciseInfo(true)}><HelpCircle size={21} /></button></div>
+                  <button type="button" className="active-set-demo" aria-label="Abrir detalhe completo do exercício" onClick={() => setShowExerciseInfo(true)}>
+                    <span className="active-set-demo-art"><img src={getExerciseThumbnail(activeModalExercise, getThumbnailPlan(user?.username, selectedWorkout)) || getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif} alt="" onError={event => { if (!retryThumbnail(event.currentTarget, getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif)) event.currentTarget.dataset.unavailable = 'true'; }} /><Dumbbell size={28} /></span>
+                    <span className="active-set-demo-copy"><strong>{activeModalExercise.sets} séries · {activeModalExercise.reps}{timed ? '' : ' reps'}</strong><span><Clock size={13} /> {activeModalExercise.rest}s de descanso</span><small>Ver execução <ChevronRight size={12} /></small></span>
+                  </button>
+                  <section className="active-set-progress" aria-label="Progresso das séries"><div className="active-set-section-label"><h3>Suas séries</h3><span aria-live="polite">{completed} de {sets.length} concluídas</span></div>
+                    <div className="active-set-track">{sets.map((item, index) => <button type="button" key={index} className={item.completed ? 'is-completed' : index === setIdx ? 'is-current' : 'is-pending'} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><span className="active-set-marker">{item.completed ? <Check size={17} /> : String(index + 1).padStart(2, '0')}</span><span>{item.completed ? `${item.weight} kg · ${timed ? (item.durationSeconds || 0) + 's' : item.reps + ' reps'}` : index === setIdx ? 'Agora' : 'A seguir'}</span></button>)}</div>
+                  </section>
+                  {set && <>
+                    <section className="active-set-console horus-blue-card" aria-label="Registrar série"><div className="active-set-console-heading"><h3>Série {String(setIdx + 1).padStart(2, '0')}</h3><span><i />{interpretPrescription(activeModalExercise).drop && setIdx % 2 !== 0 ? 'Drop set' : 'Em execução'}</span></div>
+                      <div className="active-set-inputs">
+                        <div className="active-set-value"><label htmlFor="active-set-weight">Carga</label><div className="active-set-number"><input id="active-set-weight" type="number" min="0" step="any" inputMode="decimal" value={set.weight} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight: Math.max(0, parseFloat(event.target.value) || 0) })} /><span>kg</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -1)}>−</button><button type="button" aria-label="Aumentar carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 1)}>+</button></div></div>
+                        <div className="active-set-value"><label htmlFor="active-set-reps">{timed ? 'Tempo' : 'Repetições'}</label><div className="active-set-number"><input id="active-set-reps" type="number" min="0" inputMode="numeric" value={timed ? (set.durationSeconds ?? 0) : set.reps} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, timed ? { durationSeconds: Math.max(0, Number(event.target.value)) } : { reps: Math.max(0, Number(event.target.value)) })} /><span>{timed ? 'seg' : 'reps'}</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}>−</button><button type="button" aria-label="Aumentar repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}>+</button></div></div>
+                      </div>
+                    </section>
+                    {modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{isModalRestPaused ? 'Descanso pausado' : 'Recupere o fôlego'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular</button></div>}
+                    <button type="button" className="active-set-confirm" onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: true })}><Check size={20} /><span>Confirmar série {setIdx + 1}</span><ChevronRight size={18} /></button>
+                  </>}
+                  <button type="button" className="active-set-guide" onClick={() => setShowExerciseInfo(true)}>Guia técnico do exercício <ChevronRight size={14} /></button>
+                </div>;
+              })()}
               {/* Exercise details and per-set controls use the existing session handlers. */}
-              {!getExercisePerformance(activeModalExercise).every(set => set.completed) && (
+              {showExerciseInfo && !getExercisePerformance(activeModalExercise).every(set => set.completed) && (
                 <div className="horus-exercise-content space-y-4 pb-2">
                   <p className="horus-current-label">Exercício {selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) + 1} de {selectedWorkout.exercises.length} · {activeModalExercise.muscleGroup}</p>
                   <button type="button" aria-label="Abrir detalhe completo do exercício" onClick={() => setShowExerciseInfo(true)} className={`horus-exercise-media relative rounded-xl overflow-hidden h-44 w-full flex flex-col items-center justify-center p-1.5 shadow-inner border animate-fade-in ${
@@ -1057,26 +1087,6 @@ export const WorkoutView: React.FC = () => {
                     <button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button>
                     <button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button>
                   </div>}
-                  <section className="horus-register">
-                    <h3>Registrar série</h3>
-                    {(() => {
-                      const sets = getExercisePerformance(activeModalExercise);
-                      const setIdx = sets.findIndex(set => !set.completed);
-                      const set = sets[setIdx];
-                      const timed = interpretPrescription(activeModalExercise).kind === 'time';
-                      return <>
-                        {set && <>
-                          <p>Série {setIdx + 1} de {sets.length}{interpretPrescription(activeModalExercise).drop && setIdx % 2 !== 0 ? ' • Drop set' : ''}</p>
-                          <div className="horus-register-fields">
-                            <label>Carga (kg)<div className="horus-stepper"><button aria-label="Diminuir carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -1)}>−</button><input type="number" min="0" inputMode="decimal" value={set.weight} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight: Math.max(0, parseFloat(event.target.value) || 0) })} /><button aria-label="Aumentar carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 1)}>+</button></div></label>
-                            <label>{timed ? 'Tempo (seg)' : 'Repetições'}<div className="horus-stepper"><button aria-label="Diminuir repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}>−</button><input type="number" min="0" inputMode="numeric" value={timed ? (set.durationSeconds ?? 0) : set.reps} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, timed ? { durationSeconds: Math.max(0, Number(event.target.value)) } : { reps: Math.max(0, Number(event.target.value)) })} /><button aria-label="Aumentar repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}>+</button></div></label>
-                          </div>
-                          <button className="horus-action" onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: true })}><Check size={18} />Concluir série</button>
-                        </>}
-                        <div className="horus-set-history" aria-live="polite">{sets.map((item, index) => <button key={index} className={item.completed ? 'completed' : index === setIdx ? 'active' : ''} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}>{item.completed ? <Check size={16} /> : <span className="horus-set-number">{index + 1}</span>}<span>Série {index + 1}</span><strong>{item.completed ? `${item.weight} kg · ${timed ? (item.durationSeconds || 0) + ' s' : item.reps + ' reps'}` : index === setIdx ? 'Atual' : 'Aguardando'}</strong></button>)}</div>
-                      </>;
-                    })()}
-                  </section>
                   {/* Manual video/tutorial guide link */}
                   <div className="pt-2 text-center leading-none">
                     <a
