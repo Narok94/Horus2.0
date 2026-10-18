@@ -1,76 +1,150 @@
 
 /* Personal modules are scoped to Henrique; workout behavior stays in its existing store. */
-#root .horus-app-shell.personal-shell { background:#F5F7FA !important; color:#172238 !important; --performance-bg:#F5F7FA; --performance-card:#FFF; --performance-inset:#EDF2F8; --performance-muted:#64748B; --performance-line:#E2E8F0; --performance-blue:#3268FF; padding-top:env(safe-area-inset-top,0px); }
+#root .horus-app-shell.personal-shell { background:#EFF3F9 !important; color:#14243E !important; --performance-bg:#EFF3F9; --performance-card:#FFF; --performance-inset:#EDF2F8; --performance-muted:#526580; --performance-line:#E2E8F0; --performance-blue:#2459E8; padding-top:env(safe-area-inset-top,0px); }
 #root .horus-app-shell.personal-shell .horus-main-content { max-width:480px; padding:0 16px calc(84px + env(safe-area-inset-bottom,0px)); width:100%; }
-#root .horus-app-shell.personal-shell .horus-bottom-nav { background:rgba(255,255,255,.96) !important; border-top:1px solid #E3E8EF; padding-bottom:env(safe-area-inset-bottom,0px); }
+#root .horus-app-shell.personal-shell .horus-bottom-nav { background:rgba(255,255,255,.96) !important; border-top:1px solid #D3DEED; padding-bottom:env(safe-area-inset-bottom,0px); }
 #root .horus-app-shell.personal-shell .horus-bottom-nav>div { max-width:480px; height:64px; }
 #root .horus-app-shell.personal-shell .horus-bottom-nav button span { letter-spacing:.02em; font-size:10px; }
-.personal-page { display:flex; flex-direction:column; gap:14px; padding-top:24px; color:#172238; }
+.personal-page { display:flex; flex-direction:column; gap:14px; padding-top:24px; color:#14243E; }
 .personal-page * { box-sizing:border-box; min-width:0; }
 .personal-page h1 { margin:3px 0 4px; font-size:28px; font-weight:800; line-height:1.16; letter-spacing:-.04em; }
 .personal-page h2 { margin:8px 0; font-size:19px; font-weight:750; line-height:1.3; letter-spacing:-.025em; overflow-wrap:anywhere; }
 .personal-page h3 { margin:5px 0; font-size:16px; font-weight:750; overflow-wrap:anywhere; }
-.personal-page p { color:#64748B; font-size:13px; line-height:1.5; margin:5px 0; overflow-wrap:anywhere; }
-.personal-heading>span,.personal-eyebrow { color:#3268FF; font-size:10px; letter-spacing:.09em; font-weight:800; display:flex; align-items:center; gap:7px; }
+.personal-page p { color:#526580; font-size:13px; line-height:1.5; margin:5px 0; overflow-wrap:anywhere; }
+.personal-heading>span,.personal-eyebrow { color:#2459E8; font-size:10px; letter-spacing:.09em; font-weight:800; display:flex; align-items:center; gap:7px; }
 .personal-heading { margin-bottom:5px; }
-.personal-card { position:relative; background:#FFF; border:1px solid #E3E8EF; border-radius:20px; padding:17px; box-shadow:0 4px 18px #17223804; }
+.personal-card { position:relative; background:#FFF; border:1px solid #D3DEED; border-radius:20px; padding:17px; box-shadow:0 4px 18px #14243E04; }
 .personal-page button { cursor:pointer; min-height:44px; }
 .personal-between { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.personal-between>button { color:#3268FF; display:grid; place-items:center; min-width:40px; margin:-8px -5px -4px 0; }
-.personal-primary { display:flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:13px; background:#3268FF; color:#FFF; font-size:13px; font-weight:750; min-height:46px; padding:10px 14px; }
+.personal-between>button { color:#2459E8; display:grid; place-items:center; min-width:40px; margin:-8px -5px -4px 0; }
+.personal-primary { display:flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:13px; background:#2459E8; color:#FFF; font-size:13px; font-weight:750; min-height:46px; padding:10px 14px; }
 .personal-page .personal-primary { color:#FFF; }
 .personal-page button:focus-visible,.personal-page input:focus-visible,.personal-page textarea:focus-visible,.personal-page select:focus-visible { outline:3px solid #94B5FF; outline-offset:2px; }
-.personal-tag { display:inline-block; color:#3268FF; background:#EEF3FF; padding:4px 8px; border-radius:7px; font-size:10px; font-weight:700; }
+.personal-tag { display:inline-block; color:#2459E8; background:#EEF3FF; padding:4px 8px; border-radius:7px; font-size:10px; font-weight:700; }
 .personal-form { display:flex; flex-direction:column; gap:15px; }
 .personal-form h2 { margin:0 0 3px; }
 .personal-form label { display:flex; flex-direction:column; gap:7px; font-size:12px; font-weight:700; color:#344258; }
-.personal-form input,.personal-form textarea,.personal-form select,.personal-date input { display:block; width:100%; max-width:100%; min-width:0; border:1px solid #DCE3ED; background:#F8FAFC; color:#172238; border-radius:11px; padding:12px 10px; font:inherit; font-size:16px; min-height:46px; user-select:text; }
+.personal-form input,.personal-form textarea,.personal-form select,.personal-date input { display:block; width:100%; max-width:100%; min-width:0; border:1px solid #DCE3ED; background:#F8FAFC; color:#14243E; border-radius:11px; padding:12px 10px; font:inherit; font-size:16px; min-height:46px; user-select:text; }
 .personal-form textarea { resize:vertical; }
 .personal-fields { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:10px; }
 .personal-actions { display:flex; flex-direction:column; gap:3px; }
-.personal-actions>button:last-child { font-size:13px; font-weight:650; color:#64748B; }
-.personal-date { display:flex; align-items:center; gap:8px; color:#3268FF; font-size:13px; }
+.personal-actions>button:last-child { font-size:13px; font-weight:650; color:#526580; }
+.personal-date { display:flex; align-items:center; gap:8px; color:#2459E8; font-size:13px; }
 .personal-date input { flex:1; margin-left:8px; }
 .appointment-row { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start; }
-.appointment-row>time { font-size:20px; font-weight:800; color:#3268FF; letter-spacing:-.04em; }
-.appointment-row time small { display:block; font-size:10px; font-weight:500; color:#64748B; letter-spacing:0; }
+.appointment-row>time { font-size:20px; font-weight:800; color:#2459E8; letter-spacing:-.04em; }
+.appointment-row time small { display:block; font-size:10px; font-weight:500; color:#526580; letter-spacing:0; }
 .personal-grow { flex:1; }
-.personal-row-actions { display:flex; flex-direction:column; color:#64748B; margin:-6px -5px; }
+.personal-row-actions { display:flex; flex-direction:column; color:#526580; margin:-6px -5px; }
 .personal-row-actions button { min-width:36px; display:grid; place-items:center; }
-.personal-delete { width:100%; display:flex; flex-wrap:wrap; align-items:center; gap:12px; border-top:1px solid #E3E8EF; padding-top:8px; font-size:12px; }
+.personal-delete { width:100%; display:flex; flex-wrap:wrap; align-items:center; gap:12px; border-top:1px solid #D3DEED; padding-top:8px; font-size:12px; }
 .personal-delete span { width:100%; }.personal-delete button { color:#B42336; font-weight:700; }
 .personal-page .personal-empty { padding:22px 15px; border:1px dashed #D9E1ED; border-radius:16px; text-align:center; font-size:13px; }
 .personal-prewrap { white-space:pre-wrap; }
 .personal-progress { background:#E8EDF6; height:5px; border-radius:20px; overflow:hidden; margin:12px 0; }
-.personal-progress span { display:block; height:100%; background:#3268FF; border-radius:20px; transition:width .2s; }
+.personal-progress span { display:block; height:100%; background:#2459E8; border-radius:20px; transition:width .2s; }
 .meal-card h2 { margin-top:12px; }.meal-done { border-color:#B8CCFF; }
-.personal-check { display:flex; align-items:center; gap:9px; color:#64748B; font-size:12px; font-weight:650; margin-top:8px; }
+.personal-check { display:flex; align-items:center; gap:9px; color:#526580; font-size:12px; font-weight:650; margin-top:8px; }
 .personal-check>span { display:grid; place-items:center; width:22px; height:22px; border:1.5px solid #CBD5E1; border-radius:7px; }
-.personal-check[aria-pressed="true"] { color:#3268FF; }.personal-check[aria-pressed="true"]>span { background:#3268FF; color:white; border-color:#3268FF; }
+.personal-check[aria-pressed="true"] { color:#2459E8; }.personal-check[aria-pressed="true"]>span { background:#2459E8; color:white; border-color:#2459E8; }
 .personal-note { border-left:2px solid #C9D8FF; padding-left:9px; }
 .personal-today-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-bottom:6px; }
 .personal-today-header h1 { font-size:25px; }.personal-today-header p { font-size:11px; text-transform:capitalize; }
-.personal-avatar { width:44px; height:44px; border-radius:50%; flex-shrink:0; overflow:hidden; background:#E6EEFF; color:#3268FF; font-weight:800; font-size:13px; }
+.personal-avatar { width:44px; height:44px; border-radius:50%; flex-shrink:0; overflow:hidden; background:#E6EEFF; color:#2459E8; font-weight:800; font-size:13px; }
 .personal-avatar img { width:100%; height:100%; object-fit:cover; }
-.personal-next-time { font-size:28px; color:#172238; letter-spacing:-.04em; font-weight:800; margin-top:12px; }
-.personal-next-time span { font-size:11px; font-weight:550; color:#64748B; margin-left:10px; letter-spacing:0; }
-.personal-link { color:#3268FF; font-weight:700; font-size:12px; }
+.personal-next-time { font-size:28px; color:#14243E; letter-spacing:-.04em; font-weight:800; margin-top:12px; }
+.personal-next-time span { font-size:11px; font-weight:550; color:#526580; margin-left:10px; letter-spacing:0; }
+.personal-link { color:#2459E8; font-weight:700; font-size:12px; }
 .personal-workout { overflow:hidden; }.personal-workout-copy { width:70%; min-height:91px; position:relative; z-index:1; padding-top:6px; }
 .personal-workout-art { position:absolute; right:8px; top:14px; height:128px; width:100px; object-fit:cover; mask-image:linear-gradient(to bottom,transparent,#000 12%,#000 76%,transparent); }
 .personal-workout>.personal-primary { position:relative; width:100%; z-index:2; margin-top:10px; }
 .personal-quick { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); text-align:center; gap:6px; padding:4px 0 8px; }
 .personal-quick>div { display:flex; flex-direction:column; gap:4px; padding:4px; }.personal-quick>div+div { border-left:1px solid #DEE5EE; }
-.personal-quick strong { font-size:13px; font-weight:800; }.personal-quick span { font-size:9px; color:#64748B; line-height:1.4; }
-.personal-history-link { align-self:flex-end; color:#3268FF; font-size:12px; min-height:44px; font-weight:700; margin-top:12px; }
-#root .horus-app-shell.personal-shell .performance-page-heading h1,#root .horus-app-shell.personal-shell .performance-division h2 { color:#172238; }
-#root .horus-app-shell.personal-shell .performance-division { background:#FFF; border-color:#E3E8EF; box-shadow:0 3px 14px #17223804; }
-#root .horus-app-shell.personal-shell .performance-division-meta,#root .horus-app-shell.personal-shell .performance-division p { color:#64748B; }
-#root .horus-app-shell.personal-shell .horus-execution { color:#172238 !important; }
-#root .horus-app-shell.personal-shell .horus-execution>header h1,#root .horus-app-shell.personal-shell .horus-execution-exercise h3 { color:#172238 !important; }
+.personal-quick strong { font-size:13px; font-weight:800; }.personal-quick span { font-size:9px; color:#526580; line-height:1.4; }
+.personal-history-link { align-self:flex-end; color:#2459E8; font-size:12px; min-height:44px; font-weight:700; margin-top:12px; }
+#root .horus-app-shell.personal-shell .performance-page-heading h1,#root .horus-app-shell.personal-shell .performance-division h2 { color:#14243E; }
+#root .horus-app-shell.personal-shell .performance-division { background:#FFF; border-color:#D3DEED; box-shadow:0 3px 14px #14243E04; }
+#root .horus-app-shell.personal-shell .performance-division-meta,#root .horus-app-shell.personal-shell .performance-division p { color:#526580; }
+#root .horus-app-shell.personal-shell .horus-execution { color:#14243E !important; }
+#root .horus-app-shell.personal-shell .horus-execution>header h1,#root .horus-app-shell.personal-shell .horus-execution-exercise h3 { color:#14243E !important; }
 
-#root .horus-app-shell.personal-shell .horus-selected-workout h2,#root .horus-app-shell.personal-shell .horus-prescription strong,#root .horus-app-shell.personal-shell .horus-stepper input { color:#172238 !important; }
-#root .horus-app-shell.personal-shell .horus-exercise-modal { background:#F5F7FA !important; color:#172238 !important; }
-#root .horus-app-shell.personal-shell .horus-exercise-modal h1,#root .horus-app-shell.personal-shell .horus-exercise-modal h2,#root .horus-app-shell.personal-shell .horus-exercise-modal h3 { color:#172238 !important; }
-#root .horus-app-shell.personal-shell .horus-execution-exercise button { background:#EDF3FF !important; color:#3268FF !important; }
+#root .horus-app-shell.personal-shell .horus-selected-workout h2,#root .horus-app-shell.personal-shell .horus-prescription strong,#root .horus-app-shell.personal-shell .horus-stepper input { color:#14243E !important; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal { background:#EFF3F9 !important; color:#14243E !important; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal h1,#root .horus-app-shell.personal-shell .horus-exercise-modal h2,#root .horus-app-shell.personal-shell .horus-exercise-modal h3 { color:#14243E !important; }
+#root .horus-app-shell.personal-shell .horus-execution-exercise button { background:#EDF3FF !important; color:#2459E8 !important; }
 #root .horus-app-shell.personal-shell .horus-execution-exercise [class*="text-xs"],#root .horus-app-shell.personal-shell .horus-technical-info p { color:#344258 !important; }
-#root .horus-app-shell.personal-shell .horus-selected-workout h2>span { display:block; margin-top:7px; color:#172238 !important; font-style:normal; font-size:16px; line-height:1.3; }
+#root .horus-app-shell.personal-shell .horus-selected-workout h2>span { display:block; margin-top:7px; color:#14243E !important; font-style:normal; font-size:16px; line-height:1.3; }
+
+/* Shared light palette: surfaces, hierarchy, actions and semantic states. */
+#root .horus-app-shell.personal-shell {
+  --horus-ink:#14243E;
+  --horus-muted:#526580;
+  --horus-blue:#2459E8;
+  --horus-blue-soft:#E7EEFF;
+  --horus-border:#D3DEED;
+  --horus-success:#247354;
+  --performance-inset:#E8EEF8;
+  --performance-line:var(--horus-border);
+  --performance-muted:var(--horus-muted);
+}
+.personal-card { box-shadow:0 5px 18px #14243E0D; }
+.personal-workout { background:linear-gradient(120deg,#F8FAFF,#EAF0FF); border-color:#ADBFEC; box-shadow:0 6px 20px #2459E814; }
+.personal-eyebrow,.personal-heading>span { color:#244AA6; }
+.personal-tag { color:#244AA6; background:#E7EEFF; }
+.personal-primary { background:#2459E8; box-shadow:0 3px 9px #2459E826; }
+.personal-primary:hover { background:#1C49C9; }
+.personal-primary:active { background:#173DAD; }
+.personal-between>button,.personal-row-actions button { color:#3157AB; }
+.personal-progress { background:#D8E2F2; }
+.personal-quick { color:#14243E; background:#E4EBF5; box-shadow:inset 0 1px #D3DEED; border-radius:12px; }
+.personal-quick>div+div { border-color:#C5D2E5; }
+.personal-quick span { color:#455B79; }
+.personal-page .personal-empty { color:#526580; background:#E8EEF7; border-color:#BBCBE2; }
+.personal-form input,.personal-form textarea,.personal-form select,.personal-date input { background:#F8FAFE; border-color:#BACAE0; color:#14243E; }
+.personal-form input::placeholder,.personal-form textarea::placeholder { color:#61738E; opacity:1; }
+.personal-form label { color:#354C6B; }
+.personal-form input:focus,.personal-form textarea:focus,.personal-form select:focus,.personal-date input:focus { border-color:#2459E8; }
+.meal-done { background:#F4FAF7; border-color:#A3CBB8; }
+.personal-check[aria-pressed="true"] { color:#247354; }
+.personal-check[aria-pressed="true"]>span { background:#247354; border-color:#247354; }
+#root .horus-app-shell.personal-shell .horus-bottom-nav { background:#F9FBFF !important; border-color:#BACAE0 !important; box-shadow:0 -5px 20px #14243E14; }
+#root .horus-app-shell.personal-shell .horus-bottom-nav button { color:#526580; }
+#root .horus-app-shell.personal-shell .horus-bottom-nav button>svg,
+#root .horus-app-shell.personal-shell .horus-bottom-nav button>span { color:#526580 !important; filter:none !important; }
+#root .horus-app-shell.personal-shell .horus-bottom-nav button:has(>span.text-accent) { background:#E7EEFF; }
+#root .horus-app-shell.personal-shell .horus-bottom-nav button>svg.text-accent,
+#root .horus-app-shell.personal-shell .horus-bottom-nav button>span.text-accent { color:#2459E8 !important; }
+#root .horus-app-shell.personal-shell .horus-bottom-nav button>div { background:#2459E8; box-shadow:none !important; }
+#root .horus-app-shell.personal-shell .performance-page-heading>span { color:#3157AB; }
+#root .horus-app-shell.personal-shell .performance-division { border-color:#D3DEED; box-shadow:0 5px 16px #14243E0D; }
+#root .horus-app-shell.personal-shell .performance-division-badge { background:#E7EEFF; color:#244AA6; box-shadow:inset 0 0 0 1px #C4D3F5; }
+#root .horus-app-shell.personal-shell .performance-division-open { background:#2459E8; color:#FFF; box-shadow:0 3px 10px #2459E833; }
+#root .horus-app-shell.personal-shell .performance-division-meta,
+#root .horus-app-shell.personal-shell .performance-division p { color:#526580; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal { background:#EFF3F9 !important; border-color:#BACAE0 !important; box-shadow:0 -12px 38px #14243E26; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal header { border-color:#C7D4E7; }
+#root .horus-app-shell.personal-shell .horus-register { background:#FFF !important; border:1px solid #BACAE0 !important; box-shadow:0 4px 16px #14243E0A; }
+#root .horus-app-shell.personal-shell .horus-prescription,
+#root .horus-app-shell.personal-shell .horus-technical-info { background:#E7EEF9 !important; border-color:#C7D4E7 !important; }
+#root .horus-app-shell.personal-shell .horus-prescription>div+div { border-color:#BDCCE3; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal label { color:#354C6B !important; }
+#root .horus-app-shell.personal-shell .horus-stepper { background:#F1F5FC !important; border-color:#BACAE0 !important; box-shadow:inset 0 1px 3px #14243E08; }
+#root .horus-app-shell.personal-shell .horus-stepper input { color:#14243E !important; }
+#root .horus-app-shell.personal-shell .horus-stepper button { background:#DBE6FC !important; color:#244AA6 !important; }
+#root .horus-app-shell.personal-shell .horus-action { background:#2459E8 !important; color:#FFF !important; box-shadow:0 4px 12px #2459E833; }
+#root .horus-app-shell.personal-shell .horus-set-history>button { background:#F1F5FA; color:#526580; border:1px solid #D3DEED; opacity:1; box-shadow:none; }
+#root .horus-app-shell.personal-shell .horus-set-history>button strong { color:#526580; }
+#root .horus-app-shell.personal-shell .horus-set-history>button.active { background:#E7EEFF; color:#244AA6; border-color:#2459E8; box-shadow:inset 3px 0 #2459E8; }
+#root .horus-app-shell.personal-shell .horus-set-history>button.active strong { color:#244AA6; }
+#root .horus-app-shell.personal-shell .horus-set-history>button.completed { background:#E9F5EF; color:#247354; border-color:#A3CBB8; box-shadow:inset 3px 0 #247354; }
+#root .horus-app-shell.personal-shell .horus-set-history>button.completed strong,
+#root .horus-app-shell.personal-shell .horus-set-history>button.completed svg { color:#247354; }
+#root .horus-app-shell.personal-shell .horus-set-number { background:#DCE5F2; color:#455B79; }
+#root .horus-app-shell.personal-shell .active .horus-set-number { background:#2459E8; color:#FFF; }
+#root .horus-app-shell.personal-shell .horus-rest-inline { background:#E7EEF9; color:#244AA6; border-color:#BACAE0; }
+#root .horus-app-shell.personal-shell .horus-rest-inline button { background:#FFF; color:#244AA6; border-color:#C7D4E7; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-prescription span { color:#526580 !important; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-prescription { border-bottom-color:#BDCCE3 !important; }
+#root .horus-app-shell.personal-shell .horus-action svg { color:#FFF !important; }
+#root .horus-app-shell.personal-shell .horus-rest-inline span { color:#526580; }
+#root .horus-app-shell.personal-shell .horus-rest-inline strong { color:#244AA6; }

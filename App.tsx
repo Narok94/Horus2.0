@@ -2,7 +2,6 @@ import { TodayView } from './components/views/TodayView';
 import { AgendaView } from './components/views/AgendaView';
 import { DietView } from './components/views/DietView';
 import { isPersonalUser } from './src/utils/personalData';
-import './src/personal.css';
 import { HistoryView } from './components/views/HistoryView';
 import { validateLocalProfile } from './src/utils/localData';
 import React, { useState, useEffect } from 'react';
