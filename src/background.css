@@ -1,0 +1,21 @@
+/* One shared, viewport-sized background for the main authenticated screens.
+   Vite hashes the optimized asset; the browser reuses it between tabs. */
+#root .horus-app-shell.horus-background-shell {
+  isolation:isolate;
+  background:transparent !important;
+}
+#root .horus-app-shell.horus-background-shell::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:#EDF4FF url('./assets/images/fundo.webp') center center / cover no-repeat;
+}
+/* Replace the old decorative grid and glow with the approved artwork. */
+.horus-background-shell>svg,
+.horus-background-shell>div.pointer-events-none { display:none; }
+/* Compact only the workout-list heading; retain the shell's iPhone safe inset. */
+#root .horus-background-shell .personal-history-link { margin-top:0; }
+#root .horus-background-shell .performance-workouts { padding-top:0 !important; }
+.horus-background-shell .performance-workouts .performance-page-heading { padding:4px 4px 14px; }
