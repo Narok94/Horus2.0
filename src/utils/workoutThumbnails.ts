@@ -1,11 +1,22 @@
 /// <reference types="vite/client" />
 import type { Exercise, WorkoutRoutine } from '../../types';
 
+import peito_biceps from '../assets/miniaturas-horus/peito-biceps.png';
+import quadriceps_panturrilha_abdomen from '../assets/miniaturas-horus/quadriceps-panturrilha-abdomen.png';
+import costas_triceps from '../assets/miniaturas-horus/costas-triceps.png';
+import ombros_trapezio_abdomen from '../assets/miniaturas-horus/ombros-trapezio-abdomen.png';
+import posterior_gluteo_cardio from '../assets/miniaturas-horus/posterior-gluteo-cardio.png';
+import peito_triceps from '../assets/miniaturas-horus/peito-triceps.png';
+import quadriceps from '../assets/miniaturas-horus/quadriceps.png';
+import costas_biceps from '../assets/miniaturas-horus/costas-biceps.png';
+import posterior_gluteo from '../assets/miniaturas-horus/posterior-gluteo.png';
+import ombro from '../assets/miniaturas-horus/ombro.png';
+
 export type ThumbnailPlan = 'treino-principal' | 'treino-feminino';
-const divisionAssets = import.meta.glob<string>('../assets/miniaturas-horus/*.png', { eager: true, import: 'default', query: '?url' });
-const divisionFiles: Record<ThumbnailPlan, Record<string, string>> = {
-  'treino-principal': { a: 'peito-biceps', b: 'quadriceps-panturrilha-abdomen', c: 'costas-triceps', d: 'ombros-trapezio-abdomen', e: 'posterior-gluteo-cardio' },
-  'treino-feminino': { a: 'peito-triceps', b: 'quadriceps', c: 'costas-biceps', d: 'posterior-gluteo', e: 'ombro' }
+// Division cards always use the updated root assets with Vite-hashed URLs.
+const divisionImages: Record<ThumbnailPlan, Record<string, string>> = {
+  'treino-principal': { a: peito_biceps, b: quadriceps_panturrilha_abdomen, c: costas_triceps, d: ombros_trapezio_abdomen, e: posterior_gluteo_cardio },
+  'treino-feminino': { a: peito_triceps, b: quadriceps, c: costas_biceps, d: posterior_gluteo, e: ombro }
 };
 const assets = import.meta.glob<string>('../assets/miniaturas-horus/*/{divisoes,exercicios}/*.png', { eager: true, import: 'default', query: '?url' });
 export const normalizeThumbnailName = (name: string) => name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[º°ª]/g, '').replace(/\b(com|de|do|da|na|no)\b/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -44,13 +55,11 @@ export function getExerciseThumbnail(exercise: Pick<Exercise, 'name' | 'catalogE
   }
 }
 export function getDivisionThumbnail(workout: Pick<WorkoutRoutine, 'id' | 'title'>, plan: ThumbnailPlan): string | undefined {
-  const letter = workout.id.match(/^(?:h|t2)-([a-e])$/i)?.[1] || workout.title.match(/treino\s+([a-e])\b/i)?.[1];
+  const stableId = workout.id.match(/^(h|t2)-([a-e])$/i);
+  const letter = stableId?.[2] || workout.title.match(/treino\s+([a-e])\b/i)?.[1];
   if (!letter) return;
-  const filename = divisionFiles[plan][letter.toLowerCase()];
-  const image = divisionAssets[`../assets/miniaturas-horus/${filename}.png`];
-  if (image) return image;
-  const prefix = `${plan}/divisoes/treino-${letter.toLowerCase()}-`;
-  return [...thumbnails].find(([key]) => key.startsWith(prefix))?.[1];
+  const resolvedPlan = stableId ? (stableId[1].toLowerCase() === 't2' ? 'treino-feminino' : 'treino-principal') : plan;
+  return divisionImages[resolvedPlan][letter.toLowerCase()];
 }
 // Retry the existing GIF once before letting each view display its icon fallback.
 export function retryThumbnail(image: HTMLImageElement, gif: string): boolean {
