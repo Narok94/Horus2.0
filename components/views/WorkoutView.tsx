@@ -1,3 +1,4 @@
+import { BrandLogo } from '../ui/BrandLogo';
 import { createWorkoutShareImage } from '../../src/utils/workoutShareImage';
 import { getDivisionThumbnail, getExerciseThumbnail, getThumbnailPlan, retryThumbnail, retryExerciseDetail } from '../../src/utils/workoutThumbnails';
 import { interpretPrescription, createInitialPerformance, getRestSeconds } from '../../src/utils/workoutPrescription';
@@ -554,7 +555,7 @@ export const WorkoutView: React.FC = () => {
   if (showSummary) {
     return <section className="horus-workout-summary horus-completion">
       <header className="horus-completion-heading">
-        <CheckCircle2 size={44} strokeWidth={1.8} />
+        <BrandLogo className="horus-completion-logo" />
         <div><h1>Treino concluído!</h1><p>Seu treino foi salvo no histórico.</p></div>
       </header>
       <div className="horus-completion-info horus-blue-card"><h2>{selectedWorkout.title}</h2><p><Clock size={16} />{formatTime(workoutDuration || 0)} de treino</p><div className="horus-completion-details"><span>{calculateVolume()} kg de volume</span><span>{selectedWorkout.exercises.filter(ex => getExercisePerformance(ex).every(set => set.completed)).length}/{selectedWorkout.exercises.length} exercícios concluídos</span></div></div>

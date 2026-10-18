@@ -7,6 +7,7 @@ import './src/personal.css';
 import './src/background.css';
 import './src/cards.css';
 import './src/activeExercise.css';
+import './src/branding.css';
 
 console.info('[HORUS BUILD]', import.meta.env.VITE_BUILD_SHA);
 

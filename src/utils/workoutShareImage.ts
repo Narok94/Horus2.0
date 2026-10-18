@@ -1,9 +1,20 @@
+import officialLogo from '../assets/miniaturas-horus/logo.png';
+
+let logoReady: Promise<HTMLImageElement> | undefined;
+const loadOfficialLogo = () => logoReady ||= (async () => {
+  const logo = new Image();
+  logo.src = officialLogo;
+  await logo.decode();
+  return logo;
+})();
+
 /** Render once; the thumbnail, full preview and download use this exact PNG. */
 export async function createWorkoutShareImage(photo: string, division: string, durationSeconds: number): Promise<string> {
   const image = new Image();
   image.src = photo;
   await image.decode();
   await document.fonts.ready;
+  const logo = await loadOfficialLogo();
 
   const canvas = document.createElement('canvas');
   canvas.width = 1080;
@@ -14,6 +25,8 @@ export async function createWorkoutShareImage(photo: string, division: string, d
 
   const font = getComputedStyle(document.documentElement).getPropertyValue('--font-sans').trim() || 'sans-serif';
   const margin = Math.min(60, canvas.height * .08);
+  const logoSize = Math.min(180, canvas.height * .2);
+  const textWidth = canvas.width - margin * 2 - logoSize - 24;
   const titleSize = Math.min(52, canvas.height * .07);
   const lineHeight = titleSize * 1.2;
   ctx.font = `700 ${titleSize}px ${font}`;
@@ -21,7 +34,7 @@ export async function createWorkoutShareImage(photo: string, division: string, d
   let line = '';
   for (const word of division.toLocaleUpperCase('pt-BR').split(/\s+/)) {
     const next = line ? `${line} ${word}` : word;
-    if (line && ctx.measureText(next).width > canvas.width - margin * 2) {
+    if (line && ctx.measureText(next).width > textWidth) {
       lines.push(line);
       line = word;
     } else line = next;
@@ -45,10 +58,13 @@ export async function createWorkoutShareImage(photo: string, division: string, d
   const seconds = Math.floor(durationSeconds % 60);
   ctx.fillText(minutes > 0 ? `${minutes} MIN${seconds ? ` ${seconds} S` : ''}` : `${seconds} S`, margin, bottom);
 
-  // Text watermark until the approved logo asset is available.
-  ctx.font = `600 ${Math.min(28, canvas.height * .045)}px ${font}`;
-  ctx.fillStyle = 'rgba(255,255,255,.85)';
-  ctx.textAlign = 'right';
-  ctx.fillText('HÓRUS GYM', canvas.width - margin, bottom);
+  // Official artwork occupies a reserved corner, never the division/duration area.
+  // The same composited PNG is used by thumbnail, full preview and download.
+  ctx.save();
+  ctx.globalAlpha = .88;
+  ctx.shadowColor = 'rgba(200,225,255,.45)';
+  ctx.shadowBlur = 5;
+  ctx.drawImage(logo, canvas.width - margin - logoSize, bottom - logoSize, logoSize, logoSize);
+  ctx.restore();
   return canvas.toDataURL('image/png');
 }

@@ -1,14 +1,14 @@
 {
-  "short_name": "Horus",
-  "name": "Horus Training",
+  "short_name": "HÓRUS GYM",
+  "name": "HÓRUS GYM",
   "icons": [
     {
-      "src": "/horus-icon-192.png?v=horus_v5",
+      "src": "/horus-icon-192.png?v=horus_official_55c3089c7d",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/horus-icon-512.png?v=horus_v5",
+      "src": "/horus-icon-512.png?v=horus_official_55c3089c7d",
       "type": "image/png",
       "sizes": "512x512"
     }

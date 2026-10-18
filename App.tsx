@@ -1,3 +1,4 @@
+import { BrandLogo } from './components/ui/BrandLogo';
 import { TodayView } from './components/views/TodayView';
 import { AgendaView } from './components/views/AgendaView';
 import { DietView } from './components/views/DietView';
@@ -35,17 +36,9 @@ import { WorkoutView } from './components/views/WorkoutView';
 import { ProfileView } from './components/views/ProfileView';
 import { WorkoutsListView } from './components/views/WorkoutsListView';
 
-export const HorusLogoIcon: React.FC<{ size?: number; className?: string }> = ({ size = 48, className = "" }) => {
-  return (
-    <img
-      src="/horus-icon.svg"
-      alt="Horus Training Logo"
-      style={{ width: size, height: size }}
-      className={`${className} object-contain`}
-      referrerPolicy="no-referrer"
-    />
-  );
-};
+export const HorusLogoIcon: React.FC<{ size?: number; className?: string }> = ({ size = 48, className = '' }) => (
+  <BrandLogo className={className} style={{ width:size, height:size }} />
+);
 
 const AppContent: React.FC = () => {
   const {
@@ -210,15 +203,7 @@ const AppContent: React.FC = () => {
             transition={{ duration: 0.65, ease: 'easeOut' }}
             className="relative flex flex-col items-center"
           >
-            <img
-              src="/horus-icon.svg"
-              alt="Horus Training Logo"
-              className="w-[180px] sm:w-[200px] h-auto object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] mb-4"
-              onError={(e) => {
-                e.currentTarget.src = "/horus-icon-512.png";
-              }}
-              referrerPolicy="no-referrer"
-            />
+            <BrandLogo className="horus-login-logo" />
             <div className="space-y-0.5 tracking-wider text-center">
               <p className="text-white text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.24em] leading-tight">
                 DISCIPLINA HOJE,

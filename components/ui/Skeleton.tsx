@@ -1,3 +1,4 @@
+import { BrandLogo } from './BrandLogo';
 
 import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
@@ -24,6 +25,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className }) => {
 
 export const DashboardSkeleton = () => (
   <div className="space-y-6 max-w-2xl mx-auto">
+    <div className="horus-loading-brand" role="status" aria-label="Carregando HÓRUS GYM"><BrandLogo /></div>
     <Skeleton className="h-48 w-full rounded-[2rem]" />
     <div className="space-y-4">
       <Skeleton className="h-40 w-full rounded-[2rem]" />

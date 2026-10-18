@@ -1,0 +1,8 @@
+.horus-brand-logo { display:block; object-fit:contain; aspect-ratio:1; flex-shrink:0; }
+.horus-login-logo { width:180px; height:180px; margin-bottom:16px; filter:drop-shadow(0 4px 14px #72ADFF44); }
+.horus-brand-eyebrow { gap:6px; }
+.horus-header-logo { width:28px; height:28px; margin-block:-6px; }
+.horus-completion-logo { width:52px; height:52px; }
+.horus-loading-brand { display:grid; place-items:center; padding:12px; }
+.horus-loading-brand .horus-brand-logo { width:72px; height:72px; }
+@media(min-width:640px) { .horus-login-logo { width:200px; height:200px; } }
