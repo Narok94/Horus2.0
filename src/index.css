@@ -814,14 +814,15 @@ body { margin:0; }
   margin:0; color:#61718A; font-size:12px; line-height:1.5;
 }
 .performance-workouts .performance-division .performance-anatomy {
-  position:absolute; inset:0 0 0 auto; display:grid; place-items:center;
-  width:45%; height:100%; padding:0; border-radius:0; border:0; box-shadow:none;
-  background:transparent; overflow:visible; color:#2459E8;
+  position:absolute; inset:0 6px 0 auto; display:flex; align-items:center; justify-content:center;
+  width:40%; height:100%; padding:0 12px 0 0; border-radius:0; border:0; box-shadow:none;
+  background:transparent; overflow:hidden; color:#2459E8;
   mask-image:none;
 }
 .performance-workouts .performance-anatomy img {
-  position:static; width:auto; height:100%; aspect-ratio:1; min-height:0; max-width:100%;
-  justify-self:end; object-fit:contain; object-position:right center;
+  position:static; flex-shrink:1; width:min(100%,112px); height:auto; aspect-ratio:1;
+  min-height:0; max-width:100%; max-height:92%; transform:none;
+  object-fit:contain; object-position:center center;
   border:0; border-radius:0; padding:0; background:transparent; box-shadow:none;
   clip-path:var(--anatomy-outline,none);
   mask-image:linear-gradient(to right,transparent,#000 30%);
@@ -844,7 +845,7 @@ body { margin:0; }
   --anatomy-outline:polygon(31% 0,80% 0,84% 9%,86% 17%,88% 30%,89% 40%,92% 49%,91% 56%,83% 61%,81% 58%,82% 51%,80% 45%,78% 38%,75% 28%,73% 23%,73% 34%,77% 48%,80% 64%,80% 77%,78% 100%,56% 100%,57% 90%,63% 78%,63% 73%,55% 62%,49% 51%,45% 61%,38% 74%,34% 84%,28% 100%,9% 100%,10% 91%,16% 84%,22% 78%,23% 63%,21% 52%,25% 44%,25% 36%,28% 27%,34% 20%,39% 16%,36% 12%);
 }
 #root .horus-app-shell .performance-workouts .performance-division-open {
-  position:absolute; right:12px; bottom:12px; width:44px; height:44px; background:#2459E8; color:#FFF;
+  position:absolute; right:8px; bottom:8px; width:40px; height:40px; background:#2459E8; color:#FFF;
   box-shadow:0 4px 12px #2459E824;
 }
 .performance-workouts .performance-division-open svg { margin-left:2px; }
