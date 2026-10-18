@@ -1,8 +1,15 @@
+import { TodayView } from './components/views/TodayView';
+import { AgendaView } from './components/views/AgendaView';
+import { DietView } from './components/views/DietView';
+import { isPersonalUser } from './src/utils/personalData';
+import './src/personal.css';
 import { HistoryView } from './components/views/HistoryView';
 import { validateLocalProfile } from './src/utils/localData';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
+  CalendarDays,
+  Utensils,
   Dumbbell,
   LayoutDashboard,
 
@@ -294,14 +301,17 @@ const AppContent: React.FC = () => {
     );
   }
 
+  const personal = isPersonalUser(user?.username);
   const isLightUser = isLoggedIn;
   const isPremiumScreen = activeTab !== AppTab.WORKOUT || !selectedWorkout;
 
   const renderView = () => {
     if (selectedWorkout && activeTab === AppTab.WORKOUT) return <WorkoutView />;
     switch (activeTab) {
-      case AppTab.DASHBOARD: return <DashboardView />;
-      case AppTab.WORKOUT: return <WorkoutsListView />;
+      case AppTab.DASHBOARD: return personal ? <TodayView /> : <DashboardView />;
+      case AppTab.AGENDA: return personal ? <AgendaView /> : <DashboardView />;
+      case AppTab.DIET: return personal ? <DietView /> : <DashboardView />;
+      case AppTab.WORKOUT: return <>{personal && <button className="personal-history-link" onClick={() => setActiveTab(AppTab.HISTORY)}>Ver histórico de treinos →</button>}<WorkoutsListView /></>;
       case AppTab.HISTORY: return <HistoryView />;
       case AppTab.PROFILE: return <ProfileView />;
       default: return <DashboardView />;
@@ -312,7 +322,13 @@ const AppContent: React.FC = () => {
   const circleFill = isLightUser ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.06)";
   const circleFillStrong = isLightUser ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)";
 
-  const navItems = [
+  const navItems = personal ? [
+    { id: AppTab.DASHBOARD, icon: Home, label: 'Hoje' },
+    { id: AppTab.AGENDA, icon: CalendarDays, label: 'Agenda' },
+    { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treino' },
+    { id: AppTab.DIET, icon: Utensils, label: 'Dieta' },
+    { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
+  ] : [
     { id: AppTab.DASHBOARD, icon: Home, label: 'Home' },
     { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treinos' },
     { id: AppTab.HISTORY, icon: BarChart3, label: 'Histórico' },
@@ -320,7 +336,7 @@ const AppContent: React.FC = () => {
   ];
 
   return (
-    <div className={`horus-app-shell ${activeTab === AppTab.WORKOUT && showSummary ? 'completion-light-shell' : ''} ${activeTab === AppTab.HISTORY || activeTab === AppTab.PROFILE ? 'account-light-shell' : ''} ${activeTab === AppTab.DASHBOARD ? 'dashboard-refined-shell' : ''} ${activeTab === AppTab.WORKOUT || activeTab === AppTab.DASHBOARD ? 'performance-shell' : ''} min-h-[100dvh] relative flex flex-col ${
+    <div className={`horus-app-shell ${personal ? 'personal-shell' : ''} ${activeTab === AppTab.WORKOUT && showSummary ? 'completion-light-shell' : ''} ${activeTab === AppTab.HISTORY || activeTab === AppTab.PROFILE ? 'account-light-shell' : ''} ${activeTab === AppTab.DASHBOARD ? 'dashboard-refined-shell' : ''} ${activeTab === AppTab.WORKOUT || activeTab === AppTab.DASHBOARD ? 'performance-shell' : ''} min-h-[100dvh] relative flex flex-col ${
       isPremiumScreen ? "bg-[#F5F7FA] text-slate-900" : isLightUser
         ? "bg-[#F5F7FA] text-gray-900 border-zinc-200"
         : "bg-[#050505] text-white"

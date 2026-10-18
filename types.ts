@@ -84,5 +84,7 @@ export enum AppTab {
   DASHBOARD = 'dashboard',
   WORKOUT = 'workout',
   HISTORY = 'history',
+  AGENDA = 'agenda',
+  DIET = 'diet',
   PROFILE = 'profile',
 }

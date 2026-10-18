@@ -21,7 +21,7 @@ const getInitials = (name: string): string => {
   return (words[0][0] + words[words.length - 1][0]).toUpperCase();
 };
 
-export const DashboardView: React.FC = () => {
+export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
   const {
     user,
     allWorkouts,
@@ -138,6 +138,8 @@ export const DashboardView: React.FC = () => {
     handleVibrate(15);
     setActiveTab(AppTab.WORKOUT);
   };
+
+  if (compact) return <article className="personal-card personal-workout"><span className="personal-eyebrow">TREINO DE HOJE</span><div className="personal-workout-copy"><h2>{heroWorkout?.title || 'Suas fichas de treino'}</h2><p>{heroWorkout ? '45 min · '+heroWorkout.exercises.length+' exercícios' : 'Veja suas rotinas'}</p></div>{showHeroThumbnail && <img className="personal-workout-art" src={heroThumbnail} alt="" onError={() => setUnavailableDivision(heroThumbnail || null)}/>}<button className="personal-primary" onClick={startActiveWorkout}><Play size={16}/>{isWorkoutActive ? 'Continuar treino' : 'Iniciar treino'}</button></article>;
 
   return (
       <div className="horus-original-dashboard w-full min-h-screen flex flex-col justify-start gap-3 bg-transparent text-zinc-950 font-sans antialiased select-none relative pt-12 sm:pt-6 pb-40 px-1">
