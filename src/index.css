@@ -790,15 +790,15 @@ body { margin:0; }
 /* Routine list: integrated, uncropped artwork and one accessible card action.
    Scope these rules to the list so execution and dashboard artwork stay independent. */
 #root .horus-app-shell .performance-workouts { padding:8px 0 24px; }
-.performance-workouts .performance-divisions { gap:14px; }
+.performance-workouts .performance-divisions { gap:12px; }
 #root .horus-app-shell .performance-workouts .performance-division {
   display:flex; align-items:center;
-  width:100%; min-height:148px; padding:16px 18px;
+  width:100%; min-height:132px; padding:12px 16px;
   border:1px solid #E0E7F1; border-radius:22px; background:#FFF;
   box-shadow:0 4px 18px #14243E06; text-align:left; color:#14243E;
   transition:border-color .18s,box-shadow .18s;
 }
-.performance-workouts .performance-division-copy { width:58%; }
+.performance-workouts .performance-division-copy { width:59%; }
 #root .horus-app-shell .performance-workouts .performance-division-meta {
   gap:8px; color:#61718A; font-size:11px; line-height:1.4;
 }
@@ -817,12 +817,31 @@ body { margin:0; }
   position:absolute; inset:0 0 0 auto; display:grid; place-items:center;
   width:45%; height:100%; padding:0; border-radius:0; border:0; box-shadow:none;
   background:transparent; overflow:visible; color:#2459E8;
-  mask-image:linear-gradient(to right,transparent 12%,#000 65%),linear-gradient(to bottom,transparent,#000 5%,#000 95%,transparent);
-  mask-composite:intersect;
+  mask-image:none;
 }
 .performance-workouts .performance-anatomy img {
-  position:static; width:100%; height:100%; min-height:0; max-width:100%;
-  object-fit:contain; object-position:right center; mask-image:none;
+  position:static; width:auto; height:100%; aspect-ratio:1; min-height:0; max-width:100%;
+  justify-self:end; object-fit:contain; object-position:right center;
+  border:0; border-radius:0; padding:0; background:transparent; box-shadow:none;
+  clip-path:var(--anatomy-outline,none);
+  mask-image:linear-gradient(to right,transparent,#000 30%);
+}
+/* Outline only the existing PNG backdrop; preserve the anatomical framing.
+   Percentages follow each source silhouette and scale with the artwork. */
+.performance-workouts img[src*="/peito-biceps"] {
+  --anatomy-outline:polygon(43% 0,60% 0,64% 5%,65% 18%,62% 23%,67% 29%,77% 33%,85% 41%,90% 57%,96% 76%,100% 100%,0 100%,3% 81%,9% 60%,14% 43%,23% 34%,36% 28%,40% 23%,38% 16%,39% 5%);
+}
+.performance-workouts img[src*="/quadriceps-panturrilha-abdomen"] {
+  --anatomy-outline:polygon(10% 0,24% 0,22% 13%,13% 25%,11% 28%,15% 39%,16% 46%,11% 45%,5% 37%,5% 25%,8% 17%,8% 8%,10% 0,32% 0,68% 0,70% 9%,77% 31%,80% 48%,76% 66%,81% 86%,79% 100%,66% 100%,61% 80%,60% 61%,55% 50%,51% 33%,49% 33%,49% 47%,45% 61%,43% 80%,35% 100%,21% 100%,19% 89%,24% 74%,24% 65%,21% 55%,20% 44%,23% 30%,29% 9%,32% 0,76% 0,90% 0,92% 16%,94% 26%,95% 37%,90% 45%,84% 46%,87% 40%,85% 35%,88% 27%,82% 15%,76% 0);
+}
+.performance-workouts img[src*="/costas-triceps"] {
+  --anatomy-outline:polygon(48% 3%,54% 3%,60% 6%,62% 12%,62% 20%,60% 27%,61% 30%,72% 36%,80% 38%,85% 42%,87% 49%,86% 56%,90% 63%,92% 74%,96% 84%,98% 100%,2% 100%,4% 84%,9% 73%,12% 61%,15% 56%,14% 49%,16% 43%,21% 39%,29% 37%,41% 31%,40% 24%,38% 17%,40% 10%,44% 5%);
+}
+.performance-workouts img[src*="/ombros-trapezio-abdomen"] {
+  --anatomy-outline:polygon(47% 1%,54% 1%,60% 4%,62% 10%,62% 17%,64% 18%,62% 25%,59% 29%,60% 34%,69% 40%,78% 43%,85% 43%,91% 47%,95% 54%,96% 62%,100% 69%,100% 100%,0 100%,0 70%,4% 63%,4% 55%,7% 48%,15% 44%,22% 43%,32% 38%,38% 34%,39% 29%,36% 23%,36% 17%,38% 16%,38% 10%,41% 4%);
+}
+.performance-workouts img[src*="/posterior-gluteo-cardio"] {
+  --anatomy-outline:polygon(31% 0,80% 0,84% 9%,86% 17%,88% 30%,89% 40%,92% 49%,91% 56%,83% 61%,81% 58%,82% 51%,80% 45%,78% 38%,75% 28%,73% 23%,73% 34%,77% 48%,80% 64%,80% 77%,78% 100%,56% 100%,57% 90%,63% 78%,63% 73%,55% 62%,49% 51%,45% 61%,38% 74%,34% 84%,28% 100%,9% 100%,10% 91%,16% 84%,22% 78%,23% 63%,21% 52%,25% 44%,25% 36%,28% 27%,34% 20%,39% 16%,36% 12%);
 }
 #root .horus-app-shell .performance-workouts .performance-division-open {
   position:absolute; right:12px; bottom:12px; width:44px; height:44px; background:#2459E8; color:#FFF;
@@ -834,6 +853,6 @@ body { margin:0; }
   #root .horus-app-shell .performance-workouts .performance-division:hover { border-color:#A8BFFB; box-shadow:0 6px 22px #2459E812; }
 }
 @media(max-width:359px) {
-  #root .horus-app-shell .performance-workouts .performance-division { padding:16px 12px; }
+  #root .horus-app-shell .performance-workouts .performance-division { padding:12px; }
   #root .horus-app-shell .performance-workouts .performance-division h2 { font-size:16px; }
 }
