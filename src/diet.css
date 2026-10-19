@@ -1,0 +1,26 @@
+/* Diet controls stay scoped; cards reuse the approved surface from cards.css. */
+.diet-page fieldset { min-width:0; }
+.diet-day { margin-bottom:2px; }
+.diet-meal .diet-foods { display:flex; flex-direction:column; gap:12px; margin:12px 0; }
+.diet-options,.diet-variants { display:flex; flex-direction:column; gap:7px; margin:0; padding:0; border:0; }
+.diet-options legend,.diet-variants legend { width:100%; font-size:12px; font-weight:700; margin-bottom:8px; color:#FFF; }
+.diet-options legend>span { float:right; font-size:10px; font-weight:500; }
+.diet-options label,.diet-variants label { display:flex; align-items:center; gap:9px; min-height:44px; padding:10px; border:1px solid #FFFFFF26; border-radius:12px; cursor:pointer; }
+.diet-options label.is-selected,.diet-variants label.is-selected { background:#FFFFFF12; border-color:#A5C3FF; }
+.diet-options label>span,.diet-variants label>span { font-size:13px; line-height:1.45; }
+.diet-options input,.diet-variants input,.diet-confirm-replace input { width:18px; height:18px; flex-shrink:0; accent-color:#81ADFF; }
+.diet-page input[type=radio]:disabled { opacity:.8; }
+.diet-meal .diet-single-food { margin:0; padding:3px 0 7px; border-bottom:1px solid #FFFFFF20; }
+.diet-note { margin-top:12px; }
+.diet-note summary,.diet-guidance summary { min-height:36px; cursor:pointer; font-size:12px; font-weight:700; color:#E2ECFF; }
+.diet-guidance ul { display:flex; flex-direction:column; gap:8px; padding-left:16px; list-style:disc; font-size:13px; line-height:1.5; }
+.diet-import .personal-primary { margin-top:12px; width:100%; }
+.diet-import button:disabled { opacity:.5; cursor:not-allowed; }
+.diet-confirm-replace { display:flex; align-items:flex-start; gap:9px; margin-top:12px; font-size:13px; line-height:1.5; }
+.diet-back,.diet-add-food,.diet-remove-food { display:flex; align-items:center; gap:5px; min-height:44px; }
+.diet-editor-group { display:flex; flex-direction:column; gap:10px; padding:12px; border:1px solid #D3DEED; border-radius:14px; }
+.diet-editor-group legend { padding:0 5px; color:#14243E; font-size:13px; font-weight:700; }
+.diet-remove-food { color:#9E3543; font-size:12px; }
+.personal-page .diet-readonly { font-size:11px; margin-top:12px; }
+.personal-page .diet-error { color:#9E2638; }
+.diet-page :is(input,button,summary):focus-visible { outline:3px solid #8CAFFF; outline-offset:3px; }
