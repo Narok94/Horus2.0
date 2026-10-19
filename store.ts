@@ -23,7 +23,14 @@ export const calculateCheckInStreak = (checkIns: string[], now = new Date()): nu
   return streak;
 };
 
+export interface SessionRest {
+  endsAt: number;
+  pausedRemaining: number | null;
+  notified: boolean;
+}
+
 interface AppState {
+  sessionRest: SessionRest | null;
   user: User | null;
   isLoggedIn: boolean;
   activeTab: AppTab;
@@ -86,6 +93,7 @@ export const useStore = create<AppState>((set, get) => {
   }
 
   return {
+  sessionRest: null,
   user: null,
   isLoggedIn: false,
   activeTab: AppTab.WORKOUT,
@@ -143,7 +151,7 @@ export const useStore = create<AppState>((set, get) => {
     localStorage.setItem('tatugym_all_workouts', JSON.stringify(filtered));
   },
   setCurrentSessionProgress: (currentSessionProgress) => set({ currentSessionProgress }),
-  setIsWorkoutActive: (isWorkoutActive) => set({ isWorkoutActive }),
+  setIsWorkoutActive: (isWorkoutActive) => set(isWorkoutActive ? { isWorkoutActive } : { isWorkoutActive, sessionRest: null }),
   setWorkoutStartTime: (workoutStartTime) => set({ workoutStartTime }),
   setLastMarkedTime: (lastMarkedTime) => set({ lastMarkedTime }),
   setElapsedTime: (elapsedTime) => set({ elapsedTime }),
@@ -171,6 +179,7 @@ export const useStore = create<AppState>((set, get) => {
     }
 
     set({ 
+      sessionRest: null,
       user: null, 
       isLoggedIn: false, 
       activeTab: AppTab.DASHBOARD,

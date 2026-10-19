@@ -66,7 +66,7 @@ export const HistoryView: React.FC = () => {
                 <ExerciseThumbnail name={ex.name} plan={getThumbnailPlan(user.username, { id: selected.workoutId })} /><span className="min-w-0 flex-1"><strong className="block text-xs font-black uppercase tracking-tight leading-tight">{ex.name}</strong><small className="block mt-1 text-[9px] text-white/60 font-mono">{ex.performance.filter(s => s.completed).length} séries registradas</small></span>
                 <ChevronRight size={16} className={`transition-transform ${open ? 'rotate-90' : ''}`} />
               </button>
-              {open && <div className="horus-blue-card mx-2 -mt-1 rounded-b-2xl bg-[#0A192F] text-white/80 border border-white/10 border-t-0 p-3 space-y-1.5">{ex.performance.map((set, i) => <div key={i} className="flex items-center justify-between text-[10px] font-mono"><span>Série {i + 1}</span><span>{set.weight} kg · {set.durationSeconds !== undefined ? `${set.durationSeconds}s` : `${set.reps} reps`} {set.completed ? '✓' : '—'}</span></div>)}</div>}
+              {open && <div className="horus-blue-card mx-2 -mt-1 rounded-b-2xl bg-[#0A192F] text-white/80 border border-white/10 border-t-0 p-3 space-y-1.5">{ex.performance.map((set, i) => <div key={i} className="flex items-center justify-between text-[10px] font-mono"><span>Série {i + 1}</span><span>{set.weight.toLocaleString('pt-BR', { useGrouping: false, maximumFractionDigits: 20 })} kg · {set.durationSeconds !== undefined ? `${set.durationSeconds}s` : `${set.reps} reps`} {set.completed ? '✓' : '—'}</span></div>)}</div>}
             </div>;
           })}
         </div>

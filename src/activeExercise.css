@@ -45,7 +45,7 @@
 .active-set-console-heading i { width:5px; height:5px; background:#9CBEFF; border-radius:50%; }
 .active-set-inputs { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:22px; }
 #root .horus-app-shell .horus-active-session .active-set-value label { display:block; color:#C4D4EE !important; font-size:11px; font-weight:500; }
-.active-set-number { display:flex; align-items:baseline; gap:4px; margin-block:2px 10px; }
+.active-set-number { display:flex; align-items:baseline; gap:6px; margin-block:6px 10px; padding:4px 10px; border:1px solid rgba(125,185,255,.65); border-radius:12px; background:linear-gradient(135deg,rgba(37,99,235,.18),rgba(14,165,233,.08)); }
 #root .horus-active-session .active-set-number input { width:100%; min-width:0; padding:0; height:48px; border:0; border-radius:0; background:transparent; color:#FFF !important; box-shadow:none; font-family:var(--font-sans); font-weight:750; font-size:36px !important; line-height:1; letter-spacing:-.04em; appearance:textfield; }
 .active-set-number input::-webkit-inner-spin-button,.active-set-number input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
 .active-set-number span { font-size:11px; flex-shrink:0; }
@@ -59,3 +59,31 @@
 .active-set-rest>div { display:flex; flex-direction:column; margin-right:auto; }.active-set-rest span { font-size:10px; color:#61738E; }.active-set-rest strong { font-size:20px; font-variant-numeric:tabular-nums; }.active-set-rest button { min-width:32px; min-height:40px; font-size:11px; display:grid; place-items:center; }
 .horus-active-session :is(button,input):focus-visible { outline:3px solid #92B3FF; outline-offset:3px; }
 @media(max-width:374px) { #root .horus-app-shell .horus-exercise-modal.horus-active-session { padding:16px; }.active-set-inputs { gap:16px; } }
+
+.active-set-number:focus-within { border-color:#93C5FD; box-shadow:0 0 0 3px rgba(59,130,246,.2); }
+
+/* Session and rest clocks retain contrast across theme overrides. */
+#root .horus-app-shell .horus-session-controls,
+#root .horus-app-shell .horus-session-clock { background:transparent !important; }
+#root .horus-app-shell .horus-session-clock>span:last-child { color:#FFF !important; opacity:1 !important; font-weight:900; animation:none !important; text-shadow:0 1px 3px #061B4480; }
+#root .horus-app-shell .horus-session-clock-label { color:#E2EDFF !important; }
+#root .horus-app-shell .active-set-rest { display:grid; grid-template-columns:1fr auto 1fr; gap:8px; padding:16px; margin-block:12px; border:0 !important; border-radius:22px; background:linear-gradient(135deg,#2459E8,#123CA8) !important; color:#FFF !important; box-shadow:0 8px 22px #2459E824; }
+#root .horus-app-shell .active-set-rest>div { grid-column:1/-1; margin:0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+#root .horus-app-shell .active-set-rest span { color:#E2EDFF !important; font-size:12px; }
+#root .horus-app-shell .active-set-rest strong { color:#FFF !important; font-size:32px; font-weight:850; line-height:1.2; font-variant-numeric:tabular-nums; }
+#root .horus-app-shell .active-set-rest button { display:flex; align-items:center; justify-content:center; min-width:0; min-height:44px; padding:8px 12px; border:0 !important; border-radius:14px; background:rgba(255,255,255,.14) !important; color:#FFF !important; font-size:12px; font-weight:700; }
+#root .horus-app-shell .active-set-rest button:last-child { grid-column:1/-1; }
+
+/* Dark text on the light completion sheet; blue cards keep their own palette. */
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-exercise-success :is(h2,h3,h4,dd) { color:#14243E !important; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-success-summary dt { color:#455B79; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-success-summary>div { border-bottom-color:#BACAE0; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-exercise-success .horus-set-history>button.completed { background:#E9F5EF; color:#1D6248; border-color:#A3CBB8; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-exercise-success .horus-set-history>button.completed :is(strong,svg,span) { color:#1D6248; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-modal-topbar { color:#455B79; }
+#root .horus-app-shell.personal-shell .horus-exercise-modal .horus-modal-topbar>button { color:#455B79; }
+#root .horus-active-session .active-set-track .is-pending { color:#526580; }
+#root .horus-active-session .active-set-track .is-pending .active-set-marker { color:#455B79; }
+/* Preserve readable labels and separators on the technical guide's blue card. */
+#root .horus-app-shell.horus-app-shell .horus-exercise-modal .horus-prescription.horus-blue-card { border-bottom-color:#6886B6 !important; }
+#root .horus-app-shell.horus-app-shell .horus-exercise-modal .horus-technical-info.horus-blue-card :is(p,span) { color:#E2EDFF !important; }

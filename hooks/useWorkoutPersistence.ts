@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { useStore } from '../store';
+import { SessionRest, useStore } from '../store';
 import { AppTab, SetPerformance } from '../types';
 
 interface SessionSnapshot {
   version: 1;
+  sessionRest?: SessionRest | null;
   workoutId: string;
   currentSessionProgress: Record<string, SetPerformance[]>;
   workoutStartTime: number;
@@ -35,13 +36,19 @@ export const isValidSessionSnapshot = (value: unknown, now: number): value is Se
       (set.rpe === undefined || (isNonNegativeNumber(set.rpe) && set.rpe <= 10))
     )) return false;
   }
+  if (value.sessionRest !== undefined && value.sessionRest !== null) {
+    const rest = value.sessionRest;
+    if (!isObject(rest) || !isNonNegativeNumber(rest.endsAt) ||
+        !(rest.pausedRemaining === null || isNonNegativeNumber(rest.pausedRemaining)) ||
+        typeof rest.notified !== 'boolean') return false;
+  }
   return true;
 };
 
 export const useWorkoutPersistence = () => {
   const {
     user, isWorkoutActive, selectedWorkout, currentSessionProgress,
-    workoutStartTime, lastMarkedTime, allWorkouts
+    workoutStartTime, lastMarkedTime, allWorkouts, sessionRest
   } = useStore();
   const storageKey = user ? `tatugym_active_session_${user.username.toLowerCase()}` : null;
 
@@ -68,6 +75,7 @@ export const useWorkoutPersistence = () => {
       // Uma atualização evita estados intermediários durante a recuperação.
       useStore.setState({
         selectedWorkout: workout,
+        sessionRest: session.sessionRest ?? null,
         currentSessionProgress: session.currentSessionProgress,
         workoutStartTime: session.workoutStartTime,
         lastMarkedTime: session.lastMarkedTime,
@@ -90,6 +98,7 @@ export const useWorkoutPersistence = () => {
           !state.user || `tatugym_active_session_${state.user.username.toLowerCase()}` !== storageKey) return;
       const snapshot: SessionSnapshot = {
         version: 1,
+        sessionRest: state.sessionRest,
         workoutId: state.selectedWorkout.id,
         currentSessionProgress: state.currentSessionProgress,
         workoutStartTime: state.workoutStartTime,
@@ -103,10 +112,14 @@ export const useWorkoutPersistence = () => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') saveSession();
     };
+    window.addEventListener('pagehide', saveSession);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('pagehide', saveSession);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [storageKey, isWorkoutActive, selectedWorkout, currentSessionProgress,
-      workoutStartTime, lastMarkedTime]);
+      workoutStartTime, lastMarkedTime, sessionRest]);
 
   return null;
 };

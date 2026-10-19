@@ -34,6 +34,23 @@ import { getExerciseDetails } from '../../src/utils/exerciseUtils';
 import confetti from 'canvas-confetti';
 
 
+const formatWeight = (value: number) => value.toLocaleString('pt-BR', { useGrouping: false, maximumFractionDigits: 20 });
+
+const WeightInput: React.FC<{ value: number; onChange: (value: number) => void }> = ({ value, onChange }) => {
+  const [draft, setDraft] = React.useState<string | null>(null);
+  return <input id="active-set-weight" type="text" inputMode="decimal" aria-label="Carga em quilogramas" value={draft ?? formatWeight(value)}
+    onFocus={event => { setDraft(formatWeight(value)); event.currentTarget.select(); }}
+    onChange={event => {
+      const raw = event.target.value;
+      if (!/^\d*(?:[.,]\d*)?$/.test(raw)) return;
+      const parsed = Number(raw.replace(',', '.'));
+      if (!Number.isFinite(parsed)) return;
+      setDraft(raw);
+      onChange(parsed);
+    }}
+    onBlur={() => setDraft(null)} />;
+};
+
 export const WorkoutView: React.FC = () => {
   const {
     selectedWorkout,
@@ -95,9 +112,30 @@ export const WorkoutView: React.FC = () => {
   const [showExerciseInfo, setShowExerciseInfo] = React.useState(false);
   const [expandedExerciseId, setExpandedExerciseId] = React.useState<string | null>(null);
 
-  // Modal Rest Timer states
-  const [modalRestTimeLeft, setModalRestTimeLeft] = React.useState<number | null>(null);
-  const [isModalRestPaused, setIsModalRestPaused] = React.useState<boolean>(false);
+  const sessionRest = useStore(state => state.sessionRest);
+  const [restNow, setRestNow] = React.useState(Date.now);
+  const remainingRest = (rest: NonNullable<typeof sessionRest>) => rest.pausedRemaining ?? Math.max(0, Math.ceil((rest.endsAt - Date.now()) / 1000));
+  const modalRestTimeLeft = sessionRest === null ? null : sessionRest.pausedRemaining ?? Math.max(0, Math.ceil((sessionRest.endsAt - restNow) / 1000));
+  const isModalRestPaused = sessionRest?.pausedRemaining !== null && sessionRest !== null;
+  const setModalRestTimeLeft = (update: number | null | ((previous: number | null) => number | null)) => {
+    const previous = useStore.getState().sessionRest;
+    const seconds = typeof update === 'function' ? update(previous ? remainingRest(previous) : null) : update;
+    useStore.setState({ sessionRest: seconds === null ? null : {
+      endsAt: Date.now() + seconds * 1000,
+      pausedRemaining: typeof update === 'function' && previous?.pausedRemaining != null ? seconds : null,
+      notified: false
+    } });
+    setRestNow(Date.now());
+  };
+  const setIsModalRestPaused = (update: boolean | ((previous: boolean) => boolean)) => {
+    const rest = useStore.getState().sessionRest;
+    if (!rest) return;
+    const paused = typeof update === 'function' ? update(rest.pausedRemaining !== null) : update;
+    if (paused === (rest.pausedRemaining !== null)) return;
+    const seconds = remainingRest(rest);
+    useStore.setState({ sessionRest: { ...rest, endsAt: Date.now() + seconds * 1000, pausedRemaining: paused ? seconds : null } });
+    setRestNow(Date.now());
+  };
 
   // Success animation state
   const [exerciseCompletedSuccess, setExerciseCompletedSuccess] = React.useState<boolean>(false);
@@ -171,19 +209,30 @@ export const WorkoutView: React.FC = () => {
     }
   }, [isWorkoutActive, workoutStartTime, setElapsedTime]);
 
-  // Modal Rest Timer Countdown
+  // The interval refreshes the display; the persisted deadline is the clock.
   useEffect(() => {
-    if (modalRestTimeLeft !== null && modalRestTimeLeft > 0 && !isModalRestPaused) {
-      const countdown = setTimeout(() => {
-        setModalRestTimeLeft(modalRestTimeLeft - 1);
-      }, 1000);
-      return () => clearTimeout(countdown);
-    } else if (modalRestTimeLeft === 0) {
-      handleVibrate(250);
-      playBeep();
-      setModalRestTimeLeft(null);
-    }
-  }, [modalRestTimeLeft, isModalRestPaused]);
+    if (!sessionRest || !isWorkoutActive || !selectedWorkout || !user) return;
+    const refresh = () => {
+      setRestNow(Date.now());
+      const rest = useStore.getState().sessionRest;
+      if (rest && rest.pausedRemaining === null && rest.endsAt <= Date.now() && !rest.notified) {
+        useStore.setState({ sessionRest: { ...rest, notified: true } });
+        handleVibrate(250);
+        playBeep();
+      }
+    };
+    refresh();
+    const interval = sessionRest.pausedRemaining === null && sessionRest.endsAt > Date.now() ? window.setInterval(refresh, 1000) : null;
+    window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      if (interval !== null) window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('pageshow', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [sessionRest, isWorkoutActive, selectedWorkout, user]);
 
   if (!selectedWorkout || !user) return null;
 
@@ -590,6 +639,7 @@ export const WorkoutView: React.FC = () => {
 
   return (
     <div className={`horus-execution w-full min-h-screen pt-12 sm:pt-6 flex flex-col justify-start pb-32 max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-1 bg-transparent select-none ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
+      {!activeModalExercise && <> {modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{modalRestTimeLeft === 0 ? 'Descanso concluído' : isModalRestPaused ? 'Descanso pausado' : 'Recupere o fôlego'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button></div>} </>}
       {/* Upper Navigation Header */}
       <header className={`flex items-center justify-between py-1.5 border-b ${isLightTheme ? 'border-zinc-200' : 'border-white/5'} shrink-0`}>
         <div className="flex items-center gap-2 min-w-0">
@@ -631,7 +681,7 @@ export const WorkoutView: React.FC = () => {
             <div className="horus-session-controls">
               <div className="horus-session-clock">
                 <span className="horus-session-clock-label"><Clock size={14} />Tempo de treino</span>
-                <span className="text-sm font-black text-white font-mono leading-none tracking-tight animate-pulse">{formatTime(elapsedTime)}</span>
+                <span className="text-sm font-black text-white font-mono leading-none tracking-tight">{formatTime(elapsedTime)}</span>
               </div>
               <button
                 onClick={() => handleFinishWorkout()}
@@ -956,10 +1006,10 @@ export const WorkoutView: React.FC = () => {
                   <h4>Resumo do exercício</h4>
                   <dl className="horus-success-summary">
                     <div><dt>Séries realizadas</dt><dd>{sets.length} de {sets.length}</dd></div>
-                    <div><dt>Carga média</dt><dd>{Number(averageWeight.toFixed(1))} kg</dd></div>
+                    <div><dt>Carga média</dt><dd>{formatWeight(Number(averageWeight.toFixed(1)))} kg</dd></div>
                     <div><dt>{timed ? 'Tempo executado' : 'Total de repetições'}</dt><dd>{timed ? totalSeconds + ' s' : totalReps + ' reps'}</dd></div>
                   </dl>
-                  <div className="horus-set-history">{sets.map((set, index) => <button key={index} className="completed" aria-label={`Série ${index + 1}, concluída; toque para desmarcar`} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><Check size={16} /><span>Série {index + 1}</span><strong>{set.weight} kg · {timed ? (set.durationSeconds || 0) + ' s' : set.reps + ' reps'}</strong></button>)}</div>
+                  <div className="horus-set-history">{sets.map((set, index) => <button key={index} className="completed" aria-label={`Série ${index + 1}, concluída; toque para desmarcar`} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><Check size={16} /><span>Série {index + 1}</span><strong>{formatWeight(set.weight)} kg · {timed ? (set.durationSeconds || 0) + ' s' : set.reps + ' reps'}</strong></button>)}</div>
                 </section>;
               })()}
               {getExercisePerformance(activeModalExercise).every(set => set.completed) && <button className="horus-action" onClick={() => {
@@ -982,16 +1032,16 @@ export const WorkoutView: React.FC = () => {
                     <span className="active-set-demo-copy"><strong>{activeModalExercise.sets} séries · {activeModalExercise.reps}{timed ? '' : ' reps'}</strong><span><Clock size={13} /> {activeModalExercise.rest}s de descanso</span><small>Ver execução <ChevronRight size={12} /></small></span>
                   </button>
                   <section className="active-set-progress" aria-label="Progresso das séries"><div className="active-set-section-label"><h3>Suas séries</h3><span aria-live="polite">{completed} de {sets.length} concluídas</span></div>
-                    <div className="active-set-track">{sets.map((item, index) => <button type="button" key={index} className={item.completed ? 'is-completed' : index === setIdx ? 'is-current' : 'is-pending'} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><span className="active-set-marker">{item.completed ? <Check size={17} /> : String(index + 1).padStart(2, '0')}</span><span>{item.completed ? `${item.weight} kg · ${timed ? (item.durationSeconds || 0) + 's' : item.reps + ' reps'}` : index === setIdx ? 'Agora' : 'A seguir'}</span></button>)}</div>
+                    <div className="active-set-track">{sets.map((item, index) => <button type="button" key={index} className={item.completed ? 'is-completed' : index === setIdx ? 'is-current' : 'is-pending'} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><span className="active-set-marker">{item.completed ? <Check size={17} /> : String(index + 1).padStart(2, '0')}</span><span>{item.completed ? `${formatWeight(item.weight)} kg · ${timed ? (item.durationSeconds || 0) + 's' : item.reps + ' reps'}` : index === setIdx ? 'Agora' : 'A seguir'}</span></button>)}</div>
                   </section>
                   {set && <>
                     <section className="active-set-console horus-blue-card" aria-label="Registrar série"><div className="active-set-console-heading"><h3>Série {String(setIdx + 1).padStart(2, '0')}</h3><span><i />{interpretPrescription(activeModalExercise).drop && setIdx % 2 !== 0 ? 'Drop set' : 'Em execução'}</span></div>
                       <div className="active-set-inputs">
-                        <div className="active-set-value"><label htmlFor="active-set-weight">Carga</label><div className="active-set-number"><input id="active-set-weight" type="number" min="0" step="any" inputMode="decimal" value={set.weight} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight: Math.max(0, parseFloat(event.target.value) || 0) })} /><span>kg</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -1)}>−</button><button type="button" aria-label="Aumentar carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 1)}>+</button></div></div>
-                        <div className="active-set-value"><label htmlFor="active-set-reps">{timed ? 'Tempo' : 'Repetições'}</label><div className="active-set-number"><input id="active-set-reps" type="number" min="0" inputMode="numeric" value={timed ? (set.durationSeconds ?? 0) : set.reps} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, timed ? { durationSeconds: Math.max(0, Number(event.target.value)) } : { reps: Math.max(0, Number(event.target.value)) })} /><span>{timed ? 'seg' : 'reps'}</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}>−</button><button type="button" aria-label="Aumentar repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}>+</button></div></div>
+                        <div className="active-set-value"><label htmlFor="active-set-weight">Carga</label><div className="active-set-number"><WeightInput key={`${activeModalExercise.id}-${setIdx}`} value={set.weight} onChange={weight => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight })} /><span>kg</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -0.5)}>−</button><button type="button" aria-label="Aumentar carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 0.5)}>+</button></div></div>
+                        <div className="active-set-value"><label htmlFor="active-set-reps">{timed ? 'Tempo' : 'Repetições'}</label><div className="active-set-number"><input id="active-set-reps" onFocus={event => event.currentTarget.select()} type="number" min="0" inputMode="numeric" value={timed ? (set.durationSeconds ?? 0) : set.reps} onChange={event => handleUpdateModalSet(activeModalExercise.id, setIdx, timed ? { durationSeconds: Math.max(0, Number(event.target.value)) } : { reps: Math.max(0, Number(event.target.value)) })} /><span>{timed ? 'seg' : 'reps'}</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, -1)}>−</button><button type="button" aria-label="Aumentar repetições ou tempo" onClick={() => handleModifyReps(activeModalExercise.id, setIdx, 1)}>+</button></div></div>
                       </div>
                     </section>
-                    {modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{isModalRestPaused ? 'Descanso pausado' : 'Recupere o fôlego'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular</button></div>}
+                    {modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{modalRestTimeLeft === 0 ? 'Descanso concluído' : isModalRestPaused ? 'Descanso pausado' : 'Recupere o fôlego'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button></div>}
                     <button type="button" className="active-set-confirm" onClick={() => handleUpdateModalSet(activeModalExercise.id, setIdx, { completed: true })}><Check size={20} /><span>Confirmar série {setIdx + 1}</span><ChevronRight size={18} /></button>
                   </>}
                   <button type="button" className="active-set-guide" onClick={() => setShowExerciseInfo(true)}>Guia técnico do exercício <ChevronRight size={14} /></button>
@@ -1081,8 +1131,8 @@ export const WorkoutView: React.FC = () => {
                   </AnimatePresence>
 
                   {showExerciseInfo && <button className="horus-action" onClick={() => setShowExerciseInfo(false)}>Voltar para registrar série</button>}
-                  {modalRestTimeLeft !== null && <div className="horus-rest-inline horus-blue-card" role="status">
-                    <div><span>{isModalRestPaused ? 'Descanso pausado' : 'Descanso'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div>
+                  {modalRestTimeLeft !== null && <div className="active-set-rest" role="status">
+                    <div><span>{modalRestTimeLeft === 0 ? 'Descanso concluído' : isModalRestPaused ? 'Descanso pausado' : 'Descanso'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div>
                     <button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button>
                     <button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button>
                     <button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button>
