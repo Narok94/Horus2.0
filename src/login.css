@@ -1,0 +1,109 @@
+/* Login only: keep the complete portrait artwork above the compact form. */
+.horus-login {
+  position:fixed;
+  top:var(--login-top,0px);
+  left:0;
+  width:100%;
+  height:var(--login-height,100dvh);
+  padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+  display:flex;
+  flex-direction:column;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  isolation:isolate;
+  color:#fff;
+  background:#100e0c;
+  color-scheme:dark;
+  font-family:var(--font-sans);
+}
+.horus-login::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(0deg,rgba(8,10,16,.94),rgba(8,10,16,.22) 65%),url('./assets/miniaturas-horus/fundologin.png') center / cover no-repeat;
+  filter:blur(18px);
+}
+.horus-login-art {
+  flex:1 1 auto;
+  min-height:0;
+  background:url('./assets/miniaturas-horus/fundologin.png') center / contain no-repeat;
+  mask-image:linear-gradient(#000 92%,transparent);
+}
+.horus-login-form {
+  position:relative;
+  flex-shrink:0;
+  width:min(100%,420px);
+  margin:0 auto;
+  padding:8px 24px 20px;
+  display:grid;
+  gap:10px;
+}
+.horus-login-field {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  height:52px;
+  padding:0 16px;
+  border:1px solid #ffffff30;
+  border-radius:15px;
+  background:rgba(12,16,23,.76);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  color:#d7dfeb;
+  transition:border-color .2s,box-shadow .2s;
+}
+.horus-login-field:focus-within { border-color:#478bff; box-shadow:0 0 0 3px #2675ff25; }
+.horus-login-field input {
+  width:100%;
+  min-width:0;
+  height:100%;
+  padding:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#fff;
+  caret-color:#69a1ff;
+  font-size:16px;
+}
+.horus-login-field input::placeholder { color:#d5dae3; opacity:1; }
+.horus-login-field input:autofill { -webkit-text-fill-color:#fff; box-shadow:0 0 0 100px #141b29 inset; }
+.horus-login-field>svg { flex-shrink:0; }
+.horus-login-eye {
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  width:44px;
+  height:44px;
+  margin-right:-12px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#d7dfeb;
+  cursor:pointer;
+}
+.horus-login-eye:focus-visible { outline:2px solid #478bff; outline-offset:1px; }
+.horus-login .horus-login-submit {
+  height:52px;
+  min-height:52px;
+  border:1px solid #5594ff;
+  border-radius:15px;
+  background:#0866ff;
+  color:#fff;
+  font:700 16px var(--font-sans);
+  text-transform:none;
+  letter-spacing:.03em;
+  box-shadow:0 8px 28px #005dff35;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+@media(hover:hover) { .horus-login .horus-login-submit:hover { background:#2478ff; } }
+@media(min-width:900px) and (min-height:500px) {
+  .horus-login { flex-direction:row; justify-content:center; align-items:stretch; gap:clamp(24px,5vw,100px); padding:32px; }
+  .horus-login-art { flex:0 1 520px; background-position:center; mask-image:linear-gradient(#000 94%,transparent); }
+  .horus-login-form { align-self:flex-end; width:380px; margin:0 0 clamp(24px,8vh,100px); padding:24px; }
+}
+@media(max-height:500px) {
+  .horus-login-art { flex-shrink:1; }
+  .horus-login-form { padding-top:12px; padding-bottom:12px; }
+}

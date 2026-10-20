@@ -1,3 +1,4 @@
+import './src/login.css';
 import { BrandLogo } from './components/ui/BrandLogo';
 import { TodayView } from './components/views/TodayView';
 import { AgendaView } from './components/views/AgendaView';
@@ -5,7 +6,7 @@ import { DietView } from './components/views/DietView';
 import { isPersonalUser } from './src/utils/personalData';
 import { HistoryView } from './components/views/HistoryView';
 import { validateLocalProfile } from './src/utils/localData';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import {
   CalendarDays,
@@ -20,8 +21,7 @@ import {
   BarChart3,
 
   Eye,
-  EyeOff,
-  Play
+  EyeOff
 } from 'lucide-react';
 import { useStore } from './store';
 import { useWorkoutPersistence } from './hooks/useWorkoutPersistence';
@@ -95,6 +95,27 @@ const AppContent: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const loginRef = useRef<HTMLElement>(null);
+
+  // Safari/PWA keyboards resize the visual viewport independently of CSS dvh.
+  useEffect(() => {
+    if (isLoading || isLoggedIn) return;
+    const viewport = window.visualViewport;
+    const updateLoginViewport = () => {
+      loginRef.current?.style.setProperty('--login-height', `${viewport?.height ?? window.innerHeight}px`);
+      loginRef.current?.style.setProperty('--login-top', `${viewport?.offsetTop ?? 0}px`);
+    };
+    updateLoginViewport();
+    viewport?.addEventListener('resize', updateLoginViewport);
+    viewport?.addEventListener('scroll', updateLoginViewport);
+    window.addEventListener('resize', updateLoginViewport);
+    return () => {
+      viewport?.removeEventListener('resize', updateLoginViewport);
+      viewport?.removeEventListener('scroll', updateLoginViewport);
+      window.removeEventListener('resize', updateLoginViewport);
+    };
+  }, [isLoading, isLoggedIn]);
+
 
   useEffect(() => {
     const checkAutoLogin = async () => {
@@ -179,109 +200,58 @@ const AppContent: React.FC = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="horus-login h-[100dvh] max-h-[100dvh] overflow-y-auto w-full flex flex-col font-sans select-none relative bg-[#020412]">
-
-        {/* TOP HALF: Background Image with Overlay */}
-        <div className="absolute top-0 left-0 w-full h-[55%] sm:h-[60%] z-0">
-          <img
-            src="login.png"
-            alt="Background"
-            onError={(e) => {
-              e.currentTarget.src = "https://raw.githubusercontent.com/Narok94/Horus2.0/main/public/logo/login.png";
-            }}
-            className="w-full h-full object-cover object-top opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#020412]/60 via-[#112EA7]/40 to-[#020412]"></div>
-          <div className="absolute inset-0 bg-[#0A1C5A]/40 mix-blend-multiply"></div>
-        </div>
-
-        {/* TOP SECTION (Logo & Slogan) */}
-        <div className="relative z-10 w-full flex-1 flex flex-col justify-center items-center pt-8 pb-4 min-h-[45vh]">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.65, ease: 'easeOut' }}
-            className="relative flex flex-col items-center"
-          >
-            <BrandLogo className="horus-login-logo" />
-            <div className="space-y-0.5 tracking-wider text-center">
-              <p className="text-white text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.24em] leading-tight">
-                DISCIPLINA HOJE,
-              </p>
-              <p className="text-[#38BDF8] text-[11px] sm:text-[12px] font-black uppercase tracking-[0.24em] leading-tight">
-                RESULTADO SEMPRE.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* BOTTOM SECTION: White Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 bg-white w-full rounded-t-[32px] pt-8 px-6 pb-6 shadow-[0_-10px_40px_rgba(0,0,0,0.2)] flex flex-col mt-auto shrink-0"
-        >
-          <form onSubmit={handleLogin} className="space-y-4 max-w-sm mx-auto w-full">
-            <div className="space-y-4">
-
-              {/* USERNAME FIELD */}
-              <div className="relative text-left w-full mt-2">
-                <div className="absolute -top-[9px] left-4 px-1.5 bg-white flex items-center gap-1.5 z-10 select-none">
-                  <UserIcon size={12} className="text-[#1D4ED8]" strokeWidth={2.5} />
-                  <span className="text-[10px] font-black text-[#1D4ED8] tracking-widest uppercase">Usuário</span>
-                </div>
-                <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-[#1D4ED8] focus-within:ring-2 focus-within:ring-[#1D4ED8]/10 rounded-2xl h-[52px] transition-all duration-300">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full h-full bg-transparent px-4 text-gray-800 font-semibold outline-none text-sm tracking-wide placeholder:text-gray-300"
-                    placeholder="Digite seu usuário"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* PASSWORD FIELD */}
-              <div className="relative text-left w-full mt-2">
-                <div className="absolute -top-[9px] left-4 px-1.5 bg-white flex items-center gap-1.5 z-10 select-none">
-                  <Lock size={12} className="text-[#1D4ED8]" strokeWidth={2.5} />
-                  <span className="text-[10px] font-black text-[#1D4ED8] tracking-widest uppercase">Senha</span>
-                </div>
-                <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-[#1D4ED8] focus-within:ring-2 focus-within:ring-[#1D4ED8]/10 rounded-2xl h-[52px] pl-4 pr-12 transition-all duration-300">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-full bg-transparent text-gray-800 font-semibold outline-none text-sm tracking-wide placeholder:text-gray-300"
-                    placeholder="Digite sua senha"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 text-zinc-400 hover:text-[#1D4ED8] focus:outline-none transition-colors cursor-pointer text-center bg-transparent border-0"
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ENTRAR BUTTON */}
-            <motion.button
-              whileHover={{ scale: 1.01, boxShadow: '0 6px 20px rgba(29, 78, 216, 0.25)' }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              className="horus-login-submit w-full bg-[#1D4ED8] text-white font-black text-xs uppercase tracking-[0.2em] h-[52px] rounded-2xl transition-all flex justify-center items-center gap-2 cursor-pointer border-0 mt-2 shadow-[0_4px_12px_rgba(29,78,216,0.15)]"
+      <main className="horus-login" aria-label="Entrar no Horus Gym" ref={loginRef}>
+        <div className="horus-login-art" role="img" aria-label="Academia, garrafa Horus Gym e a frase: Disciplina é o que te leva mais longe." />
+        <form onSubmit={handleLogin} className="horus-login-form" aria-label="Login">
+          <label className="horus-login-field">
+            <UserIcon size={19} aria-hidden="true" />
+            <span className="sr-only">Usuário</span>
+            <input
+              name="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Usuário"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="next"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  e.currentTarget.form?.querySelector<HTMLInputElement>('[name="password"]')?.focus();
+                }
+              }}
+              required
+            />
+          </label>
+          <label className="horus-login-field">
+            <Lock size={19} aria-hidden="true" />
+            <span className="sr-only">Senha</span>
+            <input
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha"
+              autoComplete="current-password"
+              enterKeyHint="go"
+              required
+            />
+            <button
+              type="button"
+              className="horus-login-eye"
+              aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword(!showPassword)}
             >
-              <Play size={12} className="fill-white text-white ml-0.5" /> ENTRAR
-            </motion.button>
-
-          </form>
-        </motion.div>
-      </div>
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </label>
+          <button type="submit" className="horus-login-submit">Entrar</button>
+        </form>
+      </main>
     );
   }
 

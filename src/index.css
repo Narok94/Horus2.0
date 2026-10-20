@@ -345,7 +345,6 @@ html { background:#EEF1F7; width:100%; } body { min-width:0; margin:0; } #root {
 .horus-today-start,.horus-workout-start { min-height:44px !important; }.horus-workout-complete { min-height:44px !important; }.horus-home-tools button { min-width:36px; min-height:36px; }
 .horus-profile-links button,.horus-bottom-nav button { touch-action:manipulation; }.horus-screen button,.horus-execution button { touch-action:manipulation; }
 @media(max-width:430px) { .horus-screen { padding-left:calc(18px + var(--safe-left)); padding-right:calc(18px + var(--safe-right)); }.horus-execution { padding-left:calc(16px + var(--safe-left)) !important; padding-right:calc(16px + var(--safe-right)) !important; }.horus-exercise-modal { padding:16px !important; }.horus-execution-exercise h3 { font-size:12px; }.horus-home-header { gap:8px; }.horus-home-tools { gap:4px; } }
-.horus-login { height:100vh; height:100dvh; padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left); }
 .horus-login input { font-size:16px; }
 @supports not (height:100dvh) { .horus-exercise-modal,.horus-modal { max-height:calc(100vh - 24px - var(--safe-top) - var(--safe-bottom)) !important; } }
 /* Exercise list thumbnails, persistent navigation and completion screen. */
