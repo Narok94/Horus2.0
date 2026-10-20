@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useStore } from '../../store';
-import { localDay } from '../utils/personalData';
+import { isPersonalUser, localDay } from '../utils/personalData';
 import { Diet, Meal, HENRIQUE_DIET_KEY, HENRIQUE_PLAN_ID, createHenriquePlan, emptyDiet, validDiet, withDietHistory, selectMealOption } from '../data/henriqueDiet';
+
+const dietKey = (username?: string) => username === 'henrique' ? HENRIQUE_DIET_KEY : `horus_diet_${username}`;
 
 type ReadResult = { diet: Diet; blocked: boolean; message: string };
 function read(username?: string): ReadResult {
-  if (username !== 'henrique') return { diet: emptyDiet(), blocked: true, message: '' };
+  if (!isPersonalUser(username)) return { diet: emptyDiet(), blocked: true, message: '' };
   try {
-    const raw = localStorage.getItem(HENRIQUE_DIET_KEY);
+    const raw = localStorage.getItem(dietKey(username));
     if (raw === null) return { diet: emptyDiet(), blocked: false, message: '' };
     const value: unknown = JSON.parse(raw);
     if (validDiet(value)) return { diet: value, blocked: false, message: '' };
@@ -17,23 +19,24 @@ function read(username?: string): ReadResult {
   }
 }
 
-/** Only Henrique's existing key is read/written, and only after an explicit user action. */
+/** Reads and writes only the current user's diet, after an explicit user action. */
 export function useHenriqueDiet() {
   const username = useStore(s => s.user?.username.toLowerCase());
+  const key = dietKey(username);
   const [state, setState] = useState(() => ({ ...read(username), username }));
   const [error, setError] = useState('');
   useEffect(() => {
     const sync = () => setState({ ...read(username), username });
-    const onStorage = (event: StorageEvent) => { if (!event.key || event.key === HENRIQUE_DIET_KEY) sync(); };
+    const onStorage = (event: StorageEvent) => { if (!event.key || event.key === key) sync(); };
     sync();
     window.addEventListener('storage', onStorage);
-    window.addEventListener(HENRIQUE_DIET_KEY, sync);
-    return () => { window.removeEventListener('storage', onStorage); window.removeEventListener(HENRIQUE_DIET_KEY, sync); };
-  }, [username]);
+    window.addEventListener(key, sync);
+    return () => { window.removeEventListener('storage', onStorage); window.removeEventListener(key, sync); };
+  }, [username, key]);
 
   const update = useCallback((transform: (latest: Diet) => Diet, archive = false) => {
     // Re-read immediately before each write, preserving changes made in another view/tab.
-    if (username !== 'henrique') return false;
+    if (!isPersonalUser(username)) return false;
     const latest = read(username);
     if (latest.blocked) { setError(latest.message); return false; }
     try {
@@ -42,21 +45,22 @@ export function useHenriqueDiet() {
       const next = withDietHistory(latest.diet, proposed, localDay());
       if (!validDiet(next)) throw new Error('Revise os horários e as opções da refeição.');
       if (archive && latest.diet.meals.length) {
-        const raw = localStorage.getItem(HENRIQUE_DIET_KEY);
-        if (raw !== null) localStorage.setItem(`${HENRIQUE_DIET_KEY}_backup_${Date.now()}`, raw);
+        const raw = localStorage.getItem(dietKey(username));
+        if (raw !== null) localStorage.setItem(`${key}_backup_${Date.now()}`, raw);
       }
-      localStorage.setItem(HENRIQUE_DIET_KEY, JSON.stringify(next));
+      localStorage.setItem(key, JSON.stringify(next));
       setState({ diet: next, username, blocked: false, message: '' });
       setError('');
-      window.dispatchEvent(new Event(HENRIQUE_DIET_KEY));
+      window.dispatchEvent(new Event(key));
       return true;
     } catch (cause) {
       setError(cause instanceof Error && /Revise|mudou|existente/.test(cause.message) ? cause.message : 'Não foi possível salvar neste dispositivo. Seus registros anteriores foram preservados.');
       return false;
     }
-  }, [username]);
+  }, [username, key]);
 
   const loadPlan = (replace = false, supplied = createHenriquePlan()) => update(latest => {
+    if (username !== 'henrique') return latest;
     if (latest.planId === HENRIQUE_PLAN_ID) return latest;
     if (latest.meals.length && !replace) throw new Error('Há um cadastro existente. Confirme a substituição antes de carregar o plano.');
     return { ...latest, ...supplied, completed: latest.completed, history: latest.history };

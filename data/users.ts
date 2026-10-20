@@ -15,10 +15,11 @@ export const localUser: User = {
 const LOCAL_PASSWORD = '12345';
 
 export function getUserByUsername(username: string): User | null {
-  if (username.trim().toLowerCase() !== localUser.username) return null;
-  return { ...localUser, history: [], weights: {}, checkIns: [] };
+  const identity = username.trim().toLowerCase();
+  if (!['henrique', 'jessica'].includes(identity)) return null;
+  return { ...localUser, username: identity, name: identity === 'jessica' ? 'J\u00e9ssica' : 'Henrique', history: [], weights: {}, checkIns: [] };
 }
 
 export function validateCredentials(username: string, password: string): boolean {
-  return username.trim().toLowerCase() === localUser.username && password === LOCAL_PASSWORD;
+  return getUserByUsername(username) !== null && password === LOCAL_PASSWORD;
 }

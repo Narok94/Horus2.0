@@ -7,7 +7,7 @@ import { useHenriqueDiet } from '../../src/hooks/useHenriqueDiet';
 
 export const DietView = () => {
   const username = useStore(s => s.user?.username);
-  return isPersonalUser(username) ? <PersonalDiet /> : null;
+  return isPersonalUser(username) ? <PersonalDiet key={username} /> : null;
 };
 
 function MealCard({ meal, done = false, readOnly = false, previewOnly = false, choose, edit, toggle }: {
@@ -46,6 +46,7 @@ function MealEditor({ meal, save, cancel }: { meal: Meal; save: (meal: Meal) => 
 }
 
 const PersonalDiet = () => {
+  const isHenrique = useStore(s => s.user?.username.toLowerCase() === 'henrique');
   const now = usePersonalClock();
   const today = localDay(now);
   const { diet, error, blocked, loadPlan, updateMeal, choose, toggle } = useHenriqueDiet();
@@ -72,10 +73,10 @@ const PersonalDiet = () => {
       <label className="personal-date diet-day">Dia do plano<input aria-label="Dia do plano" type="date" max={today} value={day} onChange={e => setSelectedDay(e.target.value === today ? '' : e.target.value)} /></label>
       {!isToday && <button className="personal-link" onClick={() => setSelectedDay('')}>Voltar para hoje</button>}
       {!isToday && diet.history?.[day]?.legacy && <p>Registro antigo: os status foram preservados. Os alimentos refletem o cadastro disponível na atualização, pois versões anteriores das refeições não estavam armazenadas.</p>}
-      {isToday && !blocked && diet.planId !== HENRIQUE_PLAN_ID && <article className="personal-card horus-blue-card diet-import"><h2>{diet.meals.length ? 'Seu cadastro está preservado' : 'Seu plano está disponível'}</h2><p>{diet.meals.length ? 'Há um plano de cinco refeições disponível para Henrique. Nenhuma refeição ou escolha existente foi substituída.' : 'Confira o plano diário de cinco refeições e carregue quando desejar.'}</p><button className="personal-primary" onClick={() => setPreview(true)}>Ver plano fornecido</button></article>}
+      {isToday && isHenrique && !blocked && diet.planId !== HENRIQUE_PLAN_ID && <article className="personal-card horus-blue-card diet-import"><h2>{diet.meals.length ? 'Seu cadastro está preservado' : 'Seu plano está disponível'}</h2><p>{diet.meals.length ? 'Há um plano de cinco refeições disponível para Henrique. Nenhuma refeição ou escolha existente foi substituída.' : 'Confira o plano diário de cinco refeições e carregue quando desejar.'}</p><button className="personal-primary" onClick={() => setPreview(true)}>Ver plano fornecido</button></article>}
       {!!shownMeals.length && <div className="personal-progress" role="progressbar" aria-label="Refeições realizadas" aria-valuenow={count} aria-valuemin={0} aria-valuemax={shownMeals.length}><span style={{ width: `${count / shownMeals.length * 100}%` }} /></div>}
       {isToday && diet.guidance && <Guidance items={diet.guidance} />}
-      {!shownMeals.length && <p className="personal-empty horus-blue-card">{blocked ? 'O cadastro existente foi preservado. Não foi possível exibi-lo.' : isToday ? 'Nenhuma refeição cadastrada. Carregue o plano acima para começar.' : 'Nenhum registro alimentar salvo para esta data.'}</p>}
+      {!shownMeals.length && <p className="personal-empty horus-blue-card">{blocked ? 'O cadastro existente foi preservado. Não foi possível exibi-lo.' : isToday ? (isHenrique ? 'Nenhuma refeição cadastrada. Carregue o plano acima para começar.' : 'Nenhuma refeição cadastrada. Seu espaço está pronto para receber seu plano alimentar.') : 'Nenhum registro alimentar salvo para esta data.'}</p>}
       {[...shownMeals].sort((a,b) => a.time.localeCompare(b.time)).map(m => <MealCard key={m.id} meal={m} done={completed.includes(m.id)} readOnly={!isToday || blocked} choose={(v,g,o) => choose(m.id,v,g,o)} edit={isToday && !blocked ? () => setEditing(m) : undefined} toggle={isToday && !blocked ? () => toggle(m.id) : undefined} />)}
     </>}
   </section>;

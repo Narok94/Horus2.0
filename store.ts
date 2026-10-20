@@ -108,20 +108,20 @@ export const useStore = create<AppState>((set, get) => {
   workoutDuration: null,
   theme: initialTheme,
   allWorkouts: (() => {
-    const defaults = { henrique: musculacaoOnly(defaultWorkouts) };
+    const defaults = { henrique: musculacaoOnly(defaultWorkouts), jessica: jessicaWorkouts };
     if (typeof localStorage === 'undefined') return defaults;
     const saved = localStorage.getItem('tatugym_all_workouts');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed.henrique)) {
-          const normalized = normalizeSavedWorkouts(parsed.henrique);
-          if (JSON.stringify(normalized) !== JSON.stringify(parsed.henrique)) {
-            try { localStorage.setItem('tatugym_all_workouts', JSON.stringify({ ...parsed, henrique: normalized })); }
-            catch (error) { console.warn('[Catalog] Normalização disponível em memória:', error); }
+        const result: Record<string, WorkoutRoutine[]> = { ...parsed, ...defaults };
+        for (const username of ['henrique', 'jessica'] as const) {
+          if (Array.isArray(parsed[username])) {
+            const normalized = normalizeSavedWorkouts(parsed[username]).filter(isValidWorkout);
+            result[username] = username === 'henrique' ? musculacaoOnly(normalized) : normalized;
           }
-          return { henrique: musculacaoOnly(normalized.filter(isValidWorkout)) };
         }
+        return result;
       } catch (e) {
         console.error('Error loading workouts:', e);
       }
@@ -140,13 +140,22 @@ export const useStore = create<AppState>((set, get) => {
         localStorage.setItem(`tatugym_user_profile_${migratedUser.username.toLowerCase()}`, JSON.stringify(migratedUser));
       } catch (error) { console.warn('[Weights] Não foi possível persistir a migração:', error); }
     }
-    set({ user: migratedUser, activeTab: AppTab.WORKOUT });
+    const username = migratedUser?.username.toLowerCase();
+    const storedTheme = username ? localStorage.getItem(`tatugym_theme_${username}`) : null;
+    const theme = storedTheme === 'dark' || storedTheme === 'light' ? storedTheme :
+      username === 'henrique' && localStorage.getItem('tatugym_theme') === 'dark' ? 'dark' : 'light';
+    document.body.classList.remove('light', 'dark');
+    document.body.classList.add(theme);
+    set({ user: migratedUser, theme, activeTab: AppTab.WORKOUT,
+      selectedWorkout: null, sessionRest: null, currentSessionProgress: {}, isWorkoutActive: false,
+      workoutStartTime: null, lastMarkedTime: null, elapsedTime: 0, showSummary: false,
+      lastWorkoutVolume: 0, workoutDuration: null });
   },
   setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
   setActiveTab: (activeTab) => set({ activeTab }),
   setSelectedWorkout: (selectedWorkout) => set({ selectedWorkout }),
   setAllWorkouts: (allWorkouts) => {
-    const filtered = { henrique: musculacaoOnly((allWorkouts.henrique || [])) };
+    const filtered = { ...get().allWorkouts, ...allWorkouts, henrique: musculacaoOnly(allWorkouts.henrique || get().allWorkouts.henrique || []) };
     set({ allWorkouts: filtered });
     localStorage.setItem('tatugym_all_workouts', JSON.stringify(filtered));
   },
@@ -164,7 +173,8 @@ export const useStore = create<AppState>((set, get) => {
     const nextTheme = get().theme === 'light' ? 'dark' : 'light';
     set({ theme: nextTheme });
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('tatugym_theme', nextTheme);
+      const username = get().user?.username.toLowerCase();
+      if (username) localStorage.setItem(`tatugym_theme_${username}`, nextTheme);
     }
     if (typeof document !== 'undefined') {
       document.body.classList.remove('light', 'dark');
@@ -173,11 +183,6 @@ export const useStore = create<AppState>((set, get) => {
   },
 
   logout: () => {
-    const { user } = get();
-    if (user) {
-       localStorage.removeItem(`tatugym_active_session_${user.username.toLowerCase()}`);
-    }
-
     set({ 
       sessionRest: null,
       user: null, 
@@ -187,7 +192,11 @@ export const useStore = create<AppState>((set, get) => {
       isWorkoutActive: false,
       currentSessionProgress: {},
       workoutStartTime: null,
-      lastMarkedTime: null
+      lastMarkedTime: null,
+      elapsedTime: 0,
+      showSummary: false,
+      lastWorkoutVolume: 0,
+      workoutDuration: null
     });
     localStorage.removeItem('tatugym_remembered');
   },

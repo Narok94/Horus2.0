@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-export const isPersonalUser = (username?: string) => username?.toLowerCase() === 'henrique';
+import { useStore } from '../../store';
+export const isPersonalUser = (username?: string) => !!username && ['henrique', 'jessica'].includes(username.toLowerCase());
 export const localDay = (date = new Date()) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
 export interface Appointment {
     id: string;
@@ -23,12 +24,12 @@ function useLocalData<T>(key: string, initial: () => T, valid: (value: any) => b
         }
     }
     catch { } return initial(); };
-    const [value, setValue] = useState<T>(read);
+    const [value, setValue] = useState(() => ({ key, data: read() }));
     const [error, setError] = useState('');
-    useEffect(() => { const sync = () => setValue(read()); window.addEventListener('storage', sync); window.addEventListener(key, sync); return () => { window.removeEventListener('storage', sync); window.removeEventListener(key, sync); }; }, [key]);
+    useEffect(() => { const sync = () => setValue({ key, data: read() }); window.addEventListener('storage', sync); window.addEventListener(key, sync); return () => { window.removeEventListener('storage', sync); window.removeEventListener(key, sync); }; }, [key]);
     const save = (next: T) => { try {
         localStorage.setItem(key, JSON.stringify(next));
-        setValue(next);
+        setValue({ key, data: next });
         setError('');
         window.dispatchEvent(new Event(key));
         return true;
@@ -37,7 +38,7 @@ function useLocalData<T>(key: string, initial: () => T, valid: (value: any) => b
         setError('Não foi possível salvar neste dispositivo. Tente novamente.');
         return false;
     } };
-    return [value, save, error] as const;
+    return [value.key === key ? value.data : read(), save, error] as const;
 }
-export function usePersonalAgenda() { return useLocalData<Appointment[]>('horus_agenda_henrique', () => [], v => Array.isArray(v) && v.every(validAppointment)); }
+export function usePersonalAgenda() { const username = useStore(s => s.user?.username.toLowerCase()); return useLocalData<Appointment[]>(`horus_agenda_${username}`,  () => [], v => Array.isArray(v) && v.every(validAppointment)); }
 export function usePersonalClock() { const [now, setNow] = useState(() => new Date()); useEffect(() => { const timer = setInterval(() => setNow(new Date()), 30000); const update = () => setNow(new Date()); window.addEventListener('focus', update); return () => { clearInterval(timer); window.removeEventListener('focus', update); }; }, []); return now; }

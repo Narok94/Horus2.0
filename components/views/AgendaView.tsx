@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CalendarDays, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useStore } from '../../store';
 import { Appointment, categories, isPersonalUser, localDay, usePersonalAgenda, usePersonalClock } from '../../src/utils/personalData';
-export const AgendaView = () => { const user = useStore(s => s.user); return isPersonalUser(user?.username) ? <PersonalAgenda /> : null; };
+export const AgendaView = () => { const user = useStore(s => s.user); return isPersonalUser(user?.username) ? <PersonalAgenda key={user?.username} /> : null; };
 const PersonalAgenda = () => {
     const now = usePersonalClock();
     const today = localDay(now);

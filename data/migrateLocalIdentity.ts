@@ -65,6 +65,8 @@ export function migrateLocalIdentity(storage: Storage): void {
       remembered && typeof remembered === 'object' && 'username' in remembered ? remembered.username : null;
     if (typeof username === 'string' && ['teste', 'henrique'].includes(username.trim().toLowerCase())) {
       storage.setItem(key, JSON.stringify({ username: 'henrique' }));
+    } else if (typeof username === 'string' && username.trim().toLowerCase() === 'jessica') {
+      storage.setItem(key, JSON.stringify({ username: 'jessica' }));
     } else {
       storage.removeItem(key);
     }
