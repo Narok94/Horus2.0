@@ -84,6 +84,34 @@
 #root .horus-app-shell.personal-shell .horus-exercise-modal .horus-modal-topbar>button { color:#455B79; }
 #root .horus-active-session .active-set-track .is-pending { color:#526580; }
 #root .horus-active-session .active-set-track .is-pending .active-set-marker { color:#455B79; }
+/* Compact mobile execution using the current active-series markup. */
+@media (max-width:600px) {
+  #root .horus-app-shell .horus-exercise-modal.horus-active-session { gap:8px; }
+  .horus-active-session .active-set-layout { gap:10px; }
+  #root .horus-active-session .active-set-heading h2 { font-size:20px; }
+  .horus-active-session .active-set-demo-art { width:60px; height:60px; border-radius:14px; }
+  .horus-active-session .active-set-track { margin-top:8px; gap:6px; }
+  #root .horus-active-session .active-set-console { padding:12px; border-radius:20px; }
+  .horus-active-session .active-set-console-heading { margin-bottom:8px; }
+  .horus-active-session .active-set-inputs { gap:14px; }
+  .horus-active-session .active-set-number { margin-block:4px 6px; padding:2px 8px; }
+  #root .horus-active-session .active-set-number input { height:auto; min-height:36px; font-size:28px !important; }
+  .horus-active-session .active-set-confirm { min-height:44px; }
+  #root .horus-app-shell .horus-active-session .active-set-rest {
+    display:flex; flex-wrap:wrap; align-items:center; gap:4px; padding:5px 7px;
+    margin:0; border-radius:12px; box-shadow:none;
+    background:#E7EEF9 !important; color:#244AA6 !important;
+  }
+  #root .horus-app-shell .horus-active-session .active-set-rest>div {
+    flex-direction:row; flex-wrap:wrap; justify-content:flex-start; gap:4px; margin-right:auto;
+  }
+  #root .horus-app-shell .horus-active-session .active-set-rest span { font-size:10px; color:#455B79 !important; }
+  #root .horus-app-shell .horus-active-session .active-set-rest strong { font-size:18px; color:#244AA6 !important; }
+  #root .horus-app-shell .horus-active-session .active-set-rest button {
+    min-height:36px; padding:4px 6px; font-size:10px; border-radius:8px;
+    background:#FFFFFF !important; color:#244AA6 !important;
+  }
+}
 /* Preserve readable labels and separators on the technical guide's blue card. */
 #root .horus-app-shell.horus-app-shell .horus-exercise-modal .horus-prescription.horus-blue-card { border-bottom-color:#6886B6 !important; }
 #root .horus-app-shell.horus-app-shell .horus-exercise-modal .horus-technical-info.horus-blue-card :is(p,span) { color:#E2EDFF !important; }

@@ -839,3 +839,44 @@ body { margin:0; }
   #root .horus-app-shell .performance-workouts .performance-divisions .performance-division { padding:12px; }
   #root .horus-app-shell .performance-workouts .performance-divisions .performance-division h2 { font-size:16px; }
 }
+
+/* Mobile execution: use the screen width once and keep the sheet content compact. */
+@media (max-width: 600px) {
+  #root .horus-app-shell .horus-main-content:has(.horus-execution) {
+    padding-inline:max(10px,var(--safe-left)) max(10px,var(--safe-right));
+    padding-bottom:calc(80px + var(--safe-bottom));
+  }
+  #root .horus-app-shell .horus-execution {
+    width:100%; min-width:0; padding-inline:0 !important;
+  }
+  #root .horus-app-shell .horus-execution-exercise {
+    padding:10px 9px !important;
+  }
+  #root .horus-app-shell .horus-execution-exercise>div:last-child { gap:6px; }
+  #root .horus-app-shell .horus-workout-thumbnail {
+    width:64px; height:64px; margin-right:8px; flex-shrink:0;
+  }
+  #root .horus-app-shell .horus-exercise-modal {
+    padding:12px !important;
+  }
+  #root .horus-app-shell .horus-exercise-compact>*+* { margin-top:8px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-exercise-content { gap:8px; }
+  #root .horus-app-shell .horus-exercise-compact h2 { font-size:17px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-prescription { padding:6px 0; }
+  #root .horus-app-shell .horus-exercise-compact .horus-register { padding:10px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-register h3 { font-size:16px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-register p { margin:5px 0 8px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-stepper { margin-top:4px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-stepper input { font-size:22px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-action { min-height:44px; margin-top:8px; }
+  #root .horus-app-shell .horus-exercise-modal .horus-rest-inline {
+    gap:4px; padding:4px 6px; border-radius:10px; flex-wrap:wrap;
+  }
+  #root .horus-app-shell .horus-exercise-modal .horus-rest-inline>div {
+    flex-direction:row; align-items:center; gap:6px;
+  }
+  #root .horus-app-shell .horus-exercise-modal .horus-rest-inline strong { font-size:17px; }
+  #root .horus-app-shell .horus-exercise-modal .horus-rest-inline button { min-height:36px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-set-history { margin-top:8px; gap:3px; }
+  #root .horus-app-shell .horus-exercise-compact .horus-set-history>button { min-height:30px; padding:4px 6px; }
+}
