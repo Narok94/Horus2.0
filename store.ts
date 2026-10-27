@@ -24,6 +24,7 @@ export const calculateCheckInStreak = (checkIns: string[], now = new Date()): nu
 };
 
 export interface SessionRest {
+  exerciseId?: string;
   endsAt: number;
   pausedRemaining: number | null;
   notified: boolean;

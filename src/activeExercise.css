@@ -12,6 +12,11 @@
 #root .horus-active-session .horus-modal-topbar>button { width:44px; height:44px; flex-shrink:0; border:0; border-radius:50%; background:#EAF0F9; color:#526580; }
 #root .horus-active-session .horus-modal-topbar>button svg { width:19px; height:19px; }
 .active-set-layout { display:flex; flex-direction:column; gap:16px; }
+.horus-active-session .horus-modal-topbar>div { display:none; }
+.horus-active-session .horus-modal-topbar>button { margin-left:auto; }
+.active-set-prescription { margin:0; font-size:12px; line-height:1.5; color:#526580; }
+.active-set-prescription span { margin-inline:4px; color:#8998AF; }
+.horus-active-session .active-set-heading+.active-set-prescription { margin-top:-4px; }
 .active-set-heading { display:flex; align-items:center; gap:8px; }
 .active-set-heading>div { flex:1; min-width:0; }
 #root .horus-active-session .active-set-heading p { margin:0 0 5px; color:#61738E; font-size:11px; font-weight:500; }

@@ -116,11 +116,13 @@ export const WorkoutView: React.FC = () => {
   const [restNow, setRestNow] = React.useState(Date.now);
   const remainingRest = (rest: NonNullable<typeof sessionRest>) => rest.pausedRemaining ?? Math.max(0, Math.ceil((rest.endsAt - Date.now()) / 1000));
   const modalRestTimeLeft = sessionRest === null ? null : sessionRest.pausedRemaining ?? Math.max(0, Math.ceil((sessionRest.endsAt - restNow) / 1000));
+  const showModalRest = !!activeModalExercise && sessionRest?.exerciseId === activeModalExercise.id;
   const isModalRestPaused = sessionRest?.pausedRemaining !== null && sessionRest !== null;
   const setModalRestTimeLeft = (update: number | null | ((previous: number | null) => number | null)) => {
     const previous = useStore.getState().sessionRest;
     const seconds = typeof update === 'function' ? update(previous ? remainingRest(previous) : null) : update;
     useStore.setState({ sessionRest: seconds === null ? null : {
+      exerciseId: typeof update === 'function' ? previous?.exerciseId : activeModalExercise?.id,
       endsAt: Date.now() + seconds * 1000,
       pausedRemaining: typeof update === 'function' && previous?.pausedRemaining != null ? seconds : null,
       notified: false
@@ -639,7 +641,6 @@ export const WorkoutView: React.FC = () => {
 
   return (
     <div className={`horus-execution w-full min-h-screen pt-12 sm:pt-6 flex flex-col justify-start pb-32 max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-1 bg-transparent select-none ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
-      {!activeModalExercise && <> {modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{modalRestTimeLeft === 0 ? 'Descanso concluído' : isModalRestPaused ? 'Descanso pausado' : 'Recupere o fôlego'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button></div>} </>}
       {/* Upper Navigation Header */}
       <header className={`flex items-center justify-between py-1.5 border-b ${isLightTheme ? 'border-zinc-200' : 'border-white/5'} shrink-0`}>
         <div className="flex items-center gap-2 min-w-0">
@@ -1026,16 +1027,13 @@ export const WorkoutView: React.FC = () => {
                 const completed = sets.filter(item => item.completed).length;
                 const timed = interpretPrescription(activeModalExercise).kind === 'time';
                 return <div className="active-set-layout">
-                  <div className="active-set-heading"><div><p>Exercício {selectedWorkout.exercises.findIndex(ex => ex.id === activeModalExercise.id) + 1} de {selectedWorkout.exercises.length}</p><h2>{activeModalExercise.name}</h2></div><button type="button" className="active-set-help" aria-label="Abrir informações do exercício" onClick={() => setShowExerciseInfo(true)}><HelpCircle size={21} /></button></div>
-                  <button type="button" className="active-set-demo" aria-label="Abrir detalhe completo do exercício" onClick={() => setShowExerciseInfo(true)}>
-                    <span className="active-set-demo-art"><img src={getExerciseThumbnail(activeModalExercise, getThumbnailPlan(user?.username, selectedWorkout)) || getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif} alt="" onError={event => { if (!retryThumbnail(event.currentTarget, getExerciseDetails(activeModalExercise.name, activeModalExercise.muscleGroup).gif)) event.currentTarget.dataset.unavailable = 'true'; }} /><Dumbbell size={28} /></span>
-                    <span className="active-set-demo-copy"><strong>{activeModalExercise.sets} séries · {activeModalExercise.reps}{timed ? '' : ' reps'}</strong><span><Clock size={13} /> {activeModalExercise.rest}s de descanso</span><small>Ver execução <ChevronRight size={12} /></small></span>
-                  </button>
+                  <div className="active-set-heading"><div><h2>{activeModalExercise.name}</h2></div></div>
+                  <p className="active-set-prescription">{activeModalExercise.sets} séries <span>·</span> {activeModalExercise.reps}{timed ? '' : ' reps'} <span>·</span> {activeModalExercise.rest}s descanso</p>
                   <section className="active-set-progress" aria-label="Progresso das séries"><div className="active-set-section-label"><h3>Suas séries</h3><span aria-live="polite">{completed} de {sets.length} concluídas</span></div>
                     <div className="active-set-track">{sets.map((item, index) => <button type="button" key={index} className={item.completed ? 'is-completed' : index === setIdx ? 'is-current' : 'is-pending'} aria-label={`Série ${index + 1}, ${item.completed ? 'concluída; toque para desmarcar' : index === setIdx ? 'atual' : 'pendente'}`} aria-current={index === setIdx ? 'step' : undefined} disabled={!item.completed} onClick={() => handleUpdateModalSet(activeModalExercise.id, index, { completed: false })}><span className="active-set-marker">{item.completed ? <Check size={17} /> : String(index + 1).padStart(2, '0')}</span><span>{item.completed ? `${formatWeight(item.weight)} kg · ${timed ? (item.durationSeconds || 0) + 's' : item.reps + ' reps'}` : index === setIdx ? 'Agora' : 'A seguir'}</span></button>)}</div>
                   </section>
                   {set && <>
-                    {modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{modalRestTimeLeft === 0 ? 'Descanso concluído' : isModalRestPaused ? 'Descanso pausado' : 'Recupere o fôlego'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button></div>}
+                    {showModalRest && modalRestTimeLeft !== null && <div className="active-set-rest" role="status"><div><span>{modalRestTimeLeft === 0 ? 'Concluído' : isModalRestPaused ? 'Pausado' : 'Descanso'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div><button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button><button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button><button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button><button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button></div>}
                     <section className="active-set-console horus-blue-card" aria-label="Registrar série"><div className="active-set-console-heading"><h3>Série {String(setIdx + 1).padStart(2, '0')}</h3><span><i />{interpretPrescription(activeModalExercise).drop && setIdx % 2 !== 0 ? 'Drop set' : 'Em execução'}</span></div>
                       <div className="active-set-inputs">
                         <div className="active-set-value"><label htmlFor="active-set-weight">Carga</label><div className="active-set-number"><WeightInput key={`${activeModalExercise.id}-${setIdx}`} value={set.weight} onChange={weight => handleUpdateModalSet(activeModalExercise.id, setIdx, { weight })} /><span>kg</span></div><div className="active-set-adjust"><button type="button" aria-label="Diminuir carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, -0.5)}>−</button><button type="button" aria-label="Aumentar carga" onClick={() => handleModifyWeight(activeModalExercise.id, setIdx, 0.5)}>+</button></div></div>
@@ -1131,13 +1129,7 @@ export const WorkoutView: React.FC = () => {
                   </AnimatePresence>
 
                   {showExerciseInfo && <button className="horus-action" onClick={() => setShowExerciseInfo(false)}>Voltar para registrar série</button>}
-                  {modalRestTimeLeft !== null && <div className="active-set-rest" role="status">
-                    <div><span>{modalRestTimeLeft === 0 ? 'Descanso concluído' : isModalRestPaused ? 'Descanso pausado' : 'Descanso'}</span><strong>{Math.floor(modalRestTimeLeft / 60).toString().padStart(2, '0')}:{(modalRestTimeLeft % 60).toString().padStart(2, '0')}</strong></div>
-                    <button aria-label="Reduzir descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? Math.max(0, prev - 10) : 0)}>−10s</button>
-                    <button aria-label={isModalRestPaused ? 'Retomar descanso' : 'Pausar descanso'} onClick={() => setIsModalRestPaused(p => !p)}>{isModalRestPaused ? <Play size={16} /> : <Pause size={16} />}</button>
-                    <button aria-label="Aumentar descanso em 10 segundos" onClick={() => setModalRestTimeLeft(prev => prev !== null ? prev + 10 : 10)}>+10s</button>
-                    <button onClick={() => setModalRestTimeLeft(null)}>Pular descanso</button>
-                  </div>}
+
                   {/* Manual video/tutorial guide link */}
                   <div className="pt-2 text-center leading-none">
                     <a
