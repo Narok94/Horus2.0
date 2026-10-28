@@ -1,10 +1,12 @@
+import { CardioPanel } from './CardioPanel';
+import { AppTab } from '../../types';
 import React, { useRef, useState } from 'react';
 import { Check, ChevronRight, CircleHelp, Dumbbell, Edit2, Flame, LogOut, Settings, Trophy, X, Zap } from 'lucide-react';
 import { useStore } from '../../store';
 
 export const ProfileView: React.FC = () => {
-  const { user, updateUserProfile, toggleTheme, logout, theme, addToast } = useStore();
-  const [panel, setPanel] = useState<'edit' | 'settings' | 'help' | 'badges' | null>(null);
+  const { user, updateUserProfile, setThemePreference, themePreference, setActiveTab, logout, addToast } = useStore();
+  const [panel, setPanel] = useState<'edit' | 'settings' | 'help' | 'badges' | 'cardio' | null>(null);
   const [name, setName] = useState('');
   const [goal, setGoal] = useState('');
   const photoInput = useRef<HTMLInputElement>(null);
@@ -55,7 +57,7 @@ export const ProfileView: React.FC = () => {
   return (
     <section className="horus-profile w-full min-h-screen flex flex-col justify-start pt-12 sm:pt-6 px-3 pb-32 bg-transparent font-sans antialiased select-none relative text-zinc-950">
       <div className="space-y-1 px-1 shrink-0 mb-4 text-left">
-        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#2563EB] font-mono">Configurações</span>
+        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#2563EB] font-mono">SUA CONTA</span>
         <h1 className="text-xl font-extrabold tracking-tight leading-none mt-1 text-zinc-950 font-[900]">Meu Perfil</h1>
         <p className="text-xs leading-normal text-zinc-500 font-semibold">Monitore sua evolução e dados de atleta.</p>
       </div>
@@ -110,14 +112,16 @@ export const ProfileView: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <button onClick={() => setPanel('settings')} className="horus-blue-card w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><Settings size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Configurações</span><ChevronRight size={18} /></button>
+          <button className="horus-blue-card redesign-profile-row" onClick={()=>setActiveTab(AppTab.HISTORY)}>Histórico de treinos <ChevronRight size={18}/></button>
+          {user.username.toLowerCase() === 'henrique' && <button className="horus-blue-card redesign-profile-row" onClick={()=>setPanel('cardio')}>Registros de cardio <ChevronRight size={18}/></button>}
+          <button onClick={() => setPanel('settings')} className="horus-blue-card w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><Settings size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Aparência</span><ChevronRight size={18} /></button>
           <button onClick={() => setPanel('help')} className="horus-blue-card w-full rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white border border-white/10 shadow-lg text-left"><span className="w-9 h-9 rounded-xl bg-white/15 grid place-items-center"><CircleHelp size={16} /></span><span className="flex-1 font-black uppercase text-xs tracking-wide">Ajuda e Suporte</span><ChevronRight size={18} /></button>
         </div>
       </div>
 
       {panel && <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setPanel(null)}>
-        <div className="w-full max-w-sm rounded-2xl bg-white border border-zinc-200 p-5 shadow-2xl relative text-left" onClick={e => e.stopPropagation()}>
-          <button className="absolute right-3 top-3 w-8 h-8 rounded-lg bg-zinc-100 grid place-items-center" onClick={() => setPanel(null)}><X size={16} /></button>
+        <div role="dialog" aria-modal="true" aria-label="Opções do perfil" className="redesign-profile-panel w-full max-w-sm rounded-2xl bg-white border border-zinc-200 p-5 shadow-2xl relative text-left" onClick={e => e.stopPropagation()}>
+          <button className="absolute right-3 top-3 w-8 h-8 rounded-lg bg-zinc-100 grid place-items-center" aria-label="Fechar painel" onClick={() => setPanel(null)}><X size={16} /></button>
           {panel === 'edit' && <form className="space-y-4" onSubmit={e => { e.preventDefault(); updateUserProfile({ name: name.trim() || user.name, goal: goal.trim() || 'Atleta' }); setPanel(null); }}>
             <h2 className="text-lg font-black uppercase">Editar atleta</h2>
             <button type="button" onClick={() => photoInput.current?.click()} className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs">Trocar foto</button>
@@ -125,7 +129,8 @@ export const ProfileView: React.FC = () => {
             <label className="block text-xs font-bold">Identificação esportiva<input className="mt-1 w-full border border-zinc-200 rounded-xl px-3 py-3" value={goal} onChange={e => setGoal(e.target.value)} /></label>
             <button className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2"><Check size={15} />Salvar</button>
           </form>}
-          {panel === 'settings' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Configurações</h2><button className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-black uppercase text-xs" onClick={toggleTheme}>Tema: {theme === 'light' ? 'claro' : 'escuro'}</button><button className="w-full bg-zinc-900 text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2" onClick={logout}><LogOut size={15} />Sair</button></div>}
+          {panel === 'cardio' && <CardioPanel/>}
+          {panel === 'settings' && <div className="space-y-3"><h2 className="text-lg font-black">Aparência</h2><fieldset className="redesign-theme-options"><legend>Tema do aplicativo</legend>{([['light','Claro'],['dark','Escuro'],['auto','Automático']] as const).map(([value,label])=><label key={value}><input type="radio" name="appearance" checked={themePreference===value} onChange={()=>setThemePreference(value)}/>{label}</label>)}</fieldset><p className="redesign-theme-hint">Automático acompanha a aparência do seu iPhone.</p><button className="w-full bg-zinc-900 text-white py-3 rounded-xl font-black uppercase text-xs flex items-center justify-center gap-2" onClick={logout}><LogOut size={15} />Sair</button></div>}
           {panel === 'help' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Ajuda e Suporte</h2><p className="text-sm text-zinc-600">Selecione uma rotina em Treinos e registre suas séries durante a execução. Consulte os resultados na aba Histórico.</p></div>}
           {panel === 'badges' && <div className="space-y-3"><h2 className="text-lg font-black uppercase">Suas conquistas</h2>{user.badges?.length ? user.badges.map(b => <div key={b.id} className="horus-blue-card rounded-xl bg-gradient-to-br from-[#2563EB] to-[#122C60] text-white p-3"><strong className="text-sm">{b.name}</strong><p className="text-xs text-white/70 mt-1">{b.description}</p></div>) : <p className="text-sm text-zinc-600">Suas conquistas aparecerão aqui conforme você treina.</p>}</div>}
         </div>

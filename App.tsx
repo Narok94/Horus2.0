@@ -1,7 +1,6 @@
 import './src/login.css';
 import { BrandLogo } from './components/ui/BrandLogo';
 import { TodayView } from './components/views/TodayView';
-import { AgendaView } from './components/views/AgendaView';
 import { DietView } from './components/views/DietView';
 import { isPersonalUser } from './src/utils/personalData';
 import { HistoryView } from './components/views/HistoryView';
@@ -9,16 +8,13 @@ import { validateLocalProfile } from './src/utils/localData';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import {
-  CalendarDays,
   Utensils,
   Dumbbell,
-  LayoutDashboard,
 
   User as UserIcon,
   Lock,
 
   Home,
-  BarChart3,
 
   Eye,
   EyeOff
@@ -46,9 +42,9 @@ const AppContent: React.FC = () => {
     isLoggedIn,
     activeTab,
     selectedWorkout,
-    showSummary,
 
     theme,
+    themePreference,
     setUser,
     setIsLoggedIn,
     setActiveTab,
@@ -68,9 +64,18 @@ const AppContent: React.FC = () => {
   }, [toastFn, setAddToast]);
 
   useEffect(() => {
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(theme);
+    for (const element of [document.documentElement, document.body]) {
+      element.classList.remove('light', 'dark'); element.classList.add(theme);
+    }
+    document.documentElement.style.colorScheme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#07111b' : '#f5f8fc');
   }, [theme]);
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const sync = () => { if (useStore.getState().themePreference === 'auto') useStore.setState({theme: media.matches ? 'dark' : 'light'}); };
+    sync(); media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, [themePreference]);
 
   // Cor de destaque da aplicação.
   useEffect(() => {
@@ -256,77 +261,34 @@ const AppContent: React.FC = () => {
   }
 
   const personal = isPersonalUser(user?.username);
-  const isLightUser = isLoggedIn;
-  const isPremiumScreen = activeTab !== AppTab.WORKOUT || !selectedWorkout;
+  const isLightUser = theme === 'light';
 
   const renderView = () => {
     if (selectedWorkout && activeTab === AppTab.WORKOUT) return <WorkoutView />;
     switch (activeTab) {
       case AppTab.DASHBOARD: return personal ? <TodayView /> : <DashboardView />;
-      case AppTab.AGENDA: return personal ? <AgendaView /> : <DashboardView />;
       case AppTab.DIET: return personal ? <DietView /> : <DashboardView />;
-      case AppTab.WORKOUT: return <>{personal && <button className="personal-history-link" onClick={() => setActiveTab(AppTab.HISTORY)}>Ver histórico de treinos →</button>}<WorkoutsListView /></>;
+      case AppTab.WORKOUT: return <WorkoutsListView />;
       case AppTab.HISTORY: return <HistoryView />;
       case AppTab.PROFILE: return <ProfileView />;
-      default: return <DashboardView />;
+      default: return <TodayView />;
     }
   };
 
-  const strokeColor = isLightUser ? "rgba(0, 0, 0, 0.015)" : "rgba(255, 255, 255, 0.02)";
-  const circleFill = isLightUser ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.06)";
-  const circleFillStrong = isLightUser ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)";
-
-  const navItems = personal ? [
-    { id: AppTab.DASHBOARD, icon: Home, label: 'Hoje' },
-    { id: AppTab.AGENDA, icon: CalendarDays, label: 'Agenda' },
+  const navItems = [
+    { id: AppTab.DASHBOARD, icon: Home, label: 'Início' },
     { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treino' },
     { id: AppTab.DIET, icon: Utensils, label: 'Dieta' },
-    { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
-  ] : [
-    { id: AppTab.DASHBOARD, icon: Home, label: 'Home' },
-    { id: AppTab.WORKOUT, icon: Dumbbell, label: 'Treinos' },
-    { id: AppTab.HISTORY, icon: BarChart3, label: 'Histórico' },
     { id: AppTab.PROFILE, icon: UserIcon, label: 'Perfil' }
   ];
 
   return (
-    <div className={`horus-app-shell ${isPremiumScreen ? 'horus-background-shell' : ''} ${personal ? 'personal-shell' : ''} ${activeTab === AppTab.WORKOUT && showSummary ? 'completion-light-shell' : ''} ${activeTab === AppTab.HISTORY || activeTab === AppTab.PROFILE ? 'account-light-shell' : ''} ${activeTab === AppTab.DASHBOARD ? 'dashboard-refined-shell' : ''} ${activeTab === AppTab.WORKOUT || activeTab === AppTab.DASHBOARD ? 'performance-shell' : ''} min-h-[100dvh] relative flex flex-col ${
-      isPremiumScreen ? "bg-[#F5F7FA] text-slate-900" : isLightUser
-        ? "bg-[#F5F7FA] text-gray-900 border-zinc-200"
-        : "bg-[#050505] text-white"
-    } transition-colors duration-400 select-none font-sans overflow-x-hidden`}>
-      <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="global-grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke={isLightUser ? "rgba(0, 0, 0, 0.025)" : "rgba(255, 255, 255, 0.02)"} strokeWidth="0.5" />
-            <circle cx="40" cy="0" r="1.0" fill={isLightUser ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)"} />
-            <circle cx="0" cy="40" r="1.0" fill={isLightUser ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)"} />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#global-grid-pattern)" />
-
-        <line x1="15%" y1="15%" x2="40%" y2="28%" stroke={strokeColor} strokeWidth="0.5" />
-        <line x1="40%" y1="28%" x2="25%" y2="65%" stroke={strokeColor} strokeWidth="0.5" />
-        <line x1="25%" y1="65%" x2="65%" y2="80%" stroke={strokeColor} strokeWidth="0.5" />
-        <line x1="65%" y1="80%" x2="80%" y2="40%" stroke={strokeColor} strokeWidth="0.5" />
-        <line x1="80%" y1="40%" x2="55%" y2="20%" stroke={strokeColor} strokeWidth="0.5" />
-        <line x1="55%" y1="20%" x2="15%" y2="15%" stroke={strokeColor} strokeWidth="0.5" />
-        <line x1="40%" y1="28%" x2="55%" y2="20%" stroke={strokeColor} strokeWidth="0.5" />
-        <circle cx="15%" cy="15%" r="1.2" fill={circleFill} />
-        <circle cx="40%" cy="28%" r="1.5" fill={circleFillStrong} />
-        <circle cx="25%" cy="65%" r="1.2" fill={circleFill} />
-        <circle cx="65%" cy="80%" r="2.0" fill={circleFillStrong} />
-        <circle cx="80%" cy="40%" r="1.2" fill={circleFill} />
-        <circle cx="55%" cy="20%" r="1.5" fill={circleFillStrong} />
-      </svg>
-
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-accent/5 blur-[100px] rounded-full pointer-events-none"></div>
-
+    <div className={`horus-app-shell redesign-shell ${activeTab === AppTab.DASHBOARD ? 'redesign-home' : ''}`} data-theme={theme}>
       <div className="horus-main-content flex-grow flex-1 min-h-0 w-full max-w-full sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-3 md:px-4 lg:px-6 pt-1 relative z-10 flex flex-col justify-start">
         {renderView()}
       </div>
 
-        <nav className={`horus-bottom-nav fixed bottom-0 left-0 right-0 z-50 ${
+        <nav aria-label="Navegação principal" className={`horus-bottom-nav fixed bottom-0 left-0 right-0 z-50 ${
           isLightUser
             ? "bg-white/80 border-t border-gray-250/50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
             : "bg-[#050505]/85 border-t border-white/[0.04] shadow-2xl"
@@ -337,6 +299,7 @@ const AppContent: React.FC = () => {
               return (
                 <button
                   key={item.id}
+                  aria-current={isActive ? 'page' : undefined}
                   onClick={() => {
                     handleVibrate();
                     setActiveTab(item.id);

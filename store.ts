@@ -1,3 +1,4 @@
+import { ThemePreference, validThemePreference, resolveTheme, systemIsDark } from './src/utils/theme';
 import { withHenriqueABC } from './data/henriqueABC';
 import { interpretPrescription } from './src/utils/workoutPrescription';
 import { getExerciseWeightKey } from './src/utils/exerciseWeights';
@@ -47,6 +48,8 @@ interface AppState {
   workoutDuration: number | null;
   allWorkouts: Record<string, WorkoutRoutine[]>;
   theme: 'light' | 'dark';
+  themePreference: ThemePreference;
+  setThemePreference: (preference: ThemePreference) => void;
 
   registerCompletedWorkout: (workout: WorkoutRoutine, progress: Record<string, SetPerformance[]>, duration: number, completionId: string) => boolean;
   // Actions
@@ -76,7 +79,8 @@ interface AppState {
 
 export const useStore = create<AppState>((set, get) => {
   if (typeof localStorage !== 'undefined') migrateLocalIdentity(localStorage);
-  const initialTheme = typeof localStorage !== 'undefined' && localStorage.getItem('tatugym_theme') === 'dark' ? 'dark' : 'light';
+  const initialPreference = validThemePreference(typeof localStorage !== 'undefined' ? localStorage.getItem('tatugym_theme') : null);
+  const initialTheme = resolveTheme(initialPreference, systemIsDark());
 
   if (typeof document !== 'undefined') {
     document.body.classList.remove('light', 'dark');
@@ -98,6 +102,7 @@ export const useStore = create<AppState>((set, get) => {
   lastWorkoutVolume: 0,
   workoutDuration: null,
   theme: initialTheme,
+  themePreference: initialPreference,
   allWorkouts: (() => {
     const defaults = { henrique: withHenriqueABC(defaultWorkouts), jessica: jessicaWorkouts };
     if (typeof localStorage === 'undefined') return defaults;
@@ -137,11 +142,11 @@ export const useStore = create<AppState>((set, get) => {
     }
     const username = migratedUser?.username.toLowerCase();
     const storedTheme = username ? localStorage.getItem(`tatugym_theme_${username}`) : null;
-    const theme = storedTheme === 'dark' || storedTheme === 'light' ? storedTheme :
-      username === 'henrique' && localStorage.getItem('tatugym_theme') === 'dark' ? 'dark' : 'light';
+    const themePreference = validThemePreference(storedTheme || (username === 'henrique' ? localStorage.getItem('tatugym_theme') : null));
+    const theme = resolveTheme(themePreference, systemIsDark());
     document.body.classList.remove('light', 'dark');
     document.body.classList.add(theme);
-    set({ user: migratedUser, theme, activeTab: AppTab.WORKOUT,
+    set({ user: migratedUser, theme, themePreference, activeTab: AppTab.DASHBOARD,
       selectedWorkout: null, sessionRest: null, currentSessionProgress: {}, isWorkoutActive: false,
       workoutStartTime: null, lastMarkedTime: null, elapsedTime: 0, showSummary: false,
       lastWorkoutVolume: 0, workoutDuration: null });
@@ -167,18 +172,13 @@ export const useStore = create<AppState>((set, get) => {
   setWorkoutDuration: (workoutDuration) => set({ workoutDuration }),
   setAddToast: (fn) => set({ addToast: fn }),
 
-  toggleTheme: () => {
-    const nextTheme = get().theme === 'light' ? 'dark' : 'light';
-    set({ theme: nextTheme });
-    if (typeof localStorage !== 'undefined') {
-      const username = get().user?.username.toLowerCase();
-      if (username) localStorage.setItem(`tatugym_theme_${username}`, nextTheme);
-    }
-    if (typeof document !== 'undefined') {
-      document.body.classList.remove('light', 'dark');
-      document.body.classList.add(nextTheme);
-    }
+  setThemePreference: (themePreference) => {
+    const theme = resolveTheme(themePreference, systemIsDark());
+    const username = get().user?.username.toLowerCase();
+    if (username) localStorage.setItem(`tatugym_theme_${username}`, themePreference);
+    set({ themePreference, theme });
   },
+  toggleTheme: () => get().setThemePreference(get().theme === 'light' ? 'dark' : 'light'),
 
   logout: () => {
     set({ 

@@ -9,6 +9,7 @@ import './src/cards.css';
 import './src/activeExercise.css';
 import './src/branding.css';
 import './src/diet.css';
+import './src/redesign.css';
 
 console.info('[HORUS BUILD]', import.meta.env.VITE_BUILD_SHA);
 

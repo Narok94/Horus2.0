@@ -1,34 +1,31 @@
-import { useHenriqueDiet } from '../../src/hooks/useHenriqueDiet';
+import React from 'react';
+import { Check, Play } from 'lucide-react';
 import { BrandLogo } from '../ui/BrandLogo';
-import React, { useState } from 'react';
-import { ArrowUpRight, CalendarDays, Utensils } from 'lucide-react';
 import { useStore } from '../../store';
 import { AppTab } from '../../types';
-import { DashboardView } from './DashboardView';
-import { isPersonalUser, localDay, usePersonalAgenda, usePersonalClock } from '../../src/utils/personalData';
-export const TodayView = () => { const user = useStore(s => s.user); return isPersonalUser(user?.username) ? <PersonalToday key={user?.username} /> : null; };
-const PersonalToday = () => {
-    const { user, setActiveTab } = useStore();
-    const now = usePersonalClock();
-    const today = localDay(now);
-    const [agenda] = usePersonalAgenda();
-    const { diet, blocked: dietBlocked } = useHenriqueDiet();
-    const [avatarError, setAvatarError] = useState(false);
-    if (!user)
-        return null;
-    const time = now.toTimeString().slice(0, 5);
-    const next = [...agenda].filter(a => a.date > today || (a.date === today && a.time >= time)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))[0];
-    const done = diet.completed[today] || [];
-    const meals = [...diet.meals].sort((a, b) => a.time.localeCompare(b.time));
-    const pending = meals.filter(m => !done.includes(m.id));
-    const nextMeal = pending.find(m => m.time >= time) || pending[0];
-    const complete = meals.filter(m => done.includes(m.id)).length;
-    const trained = user.history.some(entry => localDay(new Date(entry.date)) === today);
-    const greeting = now.getHours() < 12 ? 'Bom dia' : now.getHours() < 18 ? 'Boa tarde' : 'Boa noite';
-    return <section className="personal-page personal-today"><header className="personal-today-header"><div><span className="personal-eyebrow horus-brand-eyebrow"><BrandLogo className="horus-header-logo" /><span>HÓRUS GYM</span></span><h1>{greeting}, {user.name.split(' ')[0]}</h1><p>{now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}</p></div><button className="personal-avatar" aria-label="Abrir perfil" onClick={() => setActiveTab(AppTab.PROFILE)}>{user.avatar && !avatarError ? <img src={user.avatar} alt="Foto de perfil" onError={() => setAvatarError(true)}/> : user.name.slice(0, 2).toUpperCase()}</button></header>
-  <article className="personal-card horus-blue-card"><div className="personal-between"><span className="personal-eyebrow"><CalendarDays size={15}/>PRÓXIMO COMPROMISSO</span><button aria-label="Abrir Agenda" onClick={() => setActiveTab(AppTab.AGENDA)}><ArrowUpRight size={21}/></button></div>{next ? <><div className="personal-next-time">{next.time}<span>{next.date === today ? 'Hoje' : new Date(next.date + 'T12:00:00').toLocaleDateString('pt-BR')}</span></div><h2>{next.title}</h2>{next.category && <span className="personal-tag">{next.category}</span>}</> : <><h2>Seu dia está livre</h2><p>Nenhum compromisso agendado.</p><button className="personal-link" onClick={() => setActiveTab(AppTab.AGENDA)}>Planejar meu dia →</button></>}</article>
-  <DashboardView compact/>
-  <article className="personal-card horus-blue-card"><div className="personal-between"><span className="personal-eyebrow"><Utensils size={15}/>SUA ALIMENTAÇÃO</span><button aria-label="Abrir Dieta" onClick={() => setActiveTab(AppTab.DIET)}><ArrowUpRight size={21}/></button></div><p>{dietBlocked ? 'Cadastro alimentar indisponível' : nextMeal ? (nextMeal.time < time ? 'Refeição pendente' : 'Próxima refeição') : meals.length ? 'Tudo realizado por hoje' : 'Seu plano alimentar'}</p><h2>{dietBlocked ? 'Seus dados foram preservados' : nextMeal ? nextMeal.name + ' · ' + nextMeal.time : meals.length ? 'Dia alimentar concluído' : user.username === 'henrique' ? 'Plano disponível para carregar' : 'Aguardando seu plano alimentar'}</h2><div className="personal-progress"><span style={{ width: (meals.length ? complete / meals.length * 100 : 0) + '%' }}/></div>{meals.length ? <p>{complete} de {meals.length} refeições realizadas</p> : <button className="personal-link" onClick={() => setActiveTab(AppTab.DIET)}>{dietBlocked ? 'Ver cadastro na Dieta →' : 'Ver plano na Dieta →'}</button>}</article>
-  <div className="personal-quick horus-blue-card" aria-label="Resumo do dia"><div><strong>{agenda.filter(a => a.date === today).length}</strong><span>compromissos</span></div><div><strong>{trained ? 'Concluído' : 'Pendente'}</strong><span>treino do dia</span></div><div><strong>{complete}/{meals.length}</strong><span>refeições · {pending.length} pendentes</span></div></div>
+import { abcOnDay, activeWorkouts } from '../../data/henriqueABC';
+import { getDivisionThumbnail, getThumbnailPlan } from '../../src/utils/workoutThumbnails';
+import { localDay, usePersonalClock } from '../../src/utils/personalData';
+
+export const TodayView = () => {
+  const { user, allWorkouts, setActiveTab, setSelectedWorkout, selectedWorkout, isWorkoutActive } = useStore();
+  const now = usePersonalClock();
+  if (!user) return null;
+  const today = localDay(now);
+  const routines = activeWorkouts(allWorkouts[user.username.toLowerCase()] || []);
+  const last = user.history.find(entry => routines.some(workout => workout.id === entry.workoutId));
+  const nextIndex = last ? (routines.findIndex(workout => workout.id === last.workoutId) + 1) % routines.length : 0;
+  const planned = user.username.toLowerCase() === 'henrique' ? abcOnDay(today) : routines[nextIndex];
+  const workout = isWorkoutActive && selectedWorkout ? selectedWorkout : routines.find(item => item.id === planned?.id);
+  const cover = workout && getDivisionThumbnail(workout, getThumbnailPlan(user.username, workout));
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7);
+  const week = Array.from({length:7}, (_,index) => { const date = new Date(monday); date.setDate(date.getDate() + index); return localDay(date); });
+  const count = week.slice(0,5).filter(day => user.checkIns.includes(day)).length;
+  const greeting = now.getHours() < 12 ? 'Bom dia' : now.getHours() < 18 ? 'Boa tarde' : 'Boa noite';
+  const open = () => { if (!isWorkoutActive && workout) setSelectedWorkout(workout); setActiveTab(AppTab.WORKOUT); };
+  return <section className="redesign-today">
+    <header className="redesign-greeting"><div><div className="redesign-brand"><BrandLogo/><span>HÓRUS GYM</span></div><h1>{greeting}, {user.name.split(' ')[0]}</h1><p>{now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</p></div><button className="redesign-avatar" aria-label="Abrir perfil" onClick={()=>setActiveTab(AppTab.PROFILE)}>{user.avatar ? <img src={user.avatar} alt=""/> : user.name.slice(0,2).toUpperCase()}</button></header>
+    <article className="redesign-week"><div><h2>Progresso da semana</h2><strong>{count}/5</strong></div><ol>{week.map((day,index)=><li key={day}><span className={user.checkIns.includes(day) ? 'done' : day===today ? 'current' : ''} aria-label={`${day}${user.checkIns.includes(day) ? ', treino realizado' : day===today ? ', hoje' : ''}`}>{user.checkIns.includes(day) ? <Check size={19}/> : ['SEG','TER','QUA','QUI','SEX','SÁB','DOM'][index]}</span><small>{['SEG','TER','QUA','QUI','SEX','SÁB','DOM'][index]}</small></li>)}</ol></article>
+    <section className="redesign-today-workout"><h2>Treino de hoje</h2>{cover ? <img className="redesign-today-cover" src={cover} alt={workout.title}/> : <div className="redesign-rest"><h3>Dia de descanso</h3><p>Recupere as energias para o próximo treino.</p></div>}<button className="redesign-primary" onClick={open}><Play size={16} fill="currentColor"/>{isWorkoutActive ? 'Continuar treino' : workout ? 'Iniciar treino' : 'Ver meus treinos'}</button></section>
   </section>;
 };
