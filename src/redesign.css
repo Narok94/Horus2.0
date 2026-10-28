@@ -173,3 +173,6 @@ html,body { background:var(--r-bg); color:var(--r-text); }
 #root .redesign-shell .redesign-selected+.flex-1 { margin-top:11px; }
 @media(max-height:780px) { .redesign-today { gap:14px; } .redesign-week { padding:13px 12px 11px; } .redesign-today-workout { padding:12px 10px 10px; gap:10px; } }
 #root .redesign-shell .refined-selected-media .redesign-selected-cover { object-fit:cover; }
+.redesign-demo figcaption { max-width:calc(100% - 20px); line-height:1.4; }
+.redesign-demo figcaption svg { flex-shrink:0; }
+#root .redesign-shell.redesign-shell .redesign-demo img { position:absolute; inset:0; min-width:0; min-height:0; }

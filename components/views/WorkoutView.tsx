@@ -1,3 +1,5 @@
+import { ExerciseDemo } from '../ui/ExerciseDemo';
+import { getABCExerciseGif } from '../../src/utils/abcGifs';
 import { BrandLogo } from '../ui/BrandLogo';
 import { createWorkoutShareImage } from '../../src/utils/workoutShareImage';
 import { getDivisionThumbnail, getExerciseThumbnail, getThumbnailPlan, retryThumbnail, retryExerciseDetail } from '../../src/utils/workoutThumbnails';
@@ -989,7 +991,7 @@ export const WorkoutView: React.FC = () => {
                 const thumbnail = getExerciseThumbnail(activeModalExercise, getThumbnailPlan(user?.username, selectedWorkout));
                 return <div className="redesign-registration">
                   <header className="redesign-exercise-heading"><button aria-label="Voltar ao treino" onClick={()=>setActiveModalExercise(null)}><ChevronLeft size={24}/></button><div><h2>{activeModalExercise.name}</h2><p>{activeModalExercise.muscleGroup}</p></div><button aria-label="Informações do exercício" onClick={()=>setShowExerciseInfo(true)}>•••</button></header>
-                  <figure className="redesign-demo" aria-label="Área reservada para futuro GIF demonstrativo">{thumbnail ? <img src={thumbnail} alt={activeModalExercise.name}/> : <Dumbbell size={60}/>}<figcaption><Play size={17}/>Demonstração · GIF em breve</figcaption></figure>
+                  <ExerciseDemo key={activeModalExercise.id} name={activeModalExercise.name} gif={getABCExerciseGif(user?.username, selectedWorkout, activeModalExercise)} thumbnail={thumbnail}/>
                   <section className="redesign-series-panel" aria-label="Registrar série">
                     <div className="redesign-series-heading"><h3>Série {setIdx + 1} de {sets.length}</h3><div className="redesign-series-dots">{sets.map((item,index)=><button type="button" key={index} className={item.completed ? 'done' : index===setIdx ? 'current' : ''} aria-current={index===setIdx ? 'step' : undefined} aria-label={`Série ${index+1}, ${item.completed ? 'concluída; toque para desmarcar' : index===setIdx ? 'atual' : 'pendente'}`} disabled={!item.completed} onClick={()=>handleUpdateModalSet(activeModalExercise.id,index,{completed:false})}>{item.completed ? <Check size={17}/> : index+1}</button>)}</div></div>
                     {set && <div className="redesign-input-cards">
