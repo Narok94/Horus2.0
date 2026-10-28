@@ -72,6 +72,8 @@ export const useWorkoutPersistence = () => {
         discardSnapshot();
         return;
       }
+      // Uma sessão antiga arquivada permanece salva, sem voltar à rotina ativa.
+      if (workout.archived) return;
       // Uma atualização evita estados intermediários durante a recuperação.
       useStore.setState({
         selectedWorkout: workout,

@@ -151,3 +151,17 @@
 
 .henrique-program .personal-form label { color: #e2e8f0; }
 .henrique-program input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; padding: 0; display: inline-block; vertical-align: middle; margin-right: 8px; }
+
+/* ABC covers contain their own labels: show the complete PNG without the anatomy crop. */
+#root .horus-app-shell .performance-workouts .performance-divisions .henrique-abc-division { flex-direction: column-reverse; align-items: stretch; padding: 0; }
+#root .horus-app-shell .henrique-abc-division .performance-division-copy { width: 100%; padding: 16px 64px 16px 16px; }
+#root .horus-app-shell .henrique-abc-division .performance-anatomy { position: relative; inset: auto; width: 100%; height: auto; aspect-ratio: auto; mask-image: none; display: block; }
+#root .horus-app-shell .henrique-abc-division .performance-anatomy img { height: auto; object-fit: contain; object-position: center; transform: none; }
+#root .horus-app-shell .henrique-abc-division::after { display: none; }
+#root .horus-app-shell [data-plan="henrique-abc"] img { object-fit: contain; }
+
+#root .horus-app-shell .performance-selected-art[data-plan="henrique-abc"] { position: relative; inset: auto; width: 100%; height: auto; mask-image: none; }
+#root .horus-app-shell .performance-selected-art[data-plan="henrique-abc"] img { position: static; width: 100%; height: auto; object-fit: contain; }
+#root .horus-app-shell .personal-workout[data-plan="henrique-abc"] .personal-workout-art { position: static; width: 100%; height: auto; mask-image: none; margin: 12px 0; border-radius: 12px; }
+#root .horus-app-shell .horus-execution[data-plan="henrique-abc"] .horus-workout-thumbnail { width: 88px; height: 60px; }
+#root .horus-app-shell .horus-execution[data-plan="henrique-abc"] .horus-workout-thumbnail img { object-fit: contain; transform: none; }

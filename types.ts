@@ -29,6 +29,8 @@ export interface Exercise {
 }
 
 export interface WorkoutRoutine {
+  /** Arquivada: preservada para histórico e cargas, indisponível para novas sessões. */
+  archived?: boolean;
   id: string;
   title: string;
   description: string;

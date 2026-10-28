@@ -6,7 +6,7 @@ const url = source => 'data:text/javascript;base64,' + Buffer.from(ts.transpileM
 const catalog = url(readFileSync(new URL('../data/exerciseCatalog.ts', import.meta.url), 'utf8'));
 const gifs = url(readFileSync(new URL('../src/utils/exerciseUtils.ts', import.meta.url), 'utf8'));
 const source = readFileSync(new URL('../data/henriqueABC.ts', import.meta.url), 'utf8').replace("'./exerciseCatalog'", JSON.stringify(catalog)).replace("'../src/utils/exerciseUtils'", JSON.stringify(gifs));
-const { henriqueABC, withHenriqueABC, abcOnDay } = await import(url(source));
+const { henriqueABC, withHenriqueABC, abcOnDay, activeWorkouts } = await import(url(source));
 test('18 prescriptions have exact sets, repetitions and individual rests', () => {
   assert.deepEqual(henriqueABC.map(w => w.exercises.map(e => [e.sets,e.reps,e.rest])), [
     [[3,'8-10',120],[2,'8-12',90],[3,'12-15',60],[2,'8-12',90],[3,'10-12',60],[2,'12-15',60]],
@@ -26,7 +26,22 @@ test('calendar continues ABC across Mondays and repeats after three weeks', () =
 test('enrollment preserves prior routines, media and repeated enrollment is idempotent', () => {
   const prior = [{id:'old', exercises:[{image:'keep.gif'}]}, {...henriqueABC[0], description:'personalized'}];
   const next = withHenriqueABC(prior);
-  assert.equal(next.find(w => w.id === 'old'),prior[0]);
-  assert.equal(next.find(w => w.id === henriqueABC[0].id),prior[1]);
+  assert.deepEqual(next.find(w => w.id === 'old'),{...prior[0], archived:true});
+  assert.deepEqual(next.find(w => w.id === henriqueABC[0].id),{...prior[1], archived:false});
+  assert.deepEqual(activeWorkouts(next).map(w=>w.id),henriqueABC.map(w=>w.id));
   assert.deepEqual(withHenriqueABC(next),next);
+});
+
+test('old A–E are archived intact; duplicated ABC IDs cannot create extra active cards', () => {
+  const old = 'abcde'.split('').map(letter => ({ id: 'h-' + letter, title: 'Treino ' + letter, description: 'Legado', color: 'blue', exercises: [{id:'old-' + letter, image:'preserved.png', sets:4, reps:'12', rest:60}], cardio: {duration:25} }));
+  const saved = [...old, ...henriqueABC, henriqueABC[0]];
+  const before = structuredClone(saved);
+  const migrated = withHenriqueABC(saved);
+  assert.deepEqual(saved,before);
+  assert.equal(activeWorkouts(migrated).length,3);
+  assert.equal(migrated.filter(w => w.archived).length,5);
+  for (const previous of old) {
+    assert.deepEqual(migrated.find(w => w.id === previous.id),{...previous,archived:true});
+  }
+  assert.deepEqual(withHenriqueABC(migrated),migrated);
 });

@@ -74,17 +74,6 @@ interface AppState {
   logout: () => void;
 }
 
-// Catálogos locais antigos podem conter itens do módulo removido.
-const musculacaoOnly = (workouts: WorkoutRoutine[]): WorkoutRoutine[] => workouts.map(workout => {
-  const { cardio: _legacyCardio, ...routine } = workout as WorkoutRoutine & { cardio?: unknown };
-  return {
-    ...routine,
-    title: routine.title.replace(/\s+e\s+cardio/gi, ''),
-    description: routine.description.split('•').filter(part => !/cardio|bicicleta|aer[oó]b/i.test(part)).join('•').trim(),
-    exercises: routine.exercises.filter(ex => !/cardio|aer[oó]b/i.test(ex.muscleGroup) && !/^cardio:/i.test(ex.name))
-  };
-});
-
 export const useStore = create<AppState>((set, get) => {
   if (typeof localStorage !== 'undefined') migrateLocalIdentity(localStorage);
   const initialTheme = typeof localStorage !== 'undefined' && localStorage.getItem('tatugym_theme') === 'dark' ? 'dark' : 'light';
@@ -110,7 +99,7 @@ export const useStore = create<AppState>((set, get) => {
   workoutDuration: null,
   theme: initialTheme,
   allWorkouts: (() => {
-    const defaults = { henrique: withHenriqueABC(musculacaoOnly(defaultWorkouts)), jessica: jessicaWorkouts };
+    const defaults = { henrique: withHenriqueABC(defaultWorkouts), jessica: jessicaWorkouts };
     if (typeof localStorage === 'undefined') return defaults;
     const saved = localStorage.getItem('tatugym_all_workouts');
     if (saved) {
@@ -120,8 +109,12 @@ export const useStore = create<AppState>((set, get) => {
         for (const username of ['henrique', 'jessica'] as const) {
           if (Array.isArray(parsed[username])) {
             const normalized = normalizeSavedWorkouts(parsed[username]).filter(isValidWorkout);
-            result[username] = username === 'henrique' ? withHenriqueABC(musculacaoOnly(normalized)) : normalized;
+            result[username] = username === 'henrique' ? withHenriqueABC(normalized) : normalized;
           }
+        }
+        if (Array.isArray(parsed.henrique) && parsed.henrique.every(isValidWorkout) && JSON.stringify(parsed.henrique) !== JSON.stringify(result.henrique)) {
+          try { localStorage.setItem('tatugym_all_workouts', JSON.stringify({ ...parsed, henrique: result.henrique })); }
+          catch (error) { console.warn('[Workouts] Não foi possível persistir o arquivamento:', error); }
         }
         return result;
       } catch (e) {
@@ -155,9 +148,12 @@ export const useStore = create<AppState>((set, get) => {
   },
   setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
   setActiveTab: (activeTab) => set({ activeTab }),
-  setSelectedWorkout: (selectedWorkout) => set({ selectedWorkout }),
+  setSelectedWorkout: (selectedWorkout) => {
+    if (selectedWorkout && get().allWorkouts[get().user?.username.toLowerCase() || '']?.find(w => w.id === selectedWorkout.id)?.archived) return;
+    set({ selectedWorkout });
+  },
   setAllWorkouts: (allWorkouts) => {
-    const filtered = { ...get().allWorkouts, ...allWorkouts, henrique: musculacaoOnly(allWorkouts.henrique || get().allWorkouts.henrique || []) };
+    const filtered = { ...get().allWorkouts, ...allWorkouts, henrique: withHenriqueABC(allWorkouts.henrique || get().allWorkouts.henrique || []) };
     set({ allWorkouts: filtered });
     localStorage.setItem('tatugym_all_workouts', JSON.stringify(filtered));
   },
@@ -205,7 +201,7 @@ export const useStore = create<AppState>((set, get) => {
 
   registerCompletedWorkout: (workout, progress, duration, completionId) => {
     const user = get().user;
-    if (!user || user.history.some(entry => entry.id === completionId) ||
+    if (!user || get().allWorkouts[user.username.toLowerCase()]?.find(w => w.id === workout.id)?.archived || user.history.some(entry => entry.id === completionId) ||
         !workout.exercises.some(ex => (progress[ex.id] || []).some(set => set.completed))) return false;
     const now = new Date();
     const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);

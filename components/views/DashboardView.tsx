@@ -1,3 +1,4 @@
+import { activeWorkouts } from '../../data/henriqueABC';
 import { abcOnDay } from '../../data/henriqueABC';
 import { localDay } from '../../src/utils/personalData';
 import { getDivisionThumbnail, getThumbnailPlan } from '../../src/utils/workoutThumbnails';
@@ -94,7 +95,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
   const currentDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
 
   const rawWorkouts = allWorkouts[user.username.toLowerCase() as keyof typeof allWorkouts] || [];
-  const workouts = rawWorkouts;
+  const workouts = activeWorkouts(rawWorkouts);
 
   // Find index of the most recently finished workout in the user's history
   const lastCompleted = user.history && user.history.length > 0 ? user.history[0] : null;
@@ -142,7 +143,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
     setActiveTab(AppTab.WORKOUT);
   };
 
-  if (compact) return <article className="personal-card personal-workout horus-blue-card"><span className="personal-eyebrow">TREINO DE HOJE</span><div className="personal-workout-copy"><h2>{heroWorkout?.title || 'Suas fichas de treino'}</h2><p>{heroWorkout ? '45 min · '+heroWorkout.exercises.length+' exercícios' : 'Veja suas rotinas'}</p></div>{showHeroThumbnail && <img className="personal-workout-art" src={heroThumbnail} alt="" onError={() => setUnavailableDivision(heroThumbnail || null)}/>}<button className="personal-primary" onClick={startActiveWorkout}><Play size={16}/>{isWorkoutActive ? 'Continuar treino' : 'Iniciar treino'}</button></article>;
+  if (compact) return <article data-plan={getThumbnailPlan(user.username, heroWorkout || undefined)} className="personal-card personal-workout horus-blue-card"><span className="personal-eyebrow">TREINO DE HOJE</span><div className="personal-workout-copy"><h2>{heroWorkout?.title || 'Suas fichas de treino'}</h2><p>{heroWorkout ? '45 min · '+heroWorkout.exercises.length+' exercícios' : 'Veja suas rotinas'}</p></div>{showHeroThumbnail && <img className="personal-workout-art" src={heroThumbnail} alt="" onError={() => setUnavailableDivision(heroThumbnail || null)}/>}<button className="personal-primary" onClick={startActiveWorkout}><Play size={16}/>{isWorkoutActive ? 'Continuar treino' : 'Iniciar treino'}</button></article>;
 
   return (
       <div className="horus-original-dashboard w-full min-h-screen flex flex-col justify-start gap-3 bg-transparent text-zinc-950 font-sans antialiased select-none relative pt-12 sm:pt-6 pb-40 px-1">

@@ -41,10 +41,17 @@ export const henriqueABC: WorkoutRoutine[] = rows.map((exercises, i) => ({
       muscleGroup: movement.muscleGroup, image: getExerciseGifUrl(movement.gifKey) };
   })
 }));
-/** Idempotente: preserva todas as fichas e personalizações existentes. */
-export const withHenriqueABC = (workouts: WorkoutRoutine[]) => [
-  ...henriqueABC.filter(next => !workouts.some(saved => saved.id === next.id)), ...workouts
-];
+/** Reutiliza o ABC cadastrado, arquiva as fichas anteriores e elimina IDs ativos repetidos. */
+export function withHenriqueABC(workouts: WorkoutRoutine[]): WorkoutRoutine[] {
+  const activeIds = new Set(henriqueABC.map(workout => workout.id));
+  const active = henriqueABC.map(template => {
+    const saved = workouts.find(workout => workout.id === template.id);
+    return { ...(saved || template), archived: false };
+  });
+  return [...active, ...workouts.filter(workout => !activeIds.has(workout.id)).map(workout =>
+    workout.archived ? workout : { ...workout, archived: true })];
+}
+export const activeWorkouts = (workouts: WorkoutRoutine[]) => workouts.filter(workout => !workout.archived);
 /** Semana 1 começa em 26/10/2026. Aritmética UTC evita desvios de horário de verão. */
 export function abcOnDay(day: string): WorkoutRoutine | null {
   const date = new Date(day + 'T12:00:00Z');

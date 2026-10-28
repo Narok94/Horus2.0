@@ -1,0 +1,36 @@
+{
+  "source": "Arte aprovada na conversa; recortes individuais sem textos sobrepostos",
+  "exercise_count": 18,
+  "workout_cover_count": 3,
+  "exercise_size_px": [
+    640,
+    400
+  ],
+  "cover_size_px": [
+    960,
+    540
+  ],
+  "files": [
+    "01_supino_inclinado_halteres.png",
+    "02_supino_reto_maquina.png",
+    "03_elevacao_lateral_polia.png",
+    "04_desenvolvimento_halteres.png",
+    "05_triceps_corda.png",
+    "06_triceps_unilateral_polia.png",
+    "07_puxada_alta_neutra.png",
+    "08_remada_articulada_apoio_peito.png",
+    "09_puxada_unilateral_polia.png",
+    "10_crucifixo_inverso_maquina.png",
+    "11_rosca_direta_polia_barra_w.png",
+    "12_rosca_martelo_polia_corda.png",
+    "13_leg_press_45.png",
+    "14_cadeira_extensora.png",
+    "15_mesa_flexora.png",
+    "16_terra_romeno_halteres.png",
+    "17_panturrilha_leg_press.png",
+    "18_abdominal_polia.png",
+    "treino_a_peito_ombros_triceps.png",
+    "treino_b_costas_biceps_posterior_ombro.png",
+    "treino_c_pernas_abdomen.png"
+  ]
+}

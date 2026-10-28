@@ -640,7 +640,7 @@ export const WorkoutView: React.FC = () => {
   }, 0);
 
   return (
-    <div className={`horus-execution w-full min-h-screen pt-12 sm:pt-6 flex flex-col justify-start pb-32 max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-1 bg-transparent select-none ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
+    <div data-plan={getThumbnailPlan(user?.username, selectedWorkout)} className={`horus-execution w-full min-h-screen pt-12 sm:pt-6 flex flex-col justify-start pb-32 max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-1 bg-transparent select-none ${isLightTheme ? 'text-zinc-950 font-black' : 'text-white'}`}>
       {/* Upper Navigation Header */}
       <header className={`flex items-center justify-between py-1.5 border-b ${isLightTheme ? 'border-zinc-200' : 'border-white/5'} shrink-0`}>
         <div className="flex items-center gap-2 min-w-0">
