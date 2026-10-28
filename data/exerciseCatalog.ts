@@ -8,6 +8,9 @@ import type { CatalogExercise } from '../types';
  * Nenhum consumidor do modelo antigo foi migrado.
  */
 export const exerciseCatalog: readonly CatalogExercise[] = [
+  { id: 'triceps-unilateral-polia', name: 'Tríceps unilateral na polia', muscleGroup: 'Tríceps', gifKey: 'Tríceps unilateral na polia' },
+  { id: 'rosca-polia-barra-w', name: 'Rosca direta na polia baixa com barra W', muscleGroup: 'Bíceps', gifKey: 'Rosca na polia' },
+  { id: 'panturrilha-leg-press', name: 'Panturrilha no leg press', muscleGroup: 'Panturrilha', gifKey: 'Panturrilha no Leg Press' },
   { id: 'supino-reto-barra', name: 'Supino reto com barra', muscleGroup: 'Peito', aliases: ['Supino Reto Barra'], gifKey: 'Supino Reto Barra' },
   { id: 'supino-inclinado-halteres', name: 'Supino inclinado com halteres', muscleGroup: 'Peito', aliases: ['Supino Inclinado Halter', 'Supino Inclinado Halteres'], gifKey: 'Supino Inclinado Halteres' },
   { id: 'supino-inclinado-barra', name: 'Supino inclinado com barra', muscleGroup: 'Peito', aliases: ['Supino Inclinado Barra'], gifKey: 'Supino Inclinado Barra' },

@@ -148,3 +148,6 @@
 #root .horus-app-shell.personal-shell .horus-action svg { color:#FFF !important; }
 #root .horus-app-shell.personal-shell .horus-rest-inline span { color:#526580; }
 #root .horus-app-shell.personal-shell .horus-rest-inline strong { color:#244AA6; }
+
+.henrique-program .personal-form label { color: #e2e8f0; }
+.henrique-program input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; padding: 0; display: inline-block; vertical-align: middle; margin-right: 8px; }

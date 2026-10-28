@@ -789,7 +789,7 @@ export const WorkoutView: React.FC = () => {
                         {ex.notes && (
                           <>
                             <span className={`${isLightTheme ? 'text-white/40' : 'text-zinc-650'}`}>•</span>
-                            <span className="text-amber-400 font-bold truncate max-w-[150px] italic">{ex.notes}</span>
+                            <span className="text-amber-400 font-bold whitespace-normal break-words italic">{ex.notes}</span>
                           </>
                         )}
                       </p>

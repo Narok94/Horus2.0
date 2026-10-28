@@ -1,3 +1,4 @@
+import { withHenriqueABC } from './data/henriqueABC';
 import { interpretPrescription } from './src/utils/workoutPrescription';
 import { getExerciseWeightKey } from './src/utils/exerciseWeights';
 import { normalizeSavedWorkouts, isValidWorkout } from './src/utils/localData';
@@ -109,7 +110,7 @@ export const useStore = create<AppState>((set, get) => {
   workoutDuration: null,
   theme: initialTheme,
   allWorkouts: (() => {
-    const defaults = { henrique: musculacaoOnly(defaultWorkouts), jessica: jessicaWorkouts };
+    const defaults = { henrique: withHenriqueABC(musculacaoOnly(defaultWorkouts)), jessica: jessicaWorkouts };
     if (typeof localStorage === 'undefined') return defaults;
     const saved = localStorage.getItem('tatugym_all_workouts');
     if (saved) {
@@ -119,7 +120,7 @@ export const useStore = create<AppState>((set, get) => {
         for (const username of ['henrique', 'jessica'] as const) {
           if (Array.isArray(parsed[username])) {
             const normalized = normalizeSavedWorkouts(parsed[username]).filter(isValidWorkout);
-            result[username] = username === 'henrique' ? musculacaoOnly(normalized) : normalized;
+            result[username] = username === 'henrique' ? withHenriqueABC(musculacaoOnly(normalized)) : normalized;
           }
         }
         return result;

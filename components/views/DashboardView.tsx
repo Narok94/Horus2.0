@@ -1,3 +1,5 @@
+import { abcOnDay } from '../../data/henriqueABC';
+import { localDay } from '../../src/utils/personalData';
 import { getDivisionThumbnail, getThumbnailPlan } from '../../src/utils/workoutThumbnails';
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store';
@@ -116,6 +118,7 @@ export const DashboardView: React.FC<{ compact?: boolean }> = ({ compact = false
     nextWorkout = workouts[nextWorkoutIndex] || workouts[0] || null;
   }
 
+  if (user.username.toLowerCase() === 'henrique') { const planned = abcOnDay(localDay()); nextWorkout = planned ? workouts.find(w => w.id === planned.id) || planned : null; }
   const heroWorkout = isWorkoutActive && currentSelected ? currentSelected : nextWorkout;
   const heroThumbnail = heroWorkout ? getDivisionThumbnail(heroWorkout, getThumbnailPlan(user?.username, heroWorkout)) : undefined;
   const showHeroThumbnail = !!heroThumbnail && unavailableDivision !== heroThumbnail;
