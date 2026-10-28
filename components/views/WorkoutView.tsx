@@ -664,7 +664,7 @@ export const WorkoutView: React.FC = () => {
       </header>
 
       <section className="redesign-selected">
-        {divisionThumbnail && <img className="redesign-selected-cover" src={divisionThumbnail} alt={selectedWorkout.title}/>}
+        {divisionThumbnail && <div className="refined-selected-media"><img className="redesign-selected-cover" src={divisionThumbnail} alt={selectedWorkout.title}/></div>}
         {isWorkoutActive ? <div className="redesign-session"><span><Clock size={15}/>{formatTime(elapsedTime)}</span><button className="redesign-primary" onClick={()=>handleFinishWorkout()}>Finalizar sessão</button></div> : <button className="redesign-primary" onClick={startWorkout}><Play size={15} fill="currentColor"/>Iniciar treino</button>}
       </section>
 
