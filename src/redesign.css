@@ -161,7 +161,7 @@ html,body { background:var(--r-bg); color:var(--r-text); }
 #root .redesign-today-workout>.redesign-primary { min-height:49px; border-radius:12px; box-shadow:0 6px 18px #0066ff25,inset 0 1px 0 #ffffff20; }
 .redesign-covers { gap:17px; }
 .redesign-cover-card { border-radius:19px; padding:7px; background:linear-gradient(160deg,color-mix(in srgb,var(--r-blue) 5%,var(--r-surface)),var(--r-surface)); border-color:color-mix(in srgb,var(--r-blue) 18%,var(--r-border)); box-shadow:0 8px 24px #00000012,inset 0 1px 0 #ffffff08; text-align:left; transition:border-color .2s,transform .2s; }
-.redesign-cover-card:active { transform:scale(.985); }
+.redesign-cover-card:active { transform:none; }
 .redesign-cover-card:focus-visible { outline:2px solid var(--r-blue); outline-offset:3px; }
 .refined-cover-media { border-radius:13px; overflow:hidden; background:var(--r-bg); }
 .refined-cover-media img { clip-path:inset(1px round 12px); }
@@ -184,17 +184,21 @@ html,body { background:var(--r-bg); color:var(--r-text); }
 #root .redesign-shell .redesign-exercise-heading { grid-template-columns:44px minmax(0,1fr) 44px; }
 #root .redesign-shell .redesign-exercise-heading button { width:44px; height:44px; min-height:44px; position:relative; z-index:1; touch-action:manipulation; }
 #root .redesign-shell .horus-main-content { padding-top:calc(14px + var(--safe-top)); padding-left:calc(16px + var(--safe-left)); padding-right:calc(16px + var(--safe-right)); }
-/* Scale covers proportionally instead of squeezing or cropping their contents. */
-.redesign-cover-card { width:80%; align-self:center; padding:6px; border-radius:16px; }
-.refined-cover-media { border-radius:11px; }
+/* Keep cards full-width; reduce only the media height without cropping embedded text. */
+#root .horus-app-shell.redesign-shell .horus-main-content:has(.horus-execution) { padding-inline:calc(16px + var(--safe-left)) calc(16px + var(--safe-right)); }
+.redesign-cover-card { width:100%; align-self:stretch; padding:6px; border-radius:16px; container-type:inline-size; }
+.refined-cover-media { width:100%; height:50cqw; border-radius:11px; background:#07111b; }
+.refined-cover-media img { width:100%; height:100%; object-fit:contain; transform:none; clip-path:none; }
 #root .redesign-cover-card>.refined-cover-action { min-height:44px; padding:7px 8px 2px; }
-.redesign-covers { gap:14px; }
+.redesign-covers { gap:10px; }
 .redesign-selected { container-type:inline-size; }
-.refined-selected-media { width:fit-content; max-width:100%; height:50cqw; aspect-ratio:auto; align-self:center; border-radius:13px; }
-#root .redesign-shell .refined-selected-media .redesign-selected-cover { width:auto; height:100%; max-width:100%; object-fit:contain; transform:none; border-radius:12px; clip-path:inset(1px round 11px); }
+.refined-selected-media { width:100%; max-width:100%; height:50cqw; aspect-ratio:auto; align-self:stretch; border-radius:13px; background:#07111b; }
+#root .redesign-shell .refined-selected-media .redesign-selected-cover { width:100%; height:100%; max-width:100%; object-fit:contain; transform:none; border-radius:12px; clip-path:none; }
 .redesign-today { display:grid; grid-template-rows:auto auto minmax(0,1fr); }
-.redesign-today-workout { width:80%; height:80%; align-self:start; justify-self:center; padding:13px 10px 10px; gap:10px; border-radius:18px; }
-.refined-today-media { background:transparent; }
+.redesign-today-workout { width:100%; height:auto; align-self:start; justify-self:stretch; padding:13px 10px 10px; gap:10px; border-radius:18px; container-type:inline-size; }
+.refined-today-media { width:100%; height:50cqw; flex:none; background:#07111b; }
+.refined-today-media .redesign-today-cover { width:100%; height:100%; object-fit:contain; transform:none; clip-path:none; }
+#root .redesign-shell .redesign-cover-card:active { transform:none; }
 #root .redesign-today-workout>.redesign-primary { min-height:44px; padding:10px; font-size:14px; }
 /* Keep the notch inset inside the sticky header so it is never counted twice. */
 #root .horus-app-shell.redesign-shell.redesign-shell .horus-exercise-modal { padding-top:0!important; }
