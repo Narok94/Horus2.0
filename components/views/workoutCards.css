@@ -1,0 +1,25 @@
+/* Original approved artwork, scoped to the workout list only. */
+.redesign-workouts .redesign-covers { gap:16px; }
+.redesign-workouts .approved-workout-card {
+  display:block;
+  width:100%;
+  min-width:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.redesign-workouts .approved-workout-card img {
+  display:block;
+  width:100%;
+  height:auto;
+  max-width:100%;
+  object-fit:contain;
+}
+.redesign-workouts .approved-workout-card:focus-visible {
+  outline:2px solid #ff7900;
+  outline-offset:4px;
+}

@@ -1,9 +1,19 @@
 import React from 'react';
+import './workoutCards.css';
+import cardA from '../../src/assets/cards/treino_a.png';
+import cardB from '../../src/assets/cards/treino_b.png';
+import cardC from '../../src/assets/cards/treino_c.png';
 import { ChevronLeft, ArrowUpRight, Dumbbell } from 'lucide-react';
 import { useStore } from '../../store';
 import { AppTab, WorkoutRoutine } from '../../types';
 import { activeWorkouts } from '../../data/henriqueABC';
 import { getDivisionThumbnail, getThumbnailPlan } from '../../src/utils/workoutThumbnails';
+const approvedCards: Record<string, string> = {
+  'henrique-abc-v1-a': cardA,
+  'henrique-abc-v1-b': cardB,
+  'henrique-abc-v1-c': cardC
+};
+
 export const WorkoutsListView: React.FC = () => {
   const {user,allWorkouts,setSelectedWorkout,setActiveTab,isWorkoutActive,selectedWorkout,addToast}=useStore();
   if(!user) return null;
@@ -13,6 +23,8 @@ export const WorkoutsListView: React.FC = () => {
     setSelectedWorkout(workout);setActiveTab(AppTab.WORKOUT);
   };
   return <section className="redesign-workouts"><header className="redesign-page-header"><button aria-label="Voltar ao início" onClick={()=>setActiveTab(AppTab.DASHBOARD)}><ChevronLeft size={22}/></button><h1>Meus Treinos</h1></header><div className="redesign-covers">{workouts.map(workout=>{
+    const approvedCard=approvedCards[workout.id];
+    if (approvedCard) return <button key={workout.id} type="button" className="approved-workout-card" aria-label={`Abrir ${workout.title}, ${workout.exercises.length} exercícios`} onClick={()=>open(workout)}><img src={approvedCard} alt="" /></button>;
     const image=getDivisionThumbnail(workout,getThumbnailPlan(user.username,workout));
     return <button key={workout.id} className="redesign-cover-card" aria-label={`Abrir ${workout.title}`} onClick={()=>open(workout)}>{image ? <div className="refined-cover-media"><img src={image} alt={workout.title}/></div> : <span><Dumbbell/>{workout.title}</span>}<span className="refined-cover-action">Ver treino<ArrowUpRight size={19}/></span></button>;
   })}</div></section>;
