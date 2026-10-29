@@ -184,20 +184,21 @@ html,body { background:var(--r-bg); color:var(--r-text); }
 #root .redesign-shell .redesign-exercise-heading { grid-template-columns:44px minmax(0,1fr) 44px; }
 #root .redesign-shell .redesign-exercise-heading button { width:44px; height:44px; min-height:44px; position:relative; z-index:1; touch-action:manipulation; }
 #root .redesign-shell .horus-main-content { padding-top:calc(14px + var(--safe-top)); padding-left:calc(16px + var(--safe-left)); padding-right:calc(16px + var(--safe-right)); }
-/* Keep cards full-width; reduce only the media height without cropping embedded text. */
+/* Fill the card with the complete artwork; compact the surrounding chrome independently. */
 #root .horus-app-shell.redesign-shell .horus-main-content:has(.horus-execution) { padding-inline:calc(16px + var(--safe-left)) calc(16px + var(--safe-right)); }
-.redesign-cover-card { width:100%; align-self:stretch; padding:6px; border-radius:16px; container-type:inline-size; }
-.refined-cover-media { width:100%; height:50cqw; border-radius:11px; background:#07111b; }
-.refined-cover-media img { width:100%; height:100%; object-fit:contain; transform:none; clip-path:none; }
-#root .redesign-cover-card>.refined-cover-action { min-height:44px; padding:7px 8px 2px; }
+.redesign-cover-card { width:100%; align-self:stretch; padding:0; border-radius:16px; container-type:inline-size; }
+.refined-cover-media { width:100%; height:auto; border-radius:15px 15px 0 0; background:#07111b; }
+.refined-cover-media img { width:100%; height:auto; object-fit:contain; transform:none; clip-path:inset(1px); }
+#root .redesign-cover-card>.refined-cover-action { min-height:44px; padding:6px 12px; }
 .redesign-covers { gap:10px; }
 .redesign-selected { container-type:inline-size; }
-.refined-selected-media { width:100%; max-width:100%; height:50cqw; aspect-ratio:auto; align-self:stretch; border-radius:13px; background:#07111b; }
-#root .redesign-shell .refined-selected-media .redesign-selected-cover { width:100%; height:100%; max-width:100%; object-fit:contain; transform:none; border-radius:12px; clip-path:none; }
+.refined-selected-media { width:100%; max-width:100%; height:auto; aspect-ratio:auto; align-self:stretch; border-radius:13px; background:#07111b; }
+#root .redesign-shell .refined-selected-media .redesign-selected-cover { width:100%; height:auto; max-width:100%; object-fit:contain; transform:none; border-radius:12px; clip-path:inset(1px round 12px); }
 .redesign-today { display:grid; grid-template-rows:auto auto minmax(0,1fr); }
-.redesign-today-workout { width:100%; height:auto; align-self:start; justify-self:stretch; padding:13px 10px 10px; gap:10px; border-radius:18px; container-type:inline-size; }
-.refined-today-media { width:100%; height:50cqw; flex:none; background:#07111b; }
-.refined-today-media .redesign-today-cover { width:100%; height:100%; object-fit:contain; transform:none; clip-path:none; }
+.redesign-today-workout { width:100%; height:auto; align-self:start; justify-self:stretch; padding:10px 0 0; gap:8px; border-radius:18px; container-type:inline-size; overflow:hidden; }
+.refined-today-media { width:100%; height:auto; flex:none; border-radius:0; background:#07111b; }
+.refined-today-media .redesign-today-cover { display:block; width:100%; height:auto; max-height:none; border-radius:0; object-fit:contain; transform:none; clip-path:inset(1px); }
+.redesign-today-workout>h2 { margin-inline:12px; }
 #root .redesign-shell .redesign-cover-card:active { transform:none; }
 #root .redesign-today-workout>.redesign-primary { min-height:44px; padding:10px; font-size:14px; }
 /* Keep the notch inset inside the sticky header so it is never counted twice. */
